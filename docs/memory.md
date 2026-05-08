@@ -23,7 +23,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | Domain | Weight | Status | Folder |
 |--------|--------|--------|--------|
 | 1 — Agentic Architecture | 27% | Complete | `domain-1/` |
-| 2 — MCP Tool Design | 18% | Complete | `domain-2/` |
+| 2 — MCP Tool Design | 18% | Not started | `domain-2/` |
 | 3 — Claude Code Workflows | 20% | Not started | `domain-3/` |
 | 4 — Prompt Engineering | 20% | Not started | `domain-4/` |
 | 5 — Context Management | 15% | Not started | `domain-5/` |

@@ -48,13 +48,13 @@ cca-exercises/
 
 | File | Description | Status |
 |------|-------------|--------|
-| `ex1_tool_descriptions.py` | Overlapping tool descriptions, disambiguation | Complete |
-| `ex2_tool_errors.py` | Structured errors: isError, errorCategory, isRetryable | Complete |
-| `ex3_tool_scope.py` | Right-sizing tool granularity | Complete |
-| `ex4_mcp_config.md` | MCP config scopes and credential handling (reference) | Complete |
-| `ex5_output_design.py` | Structured output formatting | Complete |
-| `hook_post_output_trim.py` | PostToolUse: trims get_product_details output | Complete |
-| `sample.mcp.json` | MCP config template with ${ENV_VAR} credential pattern | Complete |
+| `ex1_tool_descriptions.py` | Overlapping tool descriptions, disambiguation | Not started |
+| `ex2_tool_errors.py` | Structured errors: isError, errorCategory, isRetryable | Not started |
+| `ex3_tool_scope.py` | Right-sizing tool granularity | Not started |
+| `ex4_mcp_config.md` | MCP config scopes and credential handling (reference) | Not started |
+| `ex5_output_design.py` | Structured output formatting | Not started |
+| `hook_post_output_trim.py` | PostToolUse: trims get_product_details output | Not started |
+| `sample.mcp.json` | MCP config template with ${ENV_VAR} credential pattern | Not started |
 
 ### Domain 3 — Claude Code Workflows (`domain-3/`)
 
