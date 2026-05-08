@@ -45,6 +45,21 @@ _Rules and gotchas specific to this project. Updated by `/sync`._
 
 ---
 
+## Study Session Workflow (Standard for All Domains)
+
+Each subdomain follows this sequence — do not skip steps:
+
+1. **Concept walkthrough** — Claude explains key concepts, distinctions, and traps for the subdomain
+2. **Run the exercise** — execute the `.py` file and capture output
+3. **Save output** — write results to `domain-X/outputs/exY_output.txt` so it can be reviewed alongside the code
+4. **Multiple choice Q&A** — drill questions from the question bank on that subdomain before moving on
+
+This applies to every subdomain across all domains. For reference-only exercises (`.md` files), skip the run step and go directly to Q&A.
+
+**Output file location:** `domain-X/outputs/exY_output.txt` (create the `outputs/` folder per domain as needed)
+
+---
+
 ## Known Gotchas
 
 - The `production/` folder contains `customer_data.txt` with sample PII used by the `hook_post_pii_trim` exercise. This is fake/sample data only — never put real PII here.

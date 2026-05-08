@@ -17,16 +17,15 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] Hooks: hook_pre_production_gate, hook_pre_refund_gate, hook_post_pii_trim
 - [ ] Domain 1 practice questions — 60–80 from the question bank
 
-### Domain 2 — MCP Tool Design (18%) — NOT STARTED
-- [ ] ex1: Tool descriptions — overlapping tools, disambiguation
-- [ ] ex2: Tool errors — `isError`, `errorCategory`, `isRetryable` structured responses
-- [ ] ex3: Tool scope — right-sizing tool granularity
-- [ ] ex4: MCP config reference — scopes, credential handling (markdown)
-- [ ] ex5: Output design — structured output formatting
-- [ ] Hook: hook_post_output_trim
-- [ ] Config: sample.mcp.json with `${ENV_VAR}` credential pattern
-- [ ] Write 2 overlapping MCP tool descriptions, differentiate both, test with ambiguous queries
-- [ ] Domain 2 practice questions — 60 from the question bank
+### Domain 2 — MCP Tool Design (18%) — EXERCISES COMPLETE
+- [x] ex1: Tool descriptions — overlapping tools, disambiguation
+- [x] ex2: Tool errors — `isError`, `errorCategory`, `isRetryable` structured responses
+- [x] ex3: Tool scope — right-sizing tool granularity
+- [x] ex4: MCP config reference — scopes, credential handling (markdown)
+- [x] ex5: Output design — structured output formatting
+- [ ] Hook: hook_post_output_trim — review only (exists, not explicitly run)
+- [x] Config: sample.mcp.json with `${ENV_VAR}` credential pattern
+- [ ] Domain 2 practice questions — 60 drilled this session across all 5 subdomains (weak spots: 2.1 split generic tools, 2.2 business vs permission, 2.4 MCP resources)
 
 ### Domain 3 — Claude Code Workflows (20%) — Review Only
 - [ ] Review domain-3 page in Ramsey-Brain wiki

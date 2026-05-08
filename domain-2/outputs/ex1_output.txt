@@ -1,0 +1,69 @@
+============================================================
+EXERCISE 1 -- Tool Descriptions and Selection (2.1)
+============================================================
+Same 4 queries run against BAD tools, then GOOD tools.
+Watch for routing inconsistency in Part A.
+
+
+--- PART A: BAD descriptions (overlapping, vague) ---
+  [search   ] Query  : What orders has Jane Smith placed recently?
+              Tool   : find_orders
+              Input  : {"query": "Jane Smith"}
+
+  [search   ] Query  : Show me all pending orders from the last 7 days
+              Tool   : find_orders
+              Input  : {"query": "pending orders last 7 days"}
+
+  [id_lookup] Query  : Pull up order ORD-10041 for me
+              Tool   : get_order
+              Input  : {"order_id": "ORD-10041"}
+
+  [id_lookup] Query  : I need the details on order ORD-10038
+              Tool   : get_order
+              Input  : {"order_id": "ORD-10038"}
+
+
+--- PART B: GOOD descriptions (renamed, differentiated) ---
+  [search   ] Query  : What orders has Jane Smith placed recently?
+              Tool   : search_orders_by_criteria
+              Input  : {"customer_name": "Jane Smith"}
+
+  [search   ] Query  : Show me all pending orders from the last 7 days
+              Tool   : search_orders_by_criteria
+              Input  : {"status_filter": "pending", "date_from": "2024-12-17", "date_to": "2024-12-24"}
+
+  [id_lookup] Query  : Pull up order ORD-10041 for me
+              Tool   : get_order_by_id
+              Input  : {"order_id": "ORD-10041"}
+
+  [id_lookup] Query  : I need the details on order ORD-10038
+              Tool   : get_order_by_id
+              Input  : {"order_id": "ORD-10038"}
+
+============================================================
+EXAM DISTINCTION SUMMARY -- 2.1
+============================================================
+
+Problem: two overlapping tools causing misrouting
+
+  CORRECT  Rename + rewrite BOTH descriptions
+           - Add 'when to use' section
+           - Add 'do NOT use when' section
+           - Make the boundary explicit in the name itself
+
+  WRONG    Fix only one description
+           - The unfixed tool still creates ambiguity
+
+  WRONG    Add few-shot routing examples first
+           - Examples add token overhead without fixing root cause
+           - Descriptions are the primary signal; fix those first
+
+  WRONG    Add a routing classifier
+           - Over-engineered; bypasses LLM natural language understanding
+           - Claude already routes by description -- use that
+
+  WRONG    tool_choice:'auto' + stronger prompts to force a tool
+           - 'auto' still allows text-only response with no tool call
+           - Use tool_choice:'any' to guarantee SOME tool is called
+           - Use tool_choice:{'type':'tool','name':'X'} to force SPECIFIC tool
+

@@ -1,0 +1,166 @@
+============================================================
+EXERCISE 5 -- Tool Output Design (2.5)
+============================================================
+
+--- PART A: VERBOSE tool output (floods context) ---
+
+  [VERBOSE]
+  Tool result (~190 tokens): {"product_id": "WIDGET-001", "name": "Blue Widget Pro", "price": 89.99, "in_stock": true, "category": "Widgets", "description": "A high-quality blue widget for professional use.", "internal_sku": "INT
+  ... (truncated for display)
+  Agent: Great! Here's what I can tell you about product WIDGET-001:
+
+**Product Details:**
+- **Name:** Blue Widget Pro
+- **Price:** $89.99
+- **Category:** Widgets
+- **Description:** A high-quality blue widget for professional use
+- **Stock Status:** ✅ **Yes, it is in stock!**
+
+**Additional Information:**
+- **Internal SKU:** INT-WGT-BLU-PRO-001
+- **Warehouse Location:** A4-SHELF-22-BIN-7
+- **Featured Item:** Yes
+
+The product is currently available and ready for purchase or shipment.
+
+--- PART B: TRIMMED tool output (only business fields) ---
+
+  [TRIMMED]
+  Tool result (~44 tokens): {"product_id": "WIDGET-001", "name": "Blue Widget Pro", "price": 89.99, "in_stock": true, "category": "Widgets", "description": "A high-quality blue widget for professional use."}
+  Agent: Great! Here's what I found about product **WIDGET-001**:
+
+**Product Details:**
+- **Name:** Blue Widget Pro
+- **Price:** $89.99
+- **Category:** Widgets
+- **Description:** A high-quality blue widget for professional use
+- **In Stock:** ✓ Yes, it is currently in stock
+
+This appears to be a professional-grade widget that's readily available for purchase.
+
+--- PART C: Edit -> Read + Write fallback (non-unique match) ---
+
+  Temp file: C:\Users\ZAC~1.RAM\AppData\Local\Temp\demo_report.md
+  Original content:
+# Research Report
+
+## Section 1
+TODO: add source summary
+
+## Section 2
+TODO: add source summary
+
+## Section 3
+TODO: add source summary
+
+  Step 1: Edit tool would FAIL -- 'TODO: add source summary' appears 3 times.
+          Edit requires a unique match. Falling back to Read + Write.
+
+  Step 2: Read -- 135 chars loaded.
+  Step 3: Replace all occurrences.
+  Step 4: Write -- full file written back.
+
+  Updated content:
+# Research Report
+
+## Section 1
+Summary added by agent.
+
+## Section 2
+Summary added by agent.
+
+## Section 3
+Summary added by agent.
+
+
+--- PART D: Paginated tool output ---
+  First page:
+  {
+  "entries": [
+    {
+      "ts": "2026-05-01T10:00:00Z",
+      "action": "login",
+      "user": "alice"
+    },
+    {
+      "ts": "2026-05-01T10:05:00Z",
+      "action": "edit",
+      "user": "alice"
+    },
+    {
+      "ts": "2026-05-01T10:10:00Z",
+      "action": "logout",
+      "user": "alice"
+    }
+  ],
+  "returned": 3,
+  "total": 7,
+  "next_page_token": "3"
+}
+
+  Second page:
+  {
+  "entries": [
+    {
+      "ts": "2026-05-01T11:00:00Z",
+      "action": "login",
+      "user": "bob"
+    },
+    {
+      "ts": "2026-05-01T11:15:00Z",
+      "action": "delete",
+      "user": "bob"
+    },
+    {
+      "ts": "2026-05-01T11:20:00Z",
+      "action": "logout",
+      "user": "bob"
+    }
+  ],
+  "returned": 3,
+  "total": 7,
+  "next_page_token": "6"
+}
+
+--- HOOK NOTE: PostToolUse for output trimming ---
+
+  See hook_post_output_trim.py for the Claude Code hook implementation.
+  The hook intercepts the tool result BEFORE Claude processes it and
+  injects trimming context (or strips verbose fields).
+
+  EXAM TRAP: PostToolUse hook that returns BOTH formatted summary AND
+  raw output still sends the full raw content to the model.
+  The hook should return ONLY the trimmed/formatted version.
+
+  Rate limiting:
+    CORRECT  -- Token bucket implemented in the MCP server
+    WRONG    -- System prompt: "wait 1 second between calls"
+    WRONG    -- PreToolUse hook: time.sleep(1) before each call
+    Reason   -- Prompt-based rate limiting is probabilistic and unreliable;
+                server-side enforcement is deterministic
+
+============================================================
+EXAM DISTINCTION SUMMARY -- 2.5
+============================================================
+
+Output trimming:
+  CORRECT  -- Strip internal IDs, audit timestamps, query metrics before returning
+  CORRECT  -- PostToolUse hook returns ONLY formatted summary (not summary + raw)
+  WRONG    -- Return full backend response and rely on Claude to ignore noise
+
+Edit -> Read + Write fallback:
+  When Edit fails due to non-unique match:
+    Step 1: Read the full file
+    Step 2: Modify all occurrences in application code
+    Step 3: Write the full file back
+
+Pagination:
+  Return: first page + total count + next_page token
+  Agent requests subsequent pages only if task requires them
+  Prevents 100K+ token results from flooding context in a single call
+
+Rate limiting:
+  CORRECT  -- Token bucket in the MCP server implementation
+  WRONG    -- System prompt instructions to pause between calls
+  WRONG    -- PreToolUse hook sleep delay
+

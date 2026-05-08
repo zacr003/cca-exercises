@@ -23,7 +23,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | Domain | Weight | Status | Folder |
 |--------|--------|--------|--------|
 | 1 — Agentic Architecture | 27% | Complete | `domain-1/` |
-| 2 — MCP Tool Design | 18% | Not started | `domain-2/` |
+| 2 — MCP Tool Design | 18% | Exercises complete | `domain-2/` |
 | 3 — Claude Code Workflows | 20% | Not started | `domain-3/` |
 | 4 — Prompt Engineering | 20% | Not started | `domain-4/` |
 | 5 — Context Management | 15% | Not started | `domain-5/` |
@@ -72,6 +72,8 @@ _Updated by `/sync` at end of each session._
 
 - 2026-05-07: Domain 1 exercises complete — ex1 (agentic loop), ex1b (parallel tools), ex2 (coordinator/subagents), ex3 (hooks), ex4 (tool sequencing), ex5 (task decomposition), ex6 (session management)
 - 2026-05-07: Domain 1 hooks built — hook_pre_production_gate, hook_pre_refund_gate, hook_post_pii_trim
-- 2026-05-07: Domain 2 exercises complete — ex1 (tool descriptions), ex2 (tool errors), ex3 (tool scope), ex4 (MCP config reference), ex5 (output design)
-- 2026-05-07: Domain 2 hook built — hook_post_output_trim; sample.mcp.json created
+- 2026-05-07: Domain 2 exercises scaffolded — ex1–ex5 + hook + sample.mcp.json created
 - 2026-05-08: docs/ persistence system and /sync command bootstrapped
+- 2026-05-08: Domain 2 exercises run — ex1, ex2, ex3, ex5 executed; outputs saved to domain-2/outputs/; ex4 read as markdown reference
+- 2026-05-08: Domain 1 Q&A — 37 questions at 84%; Domain 2 Q&A — all 5 subdomains
+- 2026-05-08: Study workflow established — walkthrough → run exercise → save output → Q&A

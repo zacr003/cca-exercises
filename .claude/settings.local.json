@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(sed -n '12100,47528p' \"C:\\\\Users\\\\zac.ramsey\\\\Desktop\\\\Ramsey-Brain/raw/cca_f_question_bank_v1.0.0.md\")",
+      "Read(//tmp/**)",
+      "Bash(awk -F: ':*)",
+      "Bash(awk ':*)",
+      "Bash(grep -A 80 '^SUBDOMAIN: __TRACKED_VAR__$' /tmp/all_domain1_clean.txt)",
+      "Bash(grep:*)"
+    ]
+  }
+}

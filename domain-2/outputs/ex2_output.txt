@@ -1,0 +1,91 @@
+============================================================
+EXERCISE 2 -- Tool Error Handling (2.2)
+============================================================
+
+--- PART A: CORRECT structured error responses ---
+
+  NOTE: 0 results = success, not an error -- agent should report nothing found
+
+  [CORRECT] Search for discontinued_item in the catalog
+  Tool call : search_products({"keyword": "discontinued_item"})
+  Tool result: {"status": "success", "results": [], "count": 0, "message": "No products matched the search criteria."}
+  Agent: The search for "discontinued_item" returned no results. There are no products in the catalog matching that keyword. 
+
+This could mean:
+- The item has been removed from the catalog
+- The product name is different than expected
+- It may be truly discontinued and no longer listed
+
+Would you like me to search for something else, or do you have a different product name or keyword you'd like to try?
+
+  NOTE: Transient timeout -- isRetryable:true, agent may retry
+
+  [CORRECT] What is the inventory level for SKU WIDGET-99?
+  Tool call : get_inventory_level({"sku": "WIDGET-99"})
+  Tool result: {"isError": true, "errorCategory": "transient", "isRetryable": true, "description": "Inventory service temporarily unavailable. Please retry the request."}
+  Agent: The inventory service is temporarily unavailable at the moment. This is a transient error, so please try again in a few moments to check the inventory level for SKU WIDGET-99.
+
+  NOTE: Validation failure -- isRetryable:false, agent should not retry
+
+  [CORRECT] Apply promo code BADCODE to cart CART-555
+  Tool call : apply_promo_code({"cart_id": "CART-555", "promo_code": "BADCODE"})
+  Tool result: {"isError": true, "errorCategory": "validation", "isRetryable": false, "description": "The promotional code entered is not valid or has expired. Please check the code and try a different one."}
+  Agent: The promo code "BADCODE" is **not valid or has expired**. The code could not be applied to cart CART-555.
+
+Please check the promotional code and try a different one. Make sure:
+- The code is spelled correctly
+- The code hasn't expired
+- The code is applicable to items in your cart
+
+Do you have another promo code you'd like to try?
+
+--- PART B: ANTI-PATTERN (silent suppression) ---
+
+  NOTE: Transient timeout -- isRetryable:true, agent may retry
+
+  [SILENT] What is the inventory level for SKU WIDGET-99?
+  Tool call : get_inventory_level({"sku": "WIDGET-99"})
+  Tool result: {}
+  Agent: The inventory lookup returned an empty result. This could mean either:
+1. The SKU "WIDGET-99" doesn't exist in the inventory system
+2. The inventory service is temporarily unavailable
+
+Could you please verify that "WIDGET-99" is the correct SKU? If you have a different SKU or product name you'd like me to check, I'd be happy to help.
+
+  NOTE: Validation failure -- isRetryable:false, agent should not retry
+
+  [SILENT] Apply promo code BADCODE to cart CART-555
+  Tool call : apply_promo_code({"cart_id": "CART-555", "promo_code": "BADCODE"})
+  Tool result: {}
+  Agent: I attempted to apply the promo code "BADCODE" to cart "CART-555". The system returned an empty response, which likely indicates that the promo code is invalid or expired. 
+
+Could you please verify:
+1. That the promo code "BADCODE" is correct and currently active?
+2. That the cart ID "CART-555" is valid?
+
+If you have a different promo code or cart ID, I'd be happy to try again.
+
+============================================================
+EXAM DISTINCTION SUMMARY -- 2.2
+============================================================
+
+Error response fields:
+  isError       : true  = access/execution failure
+  errorCategory : "transient"  = network/service issue; retry may work
+                  "validation" = bad input or policy; same params will fail
+                  "permission" = access denied; not retryable
+  isRetryable   : true  = agent can retry with same parameters
+                : false = agent must change approach or escalate
+  description   : customer-safe -- never echo raw input or PII back
+
+Critical distinctions:
+  "0 results" -- NOT isError. Successful query, empty result set.
+  Timeout     -- isError:true, errorCategory:"transient", isRetryable:true
+  Policy fail -- isError:true, errorCategory:"validation", isRetryable:false
+
+  WRONG: return {} on failure (silent suppression)
+         Agent cannot tell failure from empty data
+  WRONG: use a confidence score field instead of isRetryable
+  WRONG: terminate the whole workflow on a single tool failure
+         Return partial results + structured error; let coordinator decide
+

@@ -1,0 +1,75 @@
+============================================================
+EXERCISE 3 -- Tool Scope and Constraints (2.3)
+============================================================
+
+--- PART A: Generic fetch_url (no constraints) ---
+System prompt says 'only use our docs' -- but that is probabilistic.
+
+  Query: Look up the password reset guide at support.example.com/reset
+  Tool: fetch_url
+  Input: {"url": "support.example.com/reset"}
+  Result: {"url": "support.example.com/reset", "content": "Support article: How to reset your password. Step 1: ...", "source": "o...
+
+  Query: Find information at https://competitor.com/comparison
+  (no tool called)
+
+
+--- PART B: Scoped load_support_doc (URL validated in tool) ---
+Constraint is in the tool implementation -- not the system prompt.
+
+  Query: Look up the password reset guide at support.example.com/reset
+  Tool: load_support_doc
+  Input: {"url": "support.example.com/reset"}
+  Result: {"url": "support.example.com/reset", "content": "Support article: How to reset your password. Step 1: ...", "source": "o...
+
+  Query: Find information at https://competitor.com/comparison
+  (no tool called)
+
+
+--- PART C: Too many tools (6) vs. consolidated (3) ---
+6 overlapping order tools degrade selection reliability.
+
+  Too-many-tools set (6 tools):
+    - order_lookup: Look up an order.
+    - order_search: Search for orders.
+    - order_get: Get order information.
+    - order_status: Check the status of an order.
+    - order_find: Find orders for a customer.
+    - order_details: Get detailed order information.
+
+  Consolidated set (3 tools):
+    - get_order_by_id
+    - search_orders_by_criteria
+    - get_order_status
+
+  Query against too-many-tools: What is the status of order ORD-10041?
+  Tool: order_status
+  Input: {"id": "ORD-10041"}
+  Result: {"status": "shipped", "order_id": "ORD-10041"}...
+
+  Same query against consolidated tools:
+  Tool: get_order_status
+  Input: {"order_id": "ORD-10041"}
+  Result: {"status": "shipped", "order_id": "ORD-10041"}...
+
+============================================================
+EXAM DISTINCTION SUMMARY -- 2.3
+============================================================
+
+Scoped tools vs. generic tools:
+  CORRECT  -- Constrained tool (URL allowlist enforced IN the tool)
+  WRONG    -- Generic tool + system prompt constraint (probabilistic)
+  WRONG    -- Generic tool + routing classifier to decide what is allowed
+
+Too-many-tools problem:
+  4-5 focused tools = reliable selection
+  18 overlapping tools = degraded reliability
+  Fix: consolidate overlapping tools, not rename with numbered suffixes
+
+Subagent tool restriction:
+  Each subagent gets ONLY the tools relevant to its role
+  Web-search subagent: search tools only
+  Document-analysis subagent: read tools only
+  Report-generation subagent: write tools only
+  No cross-specialization access -- scoped per role
+
