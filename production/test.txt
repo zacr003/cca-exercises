@@ -1,0 +1,10 @@
+This is a dummy production file for testing the PreToolUse hook.
+This line was added to test the PreToolUse production gate hook.
+This second line tests the hook after the Python path fix.
+Hook debug test line.
+stdin diagnostic line.
+Final hook validation line.
+Hook working — ask mode confirmed.
+This line tests the deny hook.
+This line tests the corrected exit code 2 hook.
+This line tests the hard block.

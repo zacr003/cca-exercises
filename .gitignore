@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+hook_debug.log
+*.out
+.DS_Store

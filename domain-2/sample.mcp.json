@@ -1,0 +1,29 @@
+{
+  "_comment": "Sample .mcp.json -- copy to project root and set env vars before use.",
+  "_wrong_example": "NEVER do: 'GITHUB_TOKEN': 'ghp_actualTokenValue' -- commits secrets to version control",
+
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "docs-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "env": {
+        "ALLOWED_DOMAINS": "support.example.com,docs.example.com"
+      }
+    }
+  },
+
+  "_allowedTools_note": "MCP tool pattern is always mcp__<servername>__<toolname>",
+  "allowedTools": [
+    "mcp__github__create_pull_request",
+    "mcp__github__list_issues",
+    "mcp__github__get_file_contents",
+    "mcp__docs-search__fetch"
+  ]
+}

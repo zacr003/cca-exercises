@@ -1,0 +1,160 @@
+
+============================================================
+STRATEGY 1: Prompt Chaining (fixed sequential pipeline)
+Steps are known upfront: per-file -> cross-file -> ranking
+============================================================
+
+[Step 1] Per-file local analysis (sequential here, parallel in production)
+  Analyzing user_service.py...
+    Done.
+  Analyzing order_service.py...
+    Done.
+  Analyzing api_gateway.py...
+    Done.
+
+[Step 2] Cross-file integration pass (depends on Step 1 output)
+  Done.
+
+[Step 3] Final severity ranking (depends on Steps 1 + 2)
+  Done.
+
+[Prompt chaining] Final ranking:
+```json
+{
+  "top_issues": [
+    {
+      "rank": 1,
+      "issue": "SQL injection vulnerability in user role update: both new_role and user_id are directly interpolated into UPDATE query without parameterization. Combined with missing role validation, allows arbitrary role assignment via SQL injection.",
+      "severity": "high",
+      "files": ["user_service.py", "api_gateway.py"]
+    },
+    {
+      "rank": 2,
+      "issue": "Authorization gap: api_gateway.py allows any authenticated user to update any user's role to admin without permission checks. Missing role validation in user_service.update_role() enables privilege escalation attacks.",
+      "severity": "high",
+      "files": ["api_gateway.py", "user_service.py"]
+    },
+    {
+      "rank": 3,
+      "issue": "Authorization gap: api_gateway.py calls order_svc.cancel_order(order_id) without verifying order ownership. An attacker can cancel any order in the system by knowing its ID, causing data manipulation and denial of service.",
+      "severity": "high",
+      "files": ["api_gateway.py", "order_service.py"]
+    },
+    {
+      "rank": 4,
+      "issue": "SQL injection vulnerability in order queries: user_id and order_id are directly interpolated into SELECT and UPDATE queries without parameterization across order_service.py.",
+      "severity": "high",
+      "files": ["order_service.py"]
+    },
+    {
+      "rank": 5,
+      "issue": "API contract mismatch with cascading failures: api_gateway.py calls get_orders(order_id) but function expects user_id parameter. Combined with missing null checks and unvalidated index access, causes IndexError and incorrect data retrieval.",
+      "severity": "high",
+      "files": ["api_gateway.py", "order_service.py"]
+    }
+  ]
+}
+```
+
+============================================================
+STRATEGY 2: Dynamic Adaptive Decomposition
+Subtasks are GENERATED from findings — scope is discovered, not predefined
+============================================================
+
+Investigation goal: open-ended security audit — find authorization bypass and injection vulnerabilities
+
+[Step 1] Triage — identifying highest-risk investigation areas
+  Triage findings: ```json
+{
+  "priority_areas": [
+    {
+      "area": "API Gateway Authorization Logic",
+      "reason": "Central point of all external requests; flawed authorization here affects entire application. Common issues: incorrect role validation, missing permission checks on endpoints, JWT/token verificati...
+
+[Step 2] Generating targeted subtasks from triage findings
+  Generated subtasks: ```json
+{
+  "subtasks": [
+    {
+      "task_id": 1,
+      "task": "Verify JWT token validation is enforced on all protected endpoints",
+      "target_file": "api_gateway.py",
+      "what_to_check": "Confirm every route marked as protected has token verification before handler execution; check for mi...
+
+[Step 3] Executing adaptive subtasks against source code
+  Done.
+
+[Adaptive] Final findings:
+```json
+{
+  "findings": [
+    {
+      "task_id": 1,
+      "subtask": "Verify JWT token validation is enforced on all protected endpoints",
+      "finding": "CRITICAL: No JWT token validation decorator (@auth) found on any endpoint in api_gateway.py. The handle_request function processes all endpoints (/orders, /cancel, /role) without any token verification logic. User identity is accepted via parameter without validation of authentication token.",
+      "severity": "high"
+    },
+    {
+      "task_id": 2,
+      "subtask": "Check for role-based access control (RBAC) validation on each endpoint",
+      "finding": "CRITICAL: No role-based access control implemented. The /role endpoint allows any user to modify their own role without admin verification. The /cancel and /orders endpoints have no role checks. Missing explicit validation of user.role against required permissions for each endpoint.",
+      "severity": "high"
+    },
+    {
+      "task_id": 3,
+      "subtask": "Test for privilege escalation via request header manipulation",
+      "finding": "CRITICAL: Privilege escalation vulnerability confirmed. The /role endpoint accepts role changes directly from params without validating against authenticated token claims. An attacker can escalate their own role to 'admin' by calling: handle_request('/role', user_id, {'role': 'admin'}). No validation that role changes come from token claims.",
+      "severity": "high"
+    },
+    {
+      "task_id": 4,
+      "subtask": "Audit order creation and modification for user ownership validation",
+      "finding": "CRITICAL: Authorization bypass on order operations. The /cancel endpoint calls order_svc.cancel_order(order_id) without verifying the order belongs to the requesting user. Any user can cancel any order in the system. No user_id matching validation between request and order.user_id.",
+      "severity": "high"
+    },
+    {
+      "task_id": 5,
+      "subtask": "Check for SQL/NoSQL injection vulnerabilities in order queries",
+      "finding": "CRITICAL: Multiple SQL injection vulnerabilities found. order_service.py uses string concatenation: f\"SELECT * FROM orders WHERE user_id = {user_id}\" and f\"UPDATE orders SET status = 'cancelled' WHERE id = {order_id}\". user_service.py has SQL injection in get_user() and update_role(). No parameterized queries or ORM protection used.",
+      "severity": "high"
+    },
+    {
+      "task_id": 6,
+      "subtask": "Validate order amount parameters for type and range constraints",
+      "finding": "INCOMPLETE DATA: Amount validation cannot be fully assessed as amount field is not processed in provided code snippets. However, no validation logic for amount type (numeric) or range constraints is visible in order_service.py. Risk of type confusion or negative amount manipulation exists if amount is user-controlled.",
+      "severity": "medium"
+    }
+  ]
+}
+```
+
+**Summary of Critical Issues:**
+- **Authentication**: No JWT validation on any endpoint
+- **Authorization**: Privilege escalation allows role self-elevation; order access control completely missing
+- **Injection**: Multiple SQL injection points via unparameterized queries
+- **Data Validation**: No input validation on order_id, role, or user_id parameters
+- **Logic Error**: api_gateway.py passes wrong parameters to order_svc.get_orders (order_id instead of user_id)
+
+============================================================
+EXAM DISTINCTION SUMMARY
+============================================================
+
+Prompt chaining (Strategy 1):
+  - Steps are KNOWN before execution starts
+  - Each step's output explicitly feeds the next
+  - Per-file LOCAL pass -> cross-file INTEGRATION pass -> ranking
+  - Use for: predictable multi-aspect reviews, structured pipelines
+  - Exam phrase: "fixed sequential pipeline"
+
+Dynamic adaptive decomposition (Strategy 2):
+  - Steps are GENERATED from what is discovered
+  - Triage findings determine which subtasks exist
+  - Use for: open-ended investigation, unknown scope upfront
+  - Exam phrase: "generate subtasks based on what is discovered at each step"
+
+Single-pass on all files (ANTI-PATTERN — do not do this):
+  - Attention dilutes across 14+ files
+  - Local and cross-file issues blend together
+  - Inconsistent review depth, missed bugs, contradictory feedback
+  - Fix: split into per-file pass + separate cross-file integration pass
+

@@ -1,0 +1,44 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"C:/Program Files/Python314/python\" C:/Users/zac.ramsey/Desktop/cca-exercises/domain-1/hook_pre_production_gate.py"
+          }
+        ]
+      },
+      {
+        "matcher": "process_refund",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"C:/Program Files/Python314/python\" C:/Users/zac.ramsey/Desktop/cca-exercises/domain-1/hook_pre_refund_gate.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"C:/Program Files/Python314/python\" C:/Users/zac.ramsey/Desktop/cca-exercises/domain-1/hook_post_pii_trim.py"
+          }
+        ]
+      },
+      {
+        "matcher": "get_product_details",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"C:/Program Files/Python314/python\" C:/Users/zac.ramsey/Desktop/cca-exercises/domain-2/hook_post_output_trim.py"
+          }
+        ]
+      }
+    ]
+  }
+}
