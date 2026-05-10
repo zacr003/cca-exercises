@@ -27,18 +27,28 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] Config: sample.mcp.json with `${ENV_VAR}` credential pattern
 - [ ] Domain 2 practice questions — 60 drilled this session across all 5 subdomains (weak spots: 2.1 split generic tools, 2.2 business vs permission, 2.4 MCP resources)
 
-### Domain 3 — Claude Code Workflows (20%) — Review Only
-- [ ] Review domain-3 page in Ramsey-Brain wiki
+### Domain 3 — Claude Code Workflows (20%) — EXERCISES COMPLETE
+- [x] ex1: CLAUDE.md hierarchy — 3 scopes, concatenation, @import, .claude/rules/, conflict resolution
+- [x] ex2: Skills and slash commands — context:fork, allowed-tools, argument-hint, project vs user scope
+- [x] ex3: Path-scoped rules — YAML paths frontmatter, glob patterns, vs directory CLAUDE.md
+- [x] ex4: Plan mode — decision framework, iterative refinement, Explore subagent
+- [x] ex5: CI/CD headless mode — -p flag, --output-format json, --bare, independent review instance
 - [ ] Domain 3 practice questions — 50 from the question bank
-- [ ] Optional: 1–2 exercises if weak spots surface from practice exams
 
-### Domain 4 — Prompt Engineering (20%)
+### Domain 4 — Prompt Engineering (20%) — EXERCISES COMPLETE
+- [x] ex1: Few-shot prompting — vague vs explicit criteria vs contrastive examples (4.1, 4.2)
+- [x] ex2: Structured output — JSON schema, nullable fields, enum+other, conflict_detected (4.3)
+- [x] ex3: tool_choice — auto vs any vs forced, the first-turn-then-auto pattern (4.4)
+- [x] ex4: Batch API — submit, poll, correlate via custom_id, failure recovery (4.5)
+- [x] ex5: Retry-with-feedback — error feedback loop, retry limits, detected_pattern field (4.3/4.6)
 - [ ] Domain 4 practice questions — 50 from the question bank
-- [ ] Optional: targeted exercises based on practice exam weak spots
 
-### Domain 5 — Context Management (15%)
+### Domain 5 — Context Management (15%) — EXERCISES COMPLETE
+- [x] ex1: Long context — lost-in-the-middle, key findings at top, tool output trimming (5.1)
+- [x] ex2: Escalation — explicit criteria + few-shot, frustrated user pattern, multi-topic (5.2)
+- [x] ex3: Context degradation — API statelessness, scratchpad files, case-facts block (5.4, 5.5)
+- [x] ex4: Error propagation — structured errors, coverage annotations, multi-agent recovery (5.3)
 - [ ] Domain 5 practice questions — 40 from the question bank
-- [ ] Optional: targeted exercises based on practice exam weak spots
 
 ---
 
@@ -58,4 +68,4 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-_Last updated: 2026-05-08_
+_Last updated: 2026-05-10_
