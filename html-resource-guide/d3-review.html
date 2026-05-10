@@ -131,6 +131,8 @@
     <button class="tab-btn" onclick="showTab('ex3')">Ex3: Path Rules</button>
     <button class="tab-btn" onclick="showTab('ex4')">Ex4: Plan Mode</button>
     <button class="tab-btn" onclick="showTab('ex5')">Ex5: CI/CD</button>
+    <button class="tab-btn" onclick="showTab('ref')">3.5 Refinement</button>
+    <button class="tab-btn" onclick="showTab('tools')">Tools &amp; Cmds</button>
     <button class="tab-btn" onclick="showTab('quiz')">Quiz</button>
     <button class="export-btn" onclick="window.print()">⬇ Print</button>
   </div>
@@ -487,6 +489,143 @@ claude -p "Review these tests" &lt; tests.py   # fresh invocation
           <tr><td class="td-trap"><code>--skip-config</code></td><td>Use <code>--bare</code></td></tr>
           <tr><td class="td-trap"><code>--security-only</code></td><td>Does not exist</td></tr>
           <tr><td class="td-trap"><code>--auto-test</code></td><td>Does not exist</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== 3.5 REFINEMENT ===== -->
+  <div id="ref" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">R</span> Iterative Refinement Patterns (3.5)</div>
+      <div class="concept-box">
+        <p>When detailed instructions produce inconsistent results, the fix is <strong>concrete examples</strong> — not stronger instructions. This applies beyond classification: any time Claude misinterprets a prose description, 2–3 input/output examples resolve it faster than rewording.</p>
+      </div>
+
+      <h3>When Examples Beat Instructions</h3>
+      <table>
+        <thead><tr><th>Symptom</th><th>Wrong fix</th><th>Correct fix</th></tr></thead>
+        <tbody>
+          <tr><td>Inconsistent interpretation of prose description</td><td class="td-trap">Add more detail to the instruction</td><td class="td-correct">Provide 2–3 concrete input/output examples</td></tr>
+          <tr><td>Classification keeps hitting edge cases</td><td class="td-trap">Longer, more detailed criteria</td><td class="td-correct">Contrastive adjacent examples showing the boundary</td></tr>
+          <tr><td>Model not following format correctly</td><td class="td-trap">Repeat the format instruction more firmly</td><td class="td-correct">Show exact before/after examples of correct format</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Four Refinement Patterns</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Interview pattern</span><span class="kv-val">Ask Claude to question YOU about requirements before proposing a design — surfaces ambiguity before implementation</span></div>
+        <div class="kv-row"><span class="kv-key">Test-driven iteration</span><span class="kv-val">Write tests first, share test failures with Claude — model iterates against concrete pass/fail signal instead of vague prose feedback</span></div>
+        <div class="kv-row"><span class="kv-key">Sequential for independent issues</span><span class="kv-val">Fix bugs one at a time when they don't interact — each fix is clean and reviewable</span></div>
+        <div class="kv-row"><span class="kv-key">Bundled for interacting issues</span><span class="kv-val">Fix multiple issues in one message when they touch the same code — avoids conflicts between separate edits</span></div>
+      </div>
+
+      <h3>Exam Trap Table — 3.5</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Add more detailed instructions when current instructions are failing</td><td>Switch to concrete examples — instructions hit a ceiling; examples teach the boundary</td></tr>
+          <tr><td class="td-trap">Fix all issues in one big refactor message</td><td>Sequential for independent issues; bundled only when issues interact</td></tr>
+          <tr><td class="td-trap">Provide design spec and ask Claude to build it</td><td>Interview pattern — let Claude surface ambiguity first, then design together</td></tr>
+          <tr><td class="td-trap">Describe expected output in prose</td><td>Show it — concrete before/after examples are unambiguous</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== TOOLS & COMMANDS ===== -->
+  <div id="tools" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">T</span> Built-in Tools and Claude Code Commands</div>
+      <div class="concept-box">
+        <p>Claude Code exposes built-in tools it uses when executing tasks. The exam tests which tool to use for which job, and when to fall back. Always prefer dedicated tools over Bash equivalents.</p>
+      </div>
+
+      <h3>Built-in Tool Reference</h3>
+      <table>
+        <thead><tr><th>Tool</th><th>What it does</th><th>Key rule</th></tr></thead>
+        <tbody>
+          <tr><td><code>Glob</code></td><td>Find files by <strong>name pattern</strong> (e.g. <code>**/*.py</code>, <code>src/**/*.ts</code>)</td><td>Use when you know the file pattern but not the content</td></tr>
+          <tr><td><code>Grep</code></td><td>Find files/lines by <strong>content</strong> (ripgrep regex)</td><td>Use when searching for a string, symbol, or pattern inside files</td></tr>
+          <tr><td><code>Read</code></td><td>Read file contents (with optional line range)</td><td>Always Read before Edit — required to know current state</td></tr>
+          <tr><td><code>Edit</code></td><td>Exact string replacement in a file</td><td>Requires <strong>unique match</strong> — fallback: Read + modify + Write</td></tr>
+          <tr><td><code>Write</code></td><td>Create or completely overwrite a file</td><td>Use for new files or full rewrites; prefer Edit for partial changes</td></tr>
+          <tr><td><code>Bash</code></td><td>Run shell commands</td><td>Use ONLY when no dedicated tool exists — last resort</td></tr>
+          <tr><td><code>Task</code></td><td>Spawn a subagent with its own tool set</td><td>Must be in <code>allowedTools</code> for coordinator to use it</td></tr>
+          <tr><td><code>WebFetch</code></td><td>Fetch content from a specific URL</td><td>Use when you have the exact URL</td></tr>
+          <tr><td><code>WebSearch</code></td><td>Search the web by query</td><td>Use when you need to find a URL first</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Glob vs. Grep — The Most-Tested Distinction</h3>
+      <div class="grid-2">
+        <div class="good-box">
+          <div class="good-title">Glob — Find by File Name/Path</div>
+          <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>Glob("**/*.test.py")
+→ finds all .test.py files
+
+Glob("src/**/*.ts")
+→ finds all .ts files under src/</code></pre>
+          <p style="color:var(--muted); font-size:0.85em; margin-top:8px;">Use when you know WHAT the file is called, not what's inside it</p>
+        </div>
+        <div class="good-box">
+          <div class="good-title">Grep — Find by Content</div>
+          <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>Grep("def verify_customer", "*.py")
+→ finds files containing that function
+
+Grep("isError", glob="**/*.json")
+→ finds JSON files with isError</code></pre>
+          <p style="color:var(--muted); font-size:0.85em; margin-top:8px;">Use when you know WHAT'S INSIDE the file, not its name</p>
+        </div>
+      </div>
+
+      <h3>Edit → Read + Write Fallback</h3>
+      <pre><code># Edit fails when old_string appears more than once in the file
+# Fallback procedure:
+1. Read  → load full file content
+2. Modify → replace all occurrences in Python (str.replace or re.sub)
+3. Write → write full file back
+
+# This handles non-unique matches reliably
+# Bash + sed is an alternative but prefer the dedicated tools</code></pre>
+
+      <h3>Claude Code Slash Commands</h3>
+      <table>
+        <thead><tr><th>Command</th><th>What it does</th><th>Exam relevance</th></tr></thead>
+        <tbody>
+          <tr><td><code>/memory</code></td><td>Lists all loaded CLAUDE.md and rules files</td><td>Primary diagnostic for "why isn't my rule applying?"</td></tr>
+          <tr><td><code>/compact</code></td><td>Summarizes conversation to reclaim token budget; project CLAUDE.md is re-read from disk after compacting</td><td>Fix for context degradation in long sessions (D5.4)</td></tr>
+          <tr><td><code>/init</code></td><td>Generates a starter CLAUDE.md by analyzing the current project</td><td>Correct command — NOT /setup or /config init</td></tr>
+          <tr><td><code>/clear</code></td><td>Clears conversation history entirely (fresh start)</td><td>Use when prior tool results are stale — not just long</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Directory CLAUDE.md — Real Behavior</h3>
+      <div class="trap-box">
+        <div class="trap-title">What the Exam Says vs. What Actually Happens</div>
+        <p>Exam says: directory CLAUDE.md loads when "working in that directory."<br>
+        In practice: it loads when Claude Code is <strong>actively generating or editing content</strong> inside that directory — not just reading a file there or mentioning the path.<br>
+        Use <code>/memory</code> to verify what's actually loaded in your current session.</p>
+      </div>
+
+      <h3>Other Config Notes</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">$ARGUMENTS in commands</span><span class="kv-val">Use <code>$ARGUMENTS</code> in a .claude/commands/*.md file to pass parameters: <code>/review src/api.py</code> → $ARGUMENTS = "src/api.py"</span></div>
+        <div class="kv-row"><span class="kv-key">claudeMdExcludes</span><span class="kv-val">Setting in settings.json to skip specific CLAUDE.md files by path/glob — useful in large monorepos</span></div>
+        <div class="kv-row"><span class="kv-key">~/.claude/rules/ vs .claude/rules/</span><span class="kv-val">~/.claude/rules/ = personal, applies to EVERY project on your machine. .claude/rules/ = project-specific, version-controlled, shared with team.</span></div>
+        <div class="kv-row"><span class="kv-key">Task in allowedTools</span><span class="kv-val">A coordinator must have "Task" in its allowedTools to be able to spawn subagents</span></div>
+      </div>
+
+      <h3>Exam Trap Table — Tools</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Use Glob to find files containing a specific function</td><td>Glob finds by name pattern — use Grep to search file contents</td></tr>
+          <tr><td class="td-trap">Use Grep with <code>**/*.py</code> to list all Python files</td><td>Grep searches content — use Glob for name-pattern file discovery</td></tr>
+          <tr><td class="td-trap">Edit a file without reading it first</td><td>Always Read before Edit to know current content</td></tr>
+          <tr><td class="td-trap">Use Bash instead of Glob/Grep/Read/Edit</td><td>Dedicated tools provide better UX and audit trail — Bash is last resort</td></tr>
+          <tr><td class="td-trap">/setup or /config init generates CLAUDE.md</td><td>Correct command is /init</td></tr>
+          <tr><td class="td-trap">A "Delete" or "RemoveFile" tool exists</td><td>No such tool — use Bash with <code>rm</code></td></tr>
         </tbody>
       </table>
     </div>

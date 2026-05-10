@@ -356,6 +356,16 @@ def load_support_doc_impl(url):
           <tr><td class="td-trap">User-scoped MCP servers shared via git pull</td><td><code>~/.claude/mcp.json</code> is machine-local — not shared via version control</td></tr>
         </tbody>
       </table>
+
+      <h3>MCP Resources vs. Tools</h3>
+      <table>
+        <thead><tr><th></th><th>MCP Tools</th><th>MCP Resources</th></tr></thead>
+        <tbody>
+          <tr><td><strong>What they are</strong></td><td>Callable functions — the model invokes them like API calls</td><td>Data sources the model can read — files, tables, docs</td></tr>
+          <tr><td><strong>Examples</strong></td><td>execute_query, send_message, create_ticket</td><td>Product catalog, issue summaries, schema definitions</td></tr>
+          <tr><td><strong>When to use resources</strong></td><td colspan="2">When an agent calls the same tool N times in a loop to build up a dataset → <strong>expose that data as an MCP resource instead</strong>. One read replaces N iterative tool calls.</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 

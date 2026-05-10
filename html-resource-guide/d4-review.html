@@ -92,6 +92,7 @@
     <button class="tab-btn" onclick="showTab('ex3')">Ex3: tool_choice</button>
     <button class="tab-btn" onclick="showTab('ex4')">Ex4: Batch API</button>
     <button class="tab-btn" onclick="showTab('ex5')">Ex5: Retry Feedback</button>
+    <button class="tab-btn" onclick="showTab('cache')">Prompt Cache</button>
     <button class="tab-btn" onclick="showTab('quiz')">Quiz</button>
     <button class="export-btn" onclick="window.print()">⬇ Print</button>
   </div>
@@ -435,6 +436,73 @@ Please provide a corrected extraction that resolves these errors.</code></pre>
           <tr><td class="td-trap">Retry fixes absent data</td><td>If data isn't in the source, retry causes fabrication. Accept null and route to human review.</td></tr>
           <tr><td class="td-trap">Ask Claude to explain its mistakes in natural language, then parse</td><td>Include specific machine-readable validation errors in the retry prompt</td></tr>
           <tr><td class="td-trap">Extended thinking in same session overcomes self-review bias</td><td>Still shares generation context — use an independent fresh invocation</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PROMPT CACHE -->
+  <div id="cache" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">C</span> Prompt Caching Cost Model (4.5 extension)</div>
+      <div class="concept-box">
+        <p>Prompt caching and the Batch API are <strong>different mechanisms with different savings rates</strong>. This is one of the most-tested cost confusions on the exam.</p>
+      </div>
+
+      <h3>Cost Comparison — Three Tiers</h3>
+      <table>
+        <thead><tr><th>Method</th><th>Cost</th><th>Use for</th></tr></thead>
+        <tbody>
+          <tr><td>Real-time API (no cache)</td><td>1.0× baseline</td><td>Interactive, first-call on any content</td></tr>
+          <tr><td>Batch API</td><td>0.5× (50% savings)</td><td>Latency-tolerant bulk requests</td></tr>
+          <tr><td>Prompt cache reads</td><td>0.1× (90% savings)</td><td>Same large content repeated across many calls</td></tr>
+          <tr><td>Prompt cache writes</td><td class="td-trap">MORE than baseline</td><td>One-time cost to populate the cache</td></tr>
+        </tbody>
+      </table>
+      <div class="trap-box">
+        <div class="trap-title">The Write Cost Trap</div>
+        <p>Cache writes cost <strong>MORE</strong> than standard input tokens — you pay a premium to store the cache. Cache reads cost 90% less. Net savings only accrue if you read the cache enough times to offset the write premium. Don't cache content you'll only use once.</p>
+      </div>
+
+      <h3>How Prompt Caching Works</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Mark with cache_control</span><span class="kv-val"><code>{"type": "ephemeral"}</code> on a content block marks it for caching</span></div>
+        <div class="kv-row"><span class="kv-key">TTL</span><span class="kv-val">5 minutes standard — cache expires if not hit within that window</span></div>
+        <div class="kv-row"><span class="kv-key">What to cache</span><span class="kv-val">Large stable content: long system prompts, reference documents, tool definitions used repeatedly</span></div>
+        <div class="kv-row"><span class="kv-key">Cache breakpoint placement</span><span class="kv-val">Place on the LAST STABLE block before content that changes per-request</span></div>
+      </div>
+
+      <h3>Cache Invalidation Order</h3>
+      <div class="concept-box">
+        <p>Changing content earlier in the prompt invalidates everything after it. Order matters:</p>
+        <p style="margin-top:8px;"><strong>Tools → System prompt → Messages</strong></p>
+        <p style="margin-top:6px;">If you change your tool definitions, the system prompt cache is also invalidated even if the system prompt itself didn't change. Structure your prompts so the most stable content comes first.</p>
+      </div>
+      <pre><code># Optimal structure for caching:
+1. Tool definitions        ← most stable (cache here if tools don't change)
+2. System prompt           ← second most stable (cache here)
+3. Large reference doc     ← cache with {"type": "ephemeral"}
+4. Per-request messages    ← changes every call, don't cache</code></pre>
+
+      <h3>When to Use Cache vs. Batch</h3>
+      <table>
+        <thead><tr><th>Scenario</th><th>Use</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Same 50-page document analyzed across 1,000 requests today</td><td class="td-correct">Prompt cache</td><td>Same large content repeated → 90% savings on those tokens</td></tr>
+          <tr><td>1,000 independent document analyses overnight</td><td class="td-correct">Batch API</td><td>Latency-tolerant → 50% savings on entire request cost</td></tr>
+          <tr><td>Same large document + batch processing</td><td class="td-correct">Both</td><td>Stack the savings — cache the doc, batch the requests</td></tr>
+          <tr><td>Single unique request with no repeated content</td><td>Neither</td><td>No repeated content to cache; real-time needed</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Exam Trap Table — Prompt Caching</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Prompt cache saves 50% like Batch API</td><td>Cache reads save 90% (0.1×). Batch saves 50% (0.5×). Completely different.</td></tr>
+          <tr><td class="td-trap">Cache writes are cheaper than normal tokens</td><td>Cache writes cost MORE than baseline — premium to store. Reads are the cheap part.</td></tr>
+          <tr><td class="td-trap">Cache a unique document used only once</td><td>No savings — you pay write premium and read it once. Cache only repeated content.</td></tr>
+          <tr><td class="td-trap">Changing system prompt doesn't affect tool definition cache</td><td>Invalidation flows top-down: Tools → System → Messages. Earlier changes invalidate later caches.</td></tr>
         </tbody>
       </table>
     </div>

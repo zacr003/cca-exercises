@@ -247,7 +247,8 @@
           <tr><td><strong>Symptom</strong></td><td>Agent says "typical patterns" or "standard approach" instead of the specific class/function it found earlier in the session</td></tr>
           <tr><td><strong>Cause</strong></td><td>Specific findings pushed into the middle of long context; lost-in-the-middle effect</td></tr>
           <tr><td><strong>Fix</strong></td><td>Scratchpad files — agent writes discoveries to file, reads back at phase boundaries</td></tr>
-          <tr><td><strong>Also helps</strong></td><td><code>/compact</code> in Claude Code — summarizes conversation to reclaim token budget</td></tr>
+          <tr><td><strong>/compact behavior</strong></td><td>Summarizes older turns, keeps recent turns verbatim — project CLAUDE.md is <strong>re-read from disk</strong> after compacting. Use when context is filling but session is still valid.</td></tr>
+          <tr><td><strong>/clear vs /compact</strong></td><td>/clear = full wipe (use when prior tool results are stale). /compact = summarize and continue (use when context is large but still valid).</td></tr>
           <tr><td><strong>Wrong fix</strong></td><td>Add more instructions to an overloaded context (wrong tool for the problem)</td></tr>
           <tr><td><strong>Wrong fix</strong></td><td>Lower max_tokens — max_tokens controls OUTPUT length, NOT session size</td></tr>
         </tbody>
@@ -303,7 +304,8 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
           <tr><td class="td-trap">Add more instructions when context is overloaded</td><td>More instructions into an overloaded context makes it worse</td></tr>
           <tr><td class="td-trap">Raise summarization threshold to preserve numbers</td><td>Just delays the problem — numbers still get lost. Use case-facts block.</td></tr>
           <tr><td class="td-trap">Instruct Claude to "always preserve exact amounts"</td><td>Probabilistic — degrades. Case-facts block is deterministic.</td></tr>
-          <tr><td class="td-trap">Auto memory is in .claude/memory/ (project-level)</td><td>Auto memory is in ~/.claude/projects/&lt;project&gt;/memory/ (user-level)</td></tr>
+          <tr><td class="td-trap">Auto memory is in .claude/memory/ (project-level)</td><td>Auto memory is in ~/.claude/projects/&lt;project&gt;/memory/ (user-level, NOT version-controlled). First 200 lines or 25KB loaded at session start.</td></tr>
+          <tr><td class="td-trap">/compact and /clear do the same thing</td><td>/compact summarizes + continues (CLAUDE.md re-read after). /clear wipes everything. Use /compact for long sessions; /clear when prior tool results are stale.</td></tr>
         </tbody>
       </table>
     </div>
