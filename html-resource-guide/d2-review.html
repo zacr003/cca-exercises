@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCA-F Domain 2 — MCP Tool Design</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #22263a; --border: #2e3250;
+    --accent: #fb923c; --green: #34d399; --red: #f87171; --yellow: #fbbf24;
+    --text: #e2e8f0; --muted: #94a3b8; --code-bg: #141824;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6; }
+  header { background: linear-gradient(135deg, #431407 0%, #7c2d12 100%); padding: 28px 32px; border-bottom: 1px solid var(--border); }
+  header h1 { font-size: 1.7rem; font-weight: 700; color: #fff; }
+  header p { color: #fdba74; margin-top: 4px; font-size: 0.9rem; }
+  .header-meta { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+  .badge { background: rgba(251,146,60,0.15); border: 1px solid rgba(251,146,60,0.3); color: var(--accent); padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+  .container { max-width: 1000px; margin: 0 auto; padding: 24px 20px 60px; }
+  .nav-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px; border-bottom: 1px solid var(--border); }
+  .tab-btn { background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); padding: 8px 14px; cursor: pointer; font-size: 0.85rem; font-weight: 600; white-space: nowrap; transition: all 0.15s; margin-bottom: -1px; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
+  .card-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .card-title .num { background: var(--accent); color: #431407; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; flex-shrink: 0; }
+  .concept-box { background: rgba(251,146,60,0.07); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .trap-box { background: rgba(251,191,36,0.07); border-left: 3px solid var(--yellow); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .trap-box .trap-title { font-weight: 700; color: var(--yellow); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .good-box { background: rgba(52,211,153,0.07); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .good-box .good-title { font-weight: 700; color: var(--green); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .bad-box { background: rgba(248,113,113,0.07); border-left: 3px solid var(--red); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .bad-box .bad-title { font-weight: 700; color: var(--red); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 0.88rem; }
+  th { background: var(--surface2); color: var(--accent); font-weight: 700; padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .td-trap { color: var(--red); }
+  .td-correct { color: var(--green); }
+  code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; font-family: 'Cascadia Code','Consolas',monospace; font-size: 0.84em; color: #a5f3fc; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; margin-bottom: 16px; }
+  pre code { background: none; border: none; padding: 0; font-size: 0.85rem; color: #e2e8f0; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+  .kv-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .kv-row { display: flex; gap: 10px; align-items: baseline; }
+  .kv-key { color: var(--accent); font-weight: 700; font-family: monospace; font-size: 0.9em; min-width: 200px; flex-shrink: 0; }
+  .kv-val { color: var(--muted); font-size: 0.88em; }
+  h3 { color: #fdba74; font-size: 0.95rem; font-weight: 700; margin: 16px 0 8px; }
+  ul { padding-left: 18px; margin-bottom: 12px; }
+  li { margin-bottom: 4px; color: var(--muted); }
+  li strong { color: var(--text); }
+  .quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; }
+  .q-text { font-weight: 600; color: var(--text); margin-bottom: 14px; font-size: 0.95rem; }
+  .q-num { color: var(--muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .opt { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; cursor: pointer; transition: all 0.15s; color: var(--muted); font-size: 0.88rem; text-align: left; }
+  .opt:hover { border-color: var(--accent); color: var(--text); }
+  .opt.correct { background: rgba(52,211,153,0.12); border-color: var(--green); color: var(--green); }
+  .opt.wrong { background: rgba(248,113,113,0.12); border-color: var(--red); color: var(--red); }
+  .opt.reveal-correct { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.4); color: var(--green); }
+  .explanation { background: rgba(251,146,60,0.08); border: 1px solid rgba(251,146,60,0.2); border-radius: 6px; padding: 12px; margin-top: 12px; font-size: 0.87rem; color: #fdba74; display: none; }
+  .explanation.show { display: block; }
+  .quiz-score { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px; text-align: center; display: none; }
+  .quiz-score.show { display: block; }
+  .score-num { font-size: 2.5rem; font-weight: 800; color: var(--accent); }
+  #quiz-btn { background: var(--accent); color: #431407; border: none; border-radius: 8px; padding: 12px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 16px; display: block; }
+  .export-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.82rem; float: right; margin-top: -4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Domain 2 — MCP Tool Design</h1>
+  <p>CCA-F Exam Prep · 18% of exam · 5 exercises</p>
+  <div class="header-meta">
+    <span class="badge">2.1 Tool Descriptions</span>
+    <span class="badge">2.2 Tool Errors</span>
+    <span class="badge">2.3 Tool Scope</span>
+    <span class="badge">2.4 MCP Config</span>
+    <span class="badge">2.5 Output Design</span>
+  </div>
+</header>
+
+<div class="container">
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="showTab('ex1')">Ex1: Descriptions</button>
+    <button class="tab-btn" onclick="showTab('ex2')">Ex2: Errors</button>
+    <button class="tab-btn" onclick="showTab('ex3')">Ex3: Scope</button>
+    <button class="tab-btn" onclick="showTab('ex4')">Ex4: MCP Config</button>
+    <button class="tab-btn" onclick="showTab('ex5')">Ex5: Output Design</button>
+    <button class="tab-btn" onclick="showTab('quiz')">Quiz</button>
+    <button class="export-btn" onclick="window.print()">⬇ Print</button>
+  </div>
+
+  <!-- EX1: TOOL DESCRIPTIONS -->
+  <div id="ex1" class="tab-panel active">
+    <div class="card">
+      <div class="card-title"><span class="num">1</span> Tool Descriptions and Selection (2.1)</div>
+      <div class="concept-box">
+        <p>Tool descriptions are the <strong>primary mechanism</strong> Claude uses for tool selection. Overlapping or vague descriptions cause misrouting. When two tools overlap, fix <strong>BOTH</strong> descriptions — not just one.</p>
+      </div>
+
+      <h3>Bad vs. Good Description Anatomy</h3>
+      <div class="bad-box">
+        <div class="bad-title">Bad — Vague, Overlapping</div>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>find_orders: "Find orders for a customer. Use this to look up order information."
+get_order:   "Get order details. Use this to retrieve information about an order."
+# Both say the same thing — Claude can't distinguish them reliably</code></pre>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Good — Renamed, Differentiated, Explicit Boundaries</div>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>search_orders_by_criteria:
+  "Search for a LIST of orders by name, email, date, or status.
+   Returns summary list. Do NOT use when customer provides a specific order ID."
+
+get_order_by_id:
+  "Retrieve COMPLETE details for ONE order using a specific ID (ORD-XXXXX).
+   Use ONLY when the customer provides a specific order ID.
+   Do NOT use for browsing or searching across multiple orders."</code></pre>
+      </div>
+
+      <h3>Good Description Formula</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">When to use</span><span class="kv-val">Explicit trigger conditions for this specific tool</span></div>
+        <div class="kv-row"><span class="kv-key">Do NOT use when</span><span class="kv-val">Explicit exclusions that reference the other tool by name</span></div>
+        <div class="kv-row"><span class="kv-key">Name</span><span class="kv-val">Makes the boundary clear in the name itself (search_orders vs. get_order_by_id)</span></div>
+        <div class="kv-row"><span class="kv-key">Fix both tools</span><span class="kv-val">One unfixed tool still creates ambiguity — must fix both</span></div>
+      </div>
+
+      <h3>Exam Trap Table — 2.1</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Fix only one overlapping tool description</td><td>Fix BOTH — the unfixed one still creates ambiguity</td></tr>
+          <tr><td class="td-trap">Add few-shot routing examples before fixing descriptions</td><td>Descriptions are the primary signal — fix those first; examples add overhead without fixing root cause</td></tr>
+          <tr><td class="td-trap">Add a routing classifier / pre-processing layer</td><td>Over-engineered; Claude already routes by description — use that</td></tr>
+          <tr><td class="td-trap">tool_choice: "auto" + stronger prompts to force a specific tool</td><td>"auto" can still return text; use tool_choice: "any" or forced selection</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EX2: TOOL ERRORS -->
+  <div id="ex2" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">2</span> Tool Error Handling (2.2)</div>
+      <div class="concept-box">
+        <p>Structured error responses tell the agent HOW to recover. Generic or silent errors leave the agent unable to reason about next steps. "0 results" is <strong>NOT an error</strong> — it is a successful query returning an empty set.</p>
+      </div>
+
+      <h3>Error Response Fields</h3>
+      <table>
+        <thead><tr><th>Field</th><th>Values</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>isError</code></td><td>true</td><td>Access or execution FAILED — absent for success (even empty results)</td></tr>
+          <tr><td><code>errorCategory</code></td><td>"transient"</td><td>Network/service issue — retry with same params may work</td></tr>
+          <tr><td></td><td>"validation"</td><td>Bad input or policy violation — same params will fail again</td></tr>
+          <tr><td></td><td>"permission"</td><td>Access denied — not retryable</td></tr>
+          <tr><td><code>isRetryable</code></td><td>true</td><td>Agent can retry with same parameters</td></tr>
+          <tr><td></td><td>false</td><td>Agent must change approach or escalate</td></tr>
+          <tr><td><code>description</code></td><td>string</td><td>Customer-safe — NEVER echo raw input or PII back</td></tr>
+        </tbody>
+      </table>
+
+      <h3>The Critical Distinction</h3>
+      <div class="grid-2">
+        <div class="bad-box">
+          <div class="bad-title">Access Failure → isError: true</div>
+          <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>{
+  "isError": true,
+  "errorCategory": "transient",
+  "isRetryable": true,
+  "description": "Service temporarily unavailable."
+}</code></pre>
+        </div>
+        <div class="good-box">
+          <div class="good-title">Empty Result → NO isError</div>
+          <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>{
+  "status": "success",
+  "results": [],
+  "count": 0,
+  "message": "No products matched."
+}</code></pre>
+        </div>
+      </div>
+      <div class="trap-box">
+        <div class="trap-title">Silent Suppression Anti-Pattern</div>
+        <p>Returning <code>{}</code> or <code>[]</code> for a failure → agent thinks the call succeeded → won't retry → won't try alternative → user gets wrong answer. Always return structured <code>isError: true</code> for actual failures.</p>
+      </div>
+
+      <h3>Three Scenarios Compared</h3>
+      <table>
+        <thead><tr><th>Scenario</th><th>isError</th><th>errorCategory</th><th>isRetryable</th></tr></thead>
+        <tbody>
+          <tr><td>Database timeout</td><td class="td-trap">true</td><td>transient</td><td class="td-correct">true</td></tr>
+          <tr><td>Invalid promo code</td><td class="td-trap">true</td><td>validation</td><td class="td-trap">false</td></tr>
+          <tr><td>Permission denied (403)</td><td class="td-trap">true</td><td>permission</td><td class="td-trap">false</td></tr>
+          <tr><td>Query returns 0 results</td><td class="td-correct">absent</td><td>—</td><td>—</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Exam Trap Table — 2.2</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Return {} or [] for a service failure</td><td>Silent suppression — agent cannot distinguish from empty result. Use isError: true.</td></tr>
+          <tr><td class="td-trap">0 results → isError: true, errorCategory: "transient"</td><td>0 results is a SUCCESS. No isError flag. status: "success".</td></tr>
+          <tr><td class="td-trap">Use a confidence score field instead of isRetryable</td><td>isRetryable is a boolean — clearly retryable or not. Confidence is vague.</td></tr>
+          <tr><td class="td-trap">Terminate entire workflow on single tool failure</td><td>Return partial results + structured error; let coordinator decide recovery</td></tr>
+          <tr><td class="td-trap">Echo raw input back in error description</td><td>Description is customer-safe — never echo raw values or PII</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EX3: TOOL SCOPE -->
+  <div id="ex3" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">3</span> Tool Scope and Constraints (2.3)</div>
+      <div class="concept-box">
+        <p>Constraints should live <strong>inside the tool definition and implementation</strong> — not in the system prompt. System prompt constraints are probabilistic. Tool-level validation is deterministic.</p>
+      </div>
+
+      <h3>Generic vs. Scoped Tool</h3>
+      <div class="bad-box">
+        <div class="bad-title">Wrong — Generic Tool + System Prompt Constraint</div>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>fetch_url: "Fetch the content of any web URL."
+# System prompt: "Only use our official documentation URLs"
+# → Probabilistic — model may ignore the instruction</code></pre>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Correct — Scoped Tool with URL Validation in Implementation</div>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>load_support_doc: "Load from support.example.com or docs.example.com only.
+                   Do NOT use for external sites — this tool rejects them."
+
+def load_support_doc_impl(url):
+    if not any(domain in url for domain in ALLOWED_DOMAINS):
+        return {"isError": True, "errorCategory": "validation",
+                "isRetryable": False,
+                "description": "URL outside allowed domains. Use support.example.com only."}
+    ...</code></pre>
+      </div>
+
+      <h3>Too-Many-Tools Problem</h3>
+      <div class="concept-box">
+        <p>Having 15+ overlapping tools degrades tool selection reliability. The model misroutes between tools with similar names and descriptions.</p>
+      </div>
+      <table>
+        <thead><tr><th>Tool Count</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td>2-4 specialized tools</td><td class="td-correct">High reliability — model picks correctly</td></tr>
+          <tr><td>4-6 general-purpose tools</td><td class="td-correct">Good — acceptable complexity</td></tr>
+          <tr><td>6+ overlapping tools</td><td class="td-trap">Degraded reliability — misrouting increases</td></tr>
+          <tr><td>15+ tools</td><td class="td-trap">Significant misrouting — consolidation required</td></tr>
+        </tbody>
+      </table>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Fix</span><span class="kv-val">Consolidate overlapping tools into focused ones with clear boundaries</span></div>
+        <div class="kv-row"><span class="kv-key">Not the fix</span><span class="kv-val">Rename with numbered suffixes (order_lookup_v2) — just adds more similar names</span></div>
+      </div>
+
+      <h3>Subagent Tool Restriction</h3>
+      <div class="concept-box">
+        <p>Each subagent gets ONLY the tools relevant to its role:</p>
+        <ul style="margin-top:8px;">
+          <li>Web-search subagent: search tools only</li>
+          <li>Document-analysis subagent: read tools only</li>
+          <li>Report-generation subagent: write tools only</li>
+          <li>No cross-specialization access — scoped per role</li>
+        </ul>
+      </div>
+
+      <h3>Exam Trap Table — 2.3</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Generic tool + system prompt to restrict scope</td><td>Scope validation in the tool implementation — deterministic, not probabilistic</td></tr>
+          <tr><td class="td-trap">6 overlapping order tools for fine-grained control</td><td>Consolidate to 3 focused tools with clear descriptions</td></tr>
+          <tr><td class="td-trap">Give all subagents access to all tools</td><td>Each subagent gets only the tools for its role — scoped access</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EX4: MCP CONFIG -->
+  <div id="ex4" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">4</span> MCP Configuration (2.4)</div>
+      <div class="concept-box">
+        <p>MCP (Model Context Protocol) servers expose tools to Claude. Configuration lives in <code>.mcp.json</code> files. Credentials must use environment variable expansion — never hardcoded strings.</p>
+      </div>
+
+      <h3>Sample MCP Config Structure</h3>
+      <pre><code>{
+  "mcpServers": {
+    "database": {
+      "command": "python",
+      "args": ["-m", "my_mcp_server"],
+      "env": {
+        "DB_HOST": "${DB_HOST}",
+        "DB_PASSWORD": "${DB_PASSWORD}",   // env var expansion — NEVER hardcode
+        "DB_NAME": "production"
+      }
+    },
+    "files": {
+      "command": "node",
+      "args": ["file-server.js"],
+      "env": {
+        "API_KEY": "${FILE_SERVER_API_KEY}"
+      }
+    }
+  }
+}</code></pre>
+      <div class="trap-box">
+        <div class="trap-title">Credential Pattern</div>
+        <p>Always use <code>${ENV_VAR}</code> expansion for credentials. Never put actual API keys, passwords, or tokens as literal strings in the config file. The config can be committed to git; secrets should not be.</p>
+      </div>
+
+      <h3>MCP Scopes</h3>
+      <table>
+        <thead><tr><th>Scope</th><th>Config file</th><th>Who it's for</th></tr></thead>
+        <tbody>
+          <tr><td>Project</td><td><code>.mcp.json</code> in project root</td><td>Team-wide MCP servers, version-controlled</td></tr>
+          <tr><td>User</td><td><code>~/.claude/mcp.json</code></td><td>Personal MCP servers, machine-local</td></tr>
+        </tbody>
+      </table>
+
+      <h3>MCP Resources vs. Tools</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">MCP Tools</span><span class="kv-val">Functions the model can call — like API calls (execute_query, send_message)</span></div>
+        <div class="kv-row"><span class="kv-key">MCP Resources</span><span class="kv-val">Data sources the model can read — like files, database tables, documentation</span></div>
+        <div class="kv-row"><span class="kv-key">Key distinction</span><span class="kv-val">Tools = actions; Resources = data access. Both exposed via MCP server.</span></div>
+      </div>
+
+      <h3>Rate Limiting — Where It Belongs</h3>
+      <div class="bad-box">
+        <div class="bad-title">Wrong — Rate Limiting in Prompts or Hooks</div>
+        <p>System prompt: "Wait 1 second between calls." PreToolUse hook: <code>time.sleep(1)</code>. Both are probabilistic and unreliable.</p>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Correct — Token Bucket in the MCP Server</div>
+        <p>Rate limiting belongs in the MCP server implementation — a token bucket or similar mechanism enforced server-side. This is deterministic regardless of what Claude does.</p>
+      </div>
+
+      <h3>Exam Trap Table — 2.4</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Hardcode API keys in .mcp.json</td><td>Always use <code>${ENV_VAR}</code> expansion — configs can be version-controlled; secrets cannot</td></tr>
+          <tr><td class="td-trap">Rate limiting via system prompt instructions</td><td>Token bucket in the MCP server — server-side enforcement is deterministic</td></tr>
+          <tr><td class="td-trap">MCP resources are the same as MCP tools</td><td>Tools = callable functions; Resources = readable data sources</td></tr>
+          <tr><td class="td-trap">User-scoped MCP servers shared via git pull</td><td><code>~/.claude/mcp.json</code> is machine-local — not shared via version control</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EX5: OUTPUT DESIGN -->
+  <div id="ex5" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">5</span> Tool Output Design (2.5)</div>
+      <div class="concept-box">
+        <p>Tool output shape determines context quality. Verbose outputs accumulate across tool calls and degrade agent reasoning. Return only what Claude needs to answer the question — not everything from the backend.</p>
+      </div>
+
+      <h3>Verbose vs. Trimmed Output</h3>
+      <div class="bad-box">
+        <div class="bad-title">Verbose (Anti-Pattern) — 20+ fields</div>
+        <p>Internal SKUs, warehouse bins, audit timestamps, query plan hashes, replica IDs, shard keys, cache metadata — none of this helps Claude answer "is this in stock?" It just consumes context tokens.</p>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Trimmed (Correct) — Only business-relevant fields</div>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>{
+  "product_id": "WIDGET-001",
+  "name": "Blue Widget Pro",
+  "price": 89.99,
+  "in_stock": true,
+  "category": "Widgets",
+  "description": "A high-quality blue widget."
+}</code></pre>
+      </div>
+
+      <h3>Where Trimming Happens</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Fix at source (preferred)</span><span class="kv-val">Upstream tool/agent returns only relevant fields from the start</span></div>
+        <div class="kv-row"><span class="kv-key">PostToolUse hook (reactive)</span><span class="kv-val">Strips fields after the tool returns, before model sees them</span></div>
+        <div class="kv-row"><span class="kv-key">Hook returns summary + raw</span><span class="kv-val">WRONG — still sends full raw content to model. Return ONLY the trimmed version.</span></div>
+      </div>
+
+      <h3>Edit → Read + Write Fallback</h3>
+      <div class="concept-box">
+        <p>The Edit tool requires a <strong>unique match</strong> in the target file. If the same string appears multiple times, Edit fails. Fallback:</p>
+        <ol style="margin-top:8px; padding-left:18px; color:var(--muted);">
+          <li style="margin-bottom:4px;">Read the full file</li>
+          <li style="margin-bottom:4px;">Replace all occurrences in application code (<code>str.replace()</code>)</li>
+          <li>Write the full file back</li>
+        </ol>
+      </div>
+
+      <h3>Pagination for Large Result Sets</h3>
+      <div class="concept-box">
+        <p>When a tool could return 100K+ tokens of results, paginate:</p>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>{
+  "entries": [...first page...],
+  "returned": 10,
+  "total": 7432,
+  "next_page_token": "abc123"   // null on last page
+}</code></pre>
+        <p style="margin-top:8px;">Agent fetches subsequent pages only if the task requires them — avoids flooding context in a single call.</p>
+      </div>
+
+      <h3>Exam Trap Table — 2.5</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Return full backend response and rely on Claude to ignore noise</td><td>Trim at source — only business-relevant fields returned</td></tr>
+          <tr><td class="td-trap">PostToolUse hook returns formatted summary AND raw output</td><td>Return ONLY the formatted/trimmed version — not both</td></tr>
+          <tr><td class="td-trap">Edit tool on non-unique string (appears 3 times)</td><td>Edit fails — fall back to Read + modify all + Write</td></tr>
+          <tr><td class="td-trap">Rate limiting via PreToolUse hook sleep delay</td><td>Token bucket in MCP server — server-side, deterministic</td></tr>
+          <tr><td class="td-trap">Return all 100K results in single tool response</td><td>Paginate — first page + total + next_page_token</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz" class="tab-panel">
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-title">Domain 2 Quiz — 12 Questions</div>
+      <p style="color:var(--muted); font-size:0.88rem;">Select an answer to see immediate feedback.</p>
+    </div>
+
+    <div class="quiz-q" id="q1">
+      <div class="q-num">Question 1 of 12</div>
+      <div class="q-text">Two tools (<code>find_orders</code> and <code>get_order</code>) have similar descriptions and Claude keeps misrouting. What is the correct fix?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q1',false)">A. Rename and rewrite only <code>find_orders</code> — the better description will clarify the distinction.</div>
+        <div class="opt" onclick="answer(this,'q1',true)">B. Rename and rewrite BOTH tool descriptions with explicit "when to use" and "do NOT use when" sections.</div>
+        <div class="opt" onclick="answer(this,'q1',false)">C. Add few-shot routing examples to the system prompt to teach the correct selection.</div>
+        <div class="opt" onclick="answer(this,'q1',false)">D. Add a routing classifier layer that parses the user message and picks the right tool.</div>
+      </div>
+      <div class="explanation" id="exp-q1">Fix BOTH descriptions. One unfixed tool still creates ambiguity. Few-shot examples add overhead without fixing root cause. Routing classifiers are over-engineered — Claude already routes by description.</div>
+    </div>
+
+    <div class="quiz-q" id="q2">
+      <div class="q-num">Question 2 of 12</div>
+      <div class="q-text">A product search returns 0 results. How should the tool respond?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q2',false)">A. <code>{"isError": true, "errorCategory": "transient", "description": "No data returned"}</code></div>
+        <div class="opt" onclick="answer(this,'q2',true)">B. <code>{"status": "success", "results": [], "count": 0, "message": "No products matched."}</code></div>
+        <div class="opt" onclick="answer(this,'q2',false)">C. <code>{}</code> — empty dict for empty results.</div>
+        <div class="opt" onclick="answer(this,'q2',false)">D. <code>{"isError": false, "results": null}</code></div>
+      </div>
+      <div class="explanation" id="exp-q2">0 results is a SUCCESS. The query ran correctly — nothing matched. isError should be absent. Option A incorrectly treats this as an error, causing the agent to retry a successful query.</div>
+    </div>
+
+    <div class="quiz-q" id="q3">
+      <div class="q-num">Question 3 of 12</div>
+      <div class="q-text">A tool returns <code>{"isError": true, "errorCategory": "validation", "isRetryable": false}</code>. What should the agent do?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q3',false)">A. Retry with the same parameters after a brief delay.</div>
+        <div class="opt" onclick="answer(this,'q3',true)">B. Change approach or escalate — same parameters will fail again.</div>
+        <div class="opt" onclick="answer(this,'q3',false)">C. Retry once, then escalate if it fails again.</div>
+        <div class="opt" onclick="answer(this,'q3',false)">D. Ignore the error and return an empty response to the user.</div>
+      </div>
+      <div class="explanation" id="exp-q3">isRetryable: false means same parameters will always fail. This is a validation or permission error — the input is wrong or access is denied. The agent must change approach (fix input, try alternative, or escalate). Retrying is wasteful.</div>
+    </div>
+
+    <div class="quiz-q" id="q4">
+      <div class="q-num">Question 4 of 12</div>
+      <div class="q-text">A tool has a URL parameter but should only fetch from <code>support.example.com</code>. Where should this constraint be enforced?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q4',false)">A. System prompt: "Only use support.example.com URLs."</div>
+        <div class="opt" onclick="answer(this,'q4',true)">B. Inside the tool implementation — validate the URL and return a structured error if it's outside the allowed domain.</div>
+        <div class="opt" onclick="answer(this,'q4',false)">C. In the tool description — write "only use for support.example.com."</div>
+        <div class="opt" onclick="answer(this,'q4',false)">D. In a PreToolUse hook that checks the URL before the tool executes.</div>
+      </div>
+      <div class="explanation" id="exp-q4">Constraints belong in the tool implementation — deterministic enforcement. System prompt is probabilistic (model can ignore it). Description helps but doesn't enforce. PreToolUse hook also works, but fixing at the tool level is the primary recommendation for scope constraints.</div>
+    </div>
+
+    <div class="quiz-q" id="q5">
+      <div class="q-num">Question 5 of 12</div>
+      <div class="q-text">An MCP config file needs a database password. How should it be stored?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q5',false)">A. As a literal string: <code>"DB_PASSWORD": "my_secret_password"</code></div>
+        <div class="opt" onclick="answer(this,'q5',true)">B. As an environment variable: <code>"DB_PASSWORD": "${DB_PASSWORD}"</code></div>
+        <div class="opt" onclick="answer(this,'q5',false)">C. Encrypted in the config file using AES-256.</div>
+        <div class="opt" onclick="answer(this,'q5',false)">D. In a separate secrets.json file that's imported by .mcp.json.</div>
+      </div>
+      <div class="explanation" id="exp-q5">Always use ${ENV_VAR} expansion. The config can be committed to git; secrets must not be. The environment variable is resolved at runtime from the system environment.</div>
+    </div>
+
+    <div class="quiz-q" id="q6">
+      <div class="q-num">Question 6 of 12</div>
+      <div class="q-text">A PostToolUse hook returns both a formatted summary and the raw tool output. What's the problem?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q6',false)">A. The hook runs too slowly, delaying the agent's response.</div>
+        <div class="opt" onclick="answer(this,'q6',true)">B. The full raw output is still sent to the model — context isn't saved. The hook should return ONLY the trimmed version.</div>
+        <div class="opt" onclick="answer(this,'q6',false)">C. Formatted summaries can't be parsed by the model.</div>
+        <div class="opt" onclick="answer(this,'q6',false)">D. No problem — giving Claude both options improves its reasoning.</div>
+      </div>
+      <div class="explanation" id="exp-q6">If the hook returns both, the model sees both — verbose output still consumes context. Return ONLY the formatted/trimmed version. The purpose of the hook is to reduce what the model processes, not add to it.</div>
+    </div>
+
+    <div class="quiz-q" id="q7">
+      <div class="q-num">Question 7 of 12</div>
+      <div class="q-text">An agent has 18 tools for various order operations, most with overlapping names. Selection reliability has degraded. What's the fix?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q7',false)">A. Add version numbers to tool names (order_lookup_v2).</div>
+        <div class="opt" onclick="answer(this,'q7',false)">B. Add a routing classifier to pick the right tool before calling Claude.</div>
+        <div class="opt" onclick="answer(this,'q7',true)">C. Consolidate overlapping tools into 3-4 focused tools with clear, non-overlapping descriptions.</div>
+        <div class="opt" onclick="answer(this,'q7',false)">D. Add more detailed examples to each tool description.</div>
+      </div>
+      <div class="explanation" id="exp-q7">Too-many-tools causes misrouting. Consolidate to 3-4 focused tools with clear boundaries. Numbered suffixes add more similar-sounding names. Routing classifiers are over-engineered. More examples don't fix overlapping tool boundaries.</div>
+    </div>
+
+    <div class="quiz-q" id="q8">
+      <div class="q-num">Question 8 of 12</div>
+      <div class="q-text">The Edit tool fails with "match is not unique." What is the fallback procedure?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q8',false)">A. Use Grep to find the unique occurrence, then Edit with more context.</div>
+        <div class="opt" onclick="answer(this,'q8',true)">B. Read the full file → modify all occurrences in application code → Write the full file back.</div>
+        <div class="opt" onclick="answer(this,'q8',false)">C. Use Bash with sed to replace all occurrences.</div>
+        <div class="opt" onclick="answer(this,'q8',false)">D. Retry the Edit with a larger match context window.</div>
+      </div>
+      <div class="explanation" id="exp-q8">Edit requires a unique match. When it fails: Read full file → replace all occurrences in code (e.g., str.replace()) → Write full file back. This handles non-unique matches reliably.</div>
+    </div>
+
+    <div class="quiz-q" id="q9">
+      <div class="q-num">Question 9 of 12</div>
+      <div class="q-text">A tool description says "Retrieve information about an order." Why is this problematic?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q9',false)">A. It's too short — descriptions need to be at least 100 words.</div>
+        <div class="opt" onclick="answer(this,'q9',true)">B. It's vague — it doesn't specify when to use this tool vs. other order-related tools, causing misrouting.</div>
+        <div class="opt" onclick="answer(this,'q9',false)">C. It doesn't include a JSON schema example.</div>
+        <div class="opt" onclick="answer(this,'q9',false)">D. The word "retrieve" is ambiguous in Claude's training data.</div>
+      </div>
+      <div class="explanation" id="exp-q9">Vague descriptions cause misrouting when multiple tools could plausibly fit. Good descriptions have explicit "when to use" conditions and "do NOT use when" exclusions that reference other tools.</div>
+    </div>
+
+    <div class="quiz-q" id="q10">
+      <div class="q-num">Question 10 of 12</div>
+      <div class="q-text">A tool returns an error description that includes the user's submitted promo code: "Invalid promo code: SUMMER25." What's wrong?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q10',false)">A. Nothing — echoing input helps the model understand the error context.</div>
+        <div class="opt" onclick="answer(this,'q10',true)">B. Error descriptions must be customer-safe — never echo raw input or PII back.</div>
+        <div class="opt" onclick="answer(this,'q10',false)">C. Promo codes aren't PII so it's acceptable to echo them.</div>
+        <div class="opt" onclick="answer(this,'q10',false)">D. The description is too long — keep it under 50 characters.</div>
+      </div>
+      <div class="explanation" id="exp-q10">Error descriptions must never echo raw input — this includes promo codes, order IDs, customer data, or any user-provided value. Customer-safe: "The promotional code is not valid or has expired. Please try a different code."</div>
+    </div>
+
+    <div class="quiz-q" id="q11">
+      <div class="q-num">Question 11 of 12</div>
+      <div class="q-text">An inventory tool could return 50,000 product records. What output design handles this correctly?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q11',false)">A. Return all 50,000 records — let Claude sort through them.</div>
+        <div class="opt" onclick="answer(this,'q11',false)">B. Pre-summarize all records to under 20K tokens before returning.</div>
+        <div class="opt" onclick="answer(this,'q11',true)">C. Paginate — return first page + total count + next_page_token. Agent fetches more pages only if needed.</div>
+        <div class="opt" onclick="answer(this,'q11',false)">D. Return only the first 10 records with no indication of remaining data.</div>
+      </div>
+      <div class="explanation" id="exp-q11">Paginate: first page + total + next_page_token. The agent fetches subsequent pages only if the task actually requires them. Pre-summarizing loses specific values. Returning all 50K floods context.</div>
+    </div>
+
+    <div class="quiz-q" id="q12">
+      <div class="q-num">Question 12 of 12</div>
+      <div class="q-text">An MCP server needs to enforce rate limiting (max 10 calls per second). Where should this be implemented?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q12',false)">A. System prompt: "Wait 100ms between tool calls."</div>
+        <div class="opt" onclick="answer(this,'q12',false)">B. PreToolUse hook with <code>time.sleep(0.1)</code> before each call.</div>
+        <div class="opt" onclick="answer(this,'q12',true)">C. Token bucket in the MCP server implementation.</div>
+        <div class="opt" onclick="answer(this,'q12',false)">D. In the tool description: "This tool has a rate limit — space out calls."</div>
+      </div>
+      <div class="explanation" id="exp-q12">Rate limiting belongs in the MCP server — token bucket or similar server-side mechanism. System prompts and descriptions are probabilistic. PreToolUse hooks can be bypassed or inconsistent. Server-side enforcement is deterministic.</div>
+    </div>
+
+    <button id="quiz-btn" onclick="showScore()">Show My Score</button>
+    <div class="quiz-score" id="quiz-score">
+      <div class="score-num" id="score-display">0/12</div>
+      <p id="score-msg" style="color:var(--muted); margin-top:8px;"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
+  let scores = {};
+  function answer(el, qid, correct) {
+    const q = document.getElementById(qid);
+    if (q.dataset.answered) return;
+    q.dataset.answered = 'true';
+    scores[qid] = correct;
+    q.querySelectorAll('.opt').forEach(o => {
+      o.style.pointerEvents = 'none';
+      if (o === el) o.classList.add(correct ? 'correct' : 'wrong');
+      else if (!correct && o.onclick.toString().includes('true')) o.classList.add('reveal-correct');
+    });
+    const exp = document.getElementById('exp-' + qid);
+    if (exp) exp.classList.add('show');
+  }
+  function showScore() {
+    const got = Object.values(scores).filter(Boolean).length;
+    document.getElementById('score-display').textContent = got + '/12';
+    const pct = Math.round(got / 12 * 100);
+    const msg = pct >= 90 ? 'Excellent — Domain 2 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the exercise tabs again.';
+    document.getElementById('score-msg').textContent = pct + '% — ' + msg;
+    document.getElementById('quiz-score').classList.add('show');
+    document.getElementById('quiz-btn').style.display = 'none';
+  }
+</script>
+</body>
+</html>

@@ -54,7 +54,7 @@ _Current exercise backlog. Updated by `/sync`._
 
 ## Practice Exams (Udemy)
 
-- [ ] **Practice Exam 1** — timed, full sim (due: Sunday May 11); log score + weak domains
+- [ ] **Practice Exam 1** — timed, full sim (taking today May 10); log score + weak domains
 - [ ] **Practice Exam 2** — timed, full sim (due: Sunday May 18); target weak domains from Exam 1
 - [ ] **Practice Exam 3** — timed, full sim (May 19–21); review every wrong answer
 

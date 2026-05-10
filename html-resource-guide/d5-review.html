@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCA-F Domain 5 — Context Management</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #22263a; --border: #2e3250;
+    --accent: #34d399; --accent2: #6ee7b7; --green: #34d399; --red: #f87171;
+    --yellow: #fbbf24; --text: #e2e8f0; --muted: #94a3b8; --code-bg: #141824;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6; }
+  header { background: linear-gradient(135deg, #064e3b 0%, #065f46 100%); padding: 28px 32px; border-bottom: 1px solid var(--border); }
+  header h1 { font-size: 1.7rem; font-weight: 700; color: #fff; }
+  header p { color: #6ee7b7; margin-top: 4px; font-size: 0.9rem; }
+  .header-meta { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+  .badge { background: rgba(52,211,153,0.15); border: 1px solid rgba(52,211,153,0.3); color: var(--accent); padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+  .container { max-width: 1000px; margin: 0 auto; padding: 24px 20px 60px; }
+  .nav-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px; border-bottom: 1px solid var(--border); }
+  .tab-btn { background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); padding: 8px 14px; cursor: pointer; font-size: 0.85rem; font-weight: 600; white-space: nowrap; transition: all 0.15s; margin-bottom: -1px; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
+  .card-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .card-title .num { background: var(--accent); color: #064e3b; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; flex-shrink: 0; }
+  .concept-box { background: rgba(52,211,153,0.07); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .trap-box { background: rgba(251,191,36,0.07); border-left: 3px solid var(--yellow); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .trap-box .trap-title { font-weight: 700; color: var(--yellow); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .good-box { background: rgba(52,211,153,0.07); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .good-box .good-title { font-weight: 700; color: var(--green); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .bad-box { background: rgba(248,113,113,0.07); border-left: 3px solid var(--red); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .bad-box .bad-title { font-weight: 700; color: var(--red); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 0.88rem; }
+  th { background: var(--surface2); color: var(--accent); font-weight: 700; padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .td-trap { color: var(--red); }
+  .td-correct { color: var(--green); }
+  code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; font-family: 'Cascadia Code','Consolas',monospace; font-size: 0.84em; color: #a5f3fc; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; margin-bottom: 16px; }
+  pre code { background: none; border: none; padding: 0; font-size: 0.85rem; color: #e2e8f0; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+  .kv-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .kv-row { display: flex; gap: 10px; align-items: baseline; }
+  .kv-key { color: var(--accent); font-weight: 700; font-family: monospace; font-size: 0.9em; min-width: 210px; flex-shrink: 0; }
+  .kv-val { color: var(--muted); font-size: 0.88em; }
+  h3 { color: #6ee7b7; font-size: 0.95rem; font-weight: 700; margin: 16px 0 8px; }
+  ul { padding-left: 18px; margin-bottom: 12px; }
+  li { margin-bottom: 4px; color: var(--muted); }
+  li strong { color: var(--text); }
+  .quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; }
+  .q-text { font-weight: 600; color: var(--text); margin-bottom: 14px; font-size: 0.95rem; }
+  .q-num { color: var(--muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .opt { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; cursor: pointer; transition: all 0.15s; color: var(--muted); font-size: 0.88rem; text-align: left; }
+  .opt:hover { border-color: var(--accent); color: var(--text); }
+  .opt.correct { background: rgba(52,211,153,0.12); border-color: var(--green); color: var(--green); }
+  .opt.wrong { background: rgba(248,113,113,0.12); border-color: var(--red); color: var(--red); }
+  .opt.reveal-correct { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.4); color: var(--green); }
+  .explanation { background: rgba(52,211,153,0.07); border: 1px solid rgba(52,211,153,0.2); border-radius: 6px; padding: 12px; margin-top: 12px; font-size: 0.87rem; color: #6ee7b7; display: none; }
+  .explanation.show { display: block; }
+  .quiz-score { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px; text-align: center; display: none; }
+  .quiz-score.show { display: block; }
+  .score-num { font-size: 2.5rem; font-weight: 800; color: var(--accent); }
+  #quiz-btn { background: var(--accent); color: #064e3b; border: none; border-radius: 8px; padding: 12px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 16px; display: block; }
+  .export-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.82rem; float: right; margin-top: -4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Domain 5 — Context Management</h1>
+  <p>CCA-F Exam Prep · 15% of exam · 4 exercises</p>
+  <div class="header-meta">
+    <span class="badge">5.1 Long Context</span>
+    <span class="badge">5.2 Escalation</span>
+    <span class="badge">5.3 Error Propagation</span>
+    <span class="badge">5.4/5.5 Context Degradation</span>
+  </div>
+</header>
+
+<div class="container">
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="showTab('ex1')">Ex1: Long Context</button>
+    <button class="tab-btn" onclick="showTab('ex2')">Ex2: Escalation</button>
+    <button class="tab-btn" onclick="showTab('ex3')">Ex3: Degradation</button>
+    <button class="tab-btn" onclick="showTab('ex4')">Ex4: Error Propagation</button>
+    <button class="tab-btn" onclick="showTab('quiz')">Quiz</button>
+    <button class="export-btn" onclick="window.print()">⬇ Print</button>
+  </div>
+
+  <!-- EX1: LONG CONTEXT -->
+  <div id="ex1" class="tab-panel active">
+    <div class="card">
+      <div class="card-title"><span class="num">1</span> Long Context and Attention Management (5.1)</div>
+      <div class="concept-box">
+        <p>Models reliably process content at the <strong>beginning</strong> and <strong>end</strong> of long inputs. Content in the <strong>middle</strong> may be missed — the "lost in the middle" effect. Key findings must go at the top.</p>
+      </div>
+
+      <h3>The Lost-in-the-Middle Effect</h3>
+      <table>
+        <thead><tr><th>Key finding position</th><th>Model reliability</th></tr></thead>
+        <tbody>
+          <tr><td>Beginning of document</td><td class="td-correct">High — reliably processed</td></tr>
+          <tr><td>End of document</td><td class="td-correct">High — reliably processed</td></tr>
+          <tr><td>Middle of document</td><td class="td-trap">Low — may be ignored or under-weighted</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Fix vs. Wrong Fixes</h3>
+      <div class="good-box">
+        <div class="good-title">Correct Fix</div>
+        <ul>
+          <li>Place key findings summaries at the <strong>BEGINNING</strong> of aggregated inputs</li>
+          <li>Use explicit section headers (<code>=== KEY FINDING ===</code>) to signal important content</li>
+          <li>Trim verbose tool outputs to relevant fields BEFORE they accumulate</li>
+        </ul>
+      </div>
+      <div class="bad-box">
+        <div class="bad-title">Wrong Fixes</div>
+        <ul>
+          <li>Pre-aggregate inputs to 20K tokens via summarization — loses specific values</li>
+          <li>Rotate which subagent's output appears first to "average out" position effects — doesn't fix position bias</li>
+          <li>Stream results incrementally — position bias still applies within each chunk</li>
+        </ul>
+      </div>
+
+      <h3>Tool Output Trimming</h3>
+      <div class="concept-box">
+        <p>Verbose tool outputs accumulate with every API call. After 10 calls, a 40-field order object can consume 80%+ of your context window.</p>
+      </div>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Symptom</span><span class="kv-val">80% of context is tool results</span></div>
+        <div class="kv-row"><span class="kv-key">Root cause</span><span class="kv-val">Tools return everything; coordinator passes everything forward</span></div>
+        <div class="kv-row"><span class="kv-key">Fix at source (preferred)</span><span class="kv-val">Upstream agent returns only relevant fields (5-field trimmed vs. 40-field verbose)</span></div>
+        <div class="kv-row"><span class="kv-key">Reactive fix</span><span class="kv-val">PostToolUse hook trims output after the fact</span></div>
+        <div class="kv-row"><span class="kv-key">Wrong fix</span><span class="kv-val">Increase max_tokens — doesn't address what's filling context, just makes the window bigger</span></div>
+      </div>
+
+      <h3>Exam Trap Table — 5.1</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Pre-aggregate inputs to 20K tokens via summarization</td><td>Summarization loses specific values — trim at source instead</td></tr>
+          <tr><td class="td-trap">Rotate which subagent appears first to fix position bias</td><td>Doesn't fix position bias — put key findings at the beginning always</td></tr>
+          <tr><td class="td-trap">80% of context = tool results → increase max_tokens</td><td>Trimming problem, not a context window size problem. Trim upstream.</td></tr>
+          <tr><td class="td-trap">Stream results incrementally to avoid lost-in-middle</td><td>Position bias applies within each streamed chunk too</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EX2: ESCALATION -->
+  <div id="ex2" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">2</span> Escalation and Human-in-the-Loop (5.2)</div>
+      <div class="concept-box">
+        <p>The exam tests this heavily with scenario questions. The key: escalation triggers are about <strong>capability gaps and explicit requests</strong> — not customer emotion, not complexity.</p>
+      </div>
+
+      <h3>Valid Escalation Triggers (escalate when ANY apply)</h3>
+      <table>
+        <thead><tr><th>Trigger</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Customer explicitly requests a human agent</strong></td><td class="td-correct">Escalate IMMEDIATELY — do not investigate first, do not offer to resolve first</td></tr>
+          <tr><td><strong>Policy is silent or ambiguous on the specific request</strong></td><td class="td-correct">Escalate — cannot proceed without guidance</td></tr>
+          <tr><td><strong>Unable to make meaningful progress after reasonable attempts</strong></td><td class="td-correct">Escalate with summary of what was tried</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Do NOT Escalate Based On</h3>
+      <div class="bad-box">
+        <div class="bad-title">These Are NOT Escalation Triggers</div>
+        <ul>
+          <li>Customer frustration or emotional tone alone (sentiment ≠ complexity)</li>
+          <li>Self-reported confidence scores (poorly calibrated)</li>
+          <li>Multi-topic messages (handle each topic with appropriate tools)</li>
+          <li>"Case seems complex" without a specific policy gap or failure to progress</li>
+        </ul>
+      </div>
+
+      <h3>The Frustrated User Pattern (heavily tested)</h3>
+      <div class="good-box">
+        <div class="good-title">Correct 3-Step Pattern</div>
+        <p><strong>Step 1:</strong> Acknowledge frustration empathetically<br>
+        <strong>Step 2:</strong> Offer to resolve the issue (if within capability)<br>
+        <strong>Step 3:</strong> Only escalate if customer <em>reiterates</em> wanting a human AFTER your offer</p>
+      </div>
+      <div class="trap-box">
+        <div class="trap-title">Two Wrong Responses</div>
+        <p><strong>Wrong A:</strong> Escalate immediately because they sound angry → frustration alone is not a trigger<br>
+        <strong>Wrong B:</strong> Ignore the frustration and just process the request → acknowledge first</p>
+      </div>
+
+      <h3>Fix for Miscalibrated Escalation</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Correct fix</span><span class="kv-val">Add explicit escalation criteria with 3-4 few-shot examples to system prompt</span></div>
+        <div class="kv-row"><span class="kv-key">Wrong: confidence threshold</span><span class="kv-val">Self-reported confidence is unreliable — auto-escalation on low confidence doesn't work</span></div>
+        <div class="kv-row"><span class="kv-key">Wrong: sentiment classifier</span><span class="kv-val">Frustration ≠ complexity — sentiment doesn't predict whether escalation is needed</span></div>
+      </div>
+
+      <h3>Multiple Account Matches</h3>
+      <div class="concept-box">
+        <p>Lookup returns multiple accounts for "John Smith." Action: <strong>ask for an additional identifier</strong> (email, phone, order number).</p>
+        <p style="margin-top:6px;"><strong>Wrong:</strong> Select the most recent account via heuristic. <strong>Wrong:</strong> Select the highest-value account. Both risk acting on the wrong account.</p>
+      </div>
+
+      <h3>Exam Trap Table — 5.2</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Customer is frustrated → escalate immediately</td><td>Acknowledge + offer resolution. Only escalate if they reiterate wanting a human.</td></tr>
+          <tr><td class="td-trap">Multi-topic message → escalate due to complexity</td><td>Handle each topic with the appropriate tool. Complexity alone isn't a trigger.</td></tr>
+          <tr><td class="td-trap">Add sentiment classifier to fix escalation calibration</td><td>Frustration ≠ complexity. Use explicit criteria + few-shot examples instead.</td></tr>
+          <tr><td class="td-trap">Add confidence threshold auto-escalation</td><td>Self-reported confidence is unreliable. Explicit criteria are the correct fix.</td></tr>
+          <tr><td class="td-trap">Competitor price match request → handle it</td><td>Policy gap (own-site only, not competitor matching) → escalate to human</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EX3: CONTEXT DEGRADATION -->
+  <div id="ex3" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">3</span> Context Degradation and Memory Patterns (5.4, 5.5)</div>
+      <div class="concept-box">
+        <p>The Claude API is <strong>stateless</strong> — no session_id, no automatic history. Every request must include the full messages array. In long sessions, specific details pushed into the middle of a large context are forgotten — the model falls back to generic descriptions.</p>
+      </div>
+
+      <h3>API Statelessness (5.5)</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Fact</span><span class="kv-val">Claude API has NO session memory — every request is independent</span></div>
+        <div class="kv-row"><span class="kv-key">Requirement</span><span class="kv-val">Every request must include the FULL messages array with all prior turns</span></div>
+        <div class="kv-row"><span class="kv-key">50+ turn sessions</span><span class="kv-val">Every request re-sends all history → linear cost growth</span></div>
+        <div class="kv-row"><span class="kv-key">Exam trap</span><span class="kv-val">"The Claude API retains state between calls" — FALSE. No session_id parameter exists.</span></div>
+      </div>
+
+      <h3>Context Degradation (5.4)</h3>
+      <table>
+        <thead><tr><th></th><th>Details</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Symptom</strong></td><td>Agent says "typical patterns" or "standard approach" instead of the specific class/function it found earlier in the session</td></tr>
+          <tr><td><strong>Cause</strong></td><td>Specific findings pushed into the middle of long context; lost-in-the-middle effect</td></tr>
+          <tr><td><strong>Fix</strong></td><td>Scratchpad files — agent writes discoveries to file, reads back at phase boundaries</td></tr>
+          <tr><td><strong>Also helps</strong></td><td><code>/compact</code> in Claude Code — summarizes conversation to reclaim token budget</td></tr>
+          <tr><td><strong>Wrong fix</strong></td><td>Add more instructions to an overloaded context (wrong tool for the problem)</td></tr>
+          <tr><td><strong>Wrong fix</strong></td><td>Lower max_tokens — max_tokens controls OUTPUT length, NOT session size</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Scratchpad File Pattern</h3>
+      <pre><code># Step 1: Agent discovers something → writes to scratchpad
+with open("scratchpad.json", "w") as f:
+    json.dump({"http_class": "LegacyHttpRequestWrapper",
+               "db_pool": "LegacyDbPool.getInstance()"}, f)
+
+# Step 2: At phase boundary → inject scratchpad at TOP of next question
+content = (
+    "=== KEY FINDINGS (from scratchpad) ===\n"
+    f"{json.dumps(scratchpad, indent=2)}\n"
+    "=== END SCRATCHPAD ===\n\n"
+    "Question: Which class for HTTP requests?"
+)</code></pre>
+
+      <h3>Hybrid Context Management for Long Sessions</h3>
+      <div class="concept-box">
+        <p>For 50+ turn sessions, use all three together:</p>
+        <ol style="margin-top:8px; padding-left:18px; color:var(--muted);">
+          <li style="margin-bottom:6px;"><strong style="color:var(--text);">Summarize older messages</strong> — condense early turns</li>
+          <li style="margin-bottom:6px;"><strong style="color:var(--text);">Keep recent turns verbatim</strong> — last few turns need exact detail</li>
+          <li><strong style="color:var(--text);">Persistent case-facts block</strong> — outside summarized history; maintained by YOUR code</li>
+        </ol>
+      </div>
+
+      <h3>Case-Facts Block (5.5)</h3>
+      <div class="good-box">
+        <div class="good-title">What It Is and Why It Works</div>
+        <p>A block of transactional facts (amounts, dates, order IDs, promo codes) maintained <strong>deterministically by your application code</strong> — not by Claude's summarization. It's included verbatim in every request, no matter how many times the conversation is summarized.</p>
+      </div>
+      <pre><code>=== CASE FACTS (always reference these) ===
+Customer ID: CUST-12345
+Order ID: ORD-7890
+Refund Amount Requested: $127.50
+Promo Code: SUMMER25 (20% applied 2026-03-10)
+Previous Resolution Attempts: replacement shipped twice, both incorrect
+===</code></pre>
+      <div class="kv-list" style="margin-top:8px;">
+        <div class="kv-row"><span class="kv-key">Wrong: raise summarization threshold</span><span class="kv-val">Just delays the problem — numbers still get lost eventually</span></div>
+        <div class="kv-row"><span class="kv-key">Wrong: instruct Claude to preserve numbers</span><span class="kv-val">Probabilistic — still degrades over time</span></div>
+        <div class="kv-row"><span class="kv-key">Wrong: semantic DB retrieval</span><span class="kv-val">Miss-detection risk on exact values (e.g., $127.50 vs. "about $130")</span></div>
+      </div>
+
+      <h3>Exam Trap Table — 5.4/5.5</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Lower max_tokens to reduce context size</td><td>max_tokens = output length, not session size. Use scratchpad + /compact.</td></tr>
+          <tr><td class="td-trap">Add more instructions when context is overloaded</td><td>More instructions into an overloaded context makes it worse</td></tr>
+          <tr><td class="td-trap">Raise summarization threshold to preserve numbers</td><td>Just delays the problem — numbers still get lost. Use case-facts block.</td></tr>
+          <tr><td class="td-trap">Instruct Claude to "always preserve exact amounts"</td><td>Probabilistic — degrades. Case-facts block is deterministic.</td></tr>
+          <tr><td class="td-trap">Auto memory is in .claude/memory/ (project-level)</td><td>Auto memory is in ~/.claude/projects/&lt;project&gt;/memory/ (user-level)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EX4: ERROR PROPAGATION -->
+  <div id="ex4" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">4</span> Structured Error Propagation (5.3)</div>
+      <div class="concept-box">
+        <p>When a subagent fails, it must return <strong>structured error context</strong> — not silence the failure or terminate the whole workflow. The coordinator uses this to make intelligent recovery decisions.</p>
+      </div>
+
+      <h3>Structured Error Fields</h3>
+      <table>
+        <thead><tr><th>Field</th><th>Values</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>isError</code></td><td>true for failures; absent for success (even empty)</td><td>Distinguishes access failure from successful empty result</td></tr>
+          <tr><td><code>errorCategory</code></td><td>"transient" | "validation" | "business" | "permission"</td><td>Determines recovery strategy</td></tr>
+          <tr><td><code>isRetryable</code></td><td>true = retry may work; false = same params will fail again</td><td>Prevents wasted retries on non-transient errors</td></tr>
+          <tr><td><code>description</code></td><td>What went wrong and what was attempted</td><td>Enables targeted recovery</td></tr>
+          <tr><td><code>partialResults</code></td><td>Any partial data from the failed operation</td><td>Don't discard partial progress</td></tr>
+          <tr><td><code>suggestedAction</code></td><td>"retry" | "fix_input" | "escalate" | "alternative_workflow"</td><td>Guides coordinator decision</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Critical Distinction: Error vs. Empty</h3>
+      <div class="grid-2">
+        <div class="bad-box">
+          <div class="bad-title">Access/Execution Failure → isError: true</div>
+          <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>{
+  "isError": true,
+  "errorCategory": "transient",
+  "isRetryable": true,
+  "description": "DB timed out"
+}</code></pre>
+        </div>
+        <div class="good-box">
+          <div class="good-title">Successful Query with No Results → NO isError</div>
+          <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>{
+  "status": "success",
+  "results": [],
+  "count": 0,
+  "message": "No records matched"
+}</code></pre>
+        </div>
+      </div>
+      <div class="trap-box">
+        <div class="trap-title">Conflating These Causes Cascading Bugs</div>
+        <p>If you return <code>{"results": []}</code> for a permission error → coordinator thinks query succeeded with no results → won't try alternative → user gets wrong answer with no indication of a problem.</p>
+      </div>
+
+      <h3>Error Handling Decision Tree (6 Steps)</h3>
+      <table>
+        <thead><tr><th>Step</th><th>Error type</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Transient (timeout, network)</td><td>Retry locally with backoff</td></tr>
+          <tr><td>2</td><td>Validation (bad input format)</td><td>Fix input, retry locally</td></tr>
+          <tr><td>3</td><td>Permission / business rule</td><td>Can't retry — propagate structured error to coordinator</td></tr>
+          <tr><td>4</td><td>Alternative source available</td><td>Try it — coordinator may route there</td></tr>
+          <tr><td>5</td><td>Partial results only</td><td>Return partial + coverage annotations</td></tr>
+          <tr><td>6</td><td>Unrecoverable</td><td>Escalate to human with full context</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Coverage Annotations</h3>
+      <div class="concept-box">
+        <p>When a synthesis subagent compiles a report, it should annotate each topic with its coverage status. This lets the coordinator evaluate completeness and re-delegate only for specific gaps.</p>
+      </div>
+      <pre><code>{
+  "executive_summary": "Q1 revenue grew 15%...",
+  "detailed_findings": {
+    "revenue":      {"coverage": "well-supported", "sources": 3},
+    "supply_chain": {"coverage": "gap",
+                     "reason": "primary DB timed out; fallback not queried yet"},
+    "international": {"coverage": "gap",
+                      "reason": "requires restricted DB access"}
+  },
+  "coverage_summary": "2 of 4 topics well-covered. 2 gaps: supply_chain (retryable), international (permission required)."
+}</code></pre>
+      <div class="kv-list" style="margin-top:4px;">
+        <div class="kv-row"><span class="kv-key">Without annotations</span><span class="kv-val">Coordinator accepts incomplete output as done</span></div>
+        <div class="kv-row"><span class="kv-key">With annotations</span><span class="kv-val">Coordinator re-delegates supply_chain to fallback; notes international gap in report</span></div>
+      </div>
+
+      <h3>Anti-Patterns (Never Do These)</h3>
+      <div class="bad-box">
+        <div class="bad-title">Anti-Patterns</div>
+        <ul>
+          <li>Return <code>{}</code> or <code>[]</code> on failure (silent suppression) — coordinator can't recover</li>
+          <li>Terminate entire workflow on single subagent failure — disproportionate, loses partial progress</li>
+          <li>Retry with identical parameters on non-transient errors — will fail again</li>
+          <li>Discard partial results from timed-out subagents — return what you have + structured error</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz" class="tab-panel">
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-title">Domain 5 Quiz — 12 Questions</div>
+      <p style="color:var(--muted); font-size:0.88rem;">Select an answer to see immediate feedback.</p>
+    </div>
+
+    <div class="quiz-q" id="q1">
+      <div class="q-num">Question 1 of 12</div>
+      <div class="q-text">A critical security alert appears in the middle of a long aggregated report. The model misses it in its summary. What is the correct fix?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q1',false)">A. Pre-summarize all inputs to 20K tokens so the model can process them as one chunk.</div>
+        <div class="opt" onclick="answer(this,'q1',true)">B. Place the key findings summary at the BEGINNING of the aggregated input with explicit section headers.</div>
+        <div class="opt" onclick="answer(this,'q1',false)">C. Rotate which source appears first to average out position effects.</div>
+        <div class="opt" onclick="answer(this,'q1',false)">D. Stream results incrementally to avoid the effect.</div>
+      </div>
+      <div class="explanation" id="exp-q1">Models reliably process the beginning and end of long inputs. Place key findings at the top with clear section headers. Pre-summarizing loses specific values. Rotation and streaming don't fix position bias.</div>
+    </div>
+
+    <div class="quiz-q" id="q2">
+      <div class="q-num">Question 2 of 12</div>
+      <div class="q-text">A customer says: "I've been waiting 3 weeks for my refund, this is completely unacceptable!" What should the agent do?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q2',false)">A. Escalate immediately — strong emotion indicates a complex case.</div>
+        <div class="opt" onclick="answer(this,'q2',true)">B. Acknowledge the frustration, then look up the refund status and offer to resolve it.</div>
+        <div class="opt" onclick="answer(this,'q2',false)">C. Ignore the emotional tone and process the refund request silently.</div>
+        <div class="opt" onclick="answer(this,'q2',false)">D. Ask clarifying questions about why they're frustrated before taking action.</div>
+      </div>
+      <div class="explanation" id="exp-q2">Frustration alone is NOT an escalation trigger. The correct pattern: acknowledge empathetically, then offer to resolve. Only escalate if the customer reiterates wanting a human AFTER you offer the resolution.</div>
+    </div>
+
+    <div class="quiz-q" id="q3">
+      <div class="q-num">Question 3 of 12</div>
+      <div class="q-text">The Claude API is called twice in sequence. The second call asks about something mentioned in the first. Without any changes, does the model remember the first call?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q3',false)">A. Yes — the API maintains a session cache for recent calls.</div>
+        <div class="opt" onclick="answer(this,'q3',true)">B. No — the API is stateless. The full messages array must be passed in every request.</div>
+        <div class="opt" onclick="answer(this,'q3',false)">C. Yes — if the calls happen within 5 minutes, they share a session.</div>
+        <div class="opt" onclick="answer(this,'q3',false)">D. Only if both calls use the same model version.</div>
+      </div>
+      <div class="explanation" id="exp-q3">The Claude API is completely stateless. There is no session_id, no cache between calls. Every request must include the full messages array with all prior turns. Without it, the model has no memory of the previous call.</div>
+    </div>
+
+    <div class="quiz-q" id="q4">
+      <div class="q-num">Question 4 of 12</div>
+      <div class="q-text">A subagent searches a database and finds no records matching the criteria. How should it report this?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q4',false)">A. <code>{"isError": true, "errorCategory": "transient", "description": "No data returned"}</code></div>
+        <div class="opt" onclick="answer(this,'q4',true)">B. <code>{"status": "success", "results": [], "count": 0, "message": "No records matched criteria"}</code></div>
+        <div class="opt" onclick="answer(this,'q4',false)">C. <code>{}</code> — empty response indicates no results.</div>
+        <div class="opt" onclick="answer(this,'q4',false)">D. <code>{"isError": false, "results": null}</code></div>
+      </div>
+      <div class="explanation" id="exp-q4">An empty result is a SUCCESS — the query ran fine, nothing matched. isError should be absent (not false). Option A incorrectly treats empty result as an error, causing the coordinator to retry a successful query. Option C is silent suppression.</div>
+    </div>
+
+    <div class="quiz-q" id="q5">
+      <div class="q-num">Question 5 of 12</div>
+      <div class="q-text">After 15 turns of analyzing modules, an agent is asked "which HTTP class should I use?" and answers with generic advice instead of the specific class it found earlier. What is this called and how do you fix it?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q5',false)">A. Model hallucination — increase temperature.</div>
+        <div class="opt" onclick="answer(this,'q5',false)">B. Context overflow — lower max_tokens to prevent it.</div>
+        <div class="opt" onclick="answer(this,'q5',true)">C. Context degradation — use a scratchpad file to write and re-inject key findings at phase boundaries.</div>
+        <div class="opt" onclick="answer(this,'q5',false)">D. API statelessness — include more system prompt instructions.</div>
+      </div>
+      <div class="explanation" id="exp-q5">Context degradation: specific findings pushed into the middle of a long context are lost. Scratchpad files persist findings outside the context window and are injected at the top of subsequent queries. max_tokens controls output length, not session size.</div>
+    </div>
+
+    <div class="quiz-q" id="q6">
+      <div class="q-num">Question 6 of 12</div>
+      <div class="q-text">A customer asks for a competitor price match. The support agent's policy covers own-site price adjustments only. What should the agent do?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q6',false)">A. Deny the request with a canned message.</div>
+        <div class="opt" onclick="answer(this,'q6',false)">B. Attempt to process it anyway using the closest policy.</div>
+        <div class="opt" onclick="answer(this,'q6',true)">C. Escalate to a human — this is a policy gap (competitor pricing not covered).</div>
+        <div class="opt" onclick="answer(this,'q6',false)">D. Ask the customer for proof of the competitor price before deciding.</div>
+      </div>
+      <div class="explanation" id="exp-q6">Policy ambiguity or silence on the specific request is a valid escalation trigger. The policy covers own-site adjustments, not competitor matching — this is a gap. The agent can't resolve it with existing authority.</div>
+    </div>
+
+    <div class="quiz-q" id="q7">
+      <div class="q-num">Question 7 of 12</div>
+      <div class="q-text">A synthesis subagent returns: "Here is the complete research report on Q1 performance." The coordinator marks the task as done. What's the problem?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q7',false)">A. The report is too long — should be summarized first.</div>
+        <div class="opt" onclick="answer(this,'q7',true)">B. No coverage annotations — the coordinator can't tell if topics are well-covered or have gaps.</div>
+        <div class="opt" onclick="answer(this,'q7',false)">C. The coordinator should always verify reports independently before marking done.</div>
+        <div class="opt" onclick="answer(this,'q7',false)">D. The report should include a confidence score.</div>
+      </div>
+      <div class="explanation" id="exp-q7">Without coverage annotations, the coordinator accepts incomplete output as done. With annotations, it can see which topics have gaps (source unavailable, permission denied) and re-delegate specifically for those gaps.</div>
+    </div>
+
+    <div class="quiz-q" id="q8">
+      <div class="q-num">Question 8 of 12</div>
+      <div class="q-text">In a long customer support conversation, summarization condenses "Customer referenced promo code SUMMER25 for 20% discount" to "Customer mentioned promotional pricing." How do you prevent this?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q8',false)">A. Raise the summarization threshold to delay when summarization kicks in.</div>
+        <div class="opt" onclick="answer(this,'q8',false)">B. Instruct Claude to always preserve exact numbers in summaries.</div>
+        <div class="opt" onclick="answer(this,'q8',true)">C. Maintain a case-facts block outside the summarized conversation, updated deterministically by your application code.</div>
+        <div class="opt" onclick="answer(this,'q8',false)">D. Store facts in a semantic database and retrieve them when needed.</div>
+      </div>
+      <div class="explanation" id="exp-q8">Case-facts block: transactional data (amounts, codes, IDs) maintained by YOUR code, included verbatim in every request regardless of summarization. Raising the threshold just delays loss. Instructing Claude is probabilistic. Semantic retrieval risks miss-detection on exact values.</div>
+    </div>
+
+    <div class="quiz-q" id="q9">
+      <div class="q-num">Question 9 of 12</div>
+      <div class="q-text">A subagent gets a 403 Permission Denied when accessing a financial records table. What is the correct structured error response?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q9',false)">A. <code>{"results": [], "count": 0}</code> — empty result for empty access.</div>
+        <div class="opt" onclick="answer(this,'q9',true)">B. <code>{"isError": true, "errorCategory": "permission", "isRetryable": false, "suggestedAction": "escalate"}</code></div>
+        <div class="opt" onclick="answer(this,'q9',false)">C. <code>{"isError": true, "errorCategory": "transient", "isRetryable": true}</code></div>
+        <div class="opt" onclick="answer(this,'q9',false)">D. Terminate the workflow — if one step fails, the whole workflow is invalid.</div>
+      </div>
+      <div class="explanation" id="exp-q9">Permission denied is non-transient (retrying with same params will fail again) → isRetryable: false. errorCategory: "permission". suggestedAction: "escalate". Option A is silent suppression — coordinator thinks query succeeded. Option C incorrectly marks it as transient/retryable.</div>
+    </div>
+
+    <div class="quiz-q" id="q10">
+      <div class="q-num">Question 10 of 12</div>
+      <div class="q-text">Context is filling up with verbose tool outputs (80% of context = order lookups). What is the correct fix?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q10',false)">A. Increase max_tokens to accommodate the larger context.</div>
+        <div class="opt" onclick="answer(this,'q10',false)">B. Switch to a model with a larger context window.</div>
+        <div class="opt" onclick="answer(this,'q10',true)">C. Have upstream agents return only relevant fields (trim at source), or use a PostToolUse hook to trim reactively.</div>
+        <div class="opt" onclick="answer(this,'q10',false)">D. Summarize tool outputs before passing them to the coordinator.</div>
+      </div>
+      <div class="explanation" id="exp-q10">80% tool results = trimming problem, not a window size problem. Fix at source: agents return only the fields needed (5 fields not 40). PostToolUse hook is a reactive fix. Summarizing tool outputs loses specific values (same problem as pre-aggregation).</div>
+    </div>
+
+    <div class="quiz-q" id="q11">
+      <div class="q-num">Question 11 of 12</div>
+      <div class="q-text">An agent encounters a database timeout. According to the 6-step error handling decision tree, what is the first action?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q11',true)">A. Retry locally with backoff — transient errors should be handled locally first.</div>
+        <div class="opt" onclick="answer(this,'q11',false)">B. Propagate a structured error to the coordinator immediately.</div>
+        <div class="opt" onclick="answer(this,'q11',false)">C. Try an alternative data source.</div>
+        <div class="opt" onclick="answer(this,'q11',false)">D. Escalate to a human with the error details.</div>
+      </div>
+      <div class="explanation" id="exp-q11">Step 1: Transient errors (timeout, network blip) → retry locally with backoff. Only if local retry fails do you propagate the error to the coordinator. Escalating immediately for a transient error is disproportionate.</div>
+    </div>
+
+    <div class="quiz-q" id="q12">
+      <div class="q-num">Question 12 of 12</div>
+      <div class="q-text">A customer says "I want to speak to a manager" mid-conversation while the agent is resolving a refund. What should the agent do?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q12',false)">A. Finish the refund first, then transfer to a manager.</div>
+        <div class="opt" onclick="answer(this,'q12',true)">B. Escalate immediately with a structured summary — explicit human request is honored without delay.</div>
+        <div class="opt" onclick="answer(this,'q12',false)">C. Explain that it can resolve the issue and offer to continue before transferring.</div>
+        <div class="opt" onclick="answer(this,'q12',false)">D. Ask why they want a manager to determine if escalation is truly necessary.</div>
+      </div>
+      <div class="explanation" id="exp-q12">Explicit human request = escalate IMMEDIATELY. No investigation first, no offer to resolve first, no asking why. This is the highest-priority escalation trigger. Finishing the task first or questioning the request both violate the rule.</div>
+    </div>
+
+    <button id="quiz-btn" onclick="showScore()">Show My Score</button>
+    <div class="quiz-score" id="quiz-score">
+      <div class="score-num" id="score-display">0/12</div>
+      <p id="score-msg" style="color:var(--muted); margin-top:8px;"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
+  let scores = {};
+  function answer(el, qid, correct) {
+    const q = document.getElementById(qid);
+    if (q.dataset.answered) return;
+    q.dataset.answered = 'true';
+    scores[qid] = correct;
+    q.querySelectorAll('.opt').forEach(o => {
+      o.style.pointerEvents = 'none';
+      if (o === el) o.classList.add(correct ? 'correct' : 'wrong');
+      else if (!correct && o.onclick.toString().includes('true')) o.classList.add('reveal-correct');
+    });
+    const exp = document.getElementById('exp-' + qid);
+    if (exp) exp.classList.add('show');
+  }
+  function showScore() {
+    const got = Object.values(scores).filter(Boolean).length;
+    document.getElementById('score-display').textContent = got + '/12';
+    const pct = Math.round(got / 12 * 100);
+    const msg = pct >= 90 ? 'Excellent — Domain 5 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the exercise tabs again.';
+    document.getElementById('score-msg').textContent = pct + '% — ' + msg;
+    document.getElementById('quiz-score').classList.add('show');
+    document.getElementById('quiz-btn').style.display = 'none';
+  }
+</script>
+</body>
+</html>

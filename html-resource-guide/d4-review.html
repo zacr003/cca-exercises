@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCA-F Domain 4 — Prompt Engineering</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #22263a; --border: #2e3250;
+    --accent: #f472b6; --accent2: #fb923c; --green: #34d399; --red: #f87171;
+    --yellow: #fbbf24; --text: #e2e8f0; --muted: #94a3b8; --code-bg: #141824;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6; }
+  header { background: linear-gradient(135deg, #4a1942 0%, #6b1e3d 100%); padding: 28px 32px; border-bottom: 1px solid var(--border); }
+  header h1 { font-size: 1.7rem; font-weight: 700; color: #fff; }
+  header p { color: #e8a0bf; margin-top: 4px; font-size: 0.9rem; }
+  .header-meta { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+  .badge { background: rgba(244,114,182,0.15); border: 1px solid rgba(244,114,182,0.3); color: var(--accent); padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+  .container { max-width: 1000px; margin: 0 auto; padding: 24px 20px 60px; }
+  .nav-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+  .tab-btn { background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); padding: 8px 14px; cursor: pointer; font-size: 0.85rem; font-weight: 600; white-space: nowrap; transition: all 0.15s; margin-bottom: -1px; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
+  .card-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .card-title .num { background: var(--accent); color: #fff; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0; }
+  .concept-box { background: rgba(244,114,182,0.07); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .trap-box { background: rgba(251,191,36,0.07); border-left: 3px solid var(--yellow); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .trap-box .trap-title { font-weight: 700; color: var(--yellow); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .good-box { background: rgba(52,211,153,0.07); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .good-box .good-title { font-weight: 700; color: var(--green); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .bad-box { background: rgba(248,113,113,0.07); border-left: 3px solid var(--red); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .bad-box .bad-title { font-weight: 700; color: var(--red); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 0.88rem; }
+  th { background: var(--surface2); color: var(--accent); font-weight: 700; padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .td-trap { color: var(--red); }
+  .td-correct { color: var(--green); }
+  code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; font-family: 'Cascadia Code','Consolas',monospace; font-size: 0.84em; color: #a5f3fc; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; margin-bottom: 16px; }
+  pre code { background: none; border: none; padding: 0; font-size: 0.85rem; color: #e2e8f0; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+  .kv-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .kv-row { display: flex; gap: 10px; align-items: baseline; }
+  .kv-key { color: var(--accent); font-weight: 700; font-family: monospace; font-size: 0.9em; min-width: 200px; flex-shrink: 0; }
+  .kv-val { color: var(--muted); font-size: 0.88em; }
+  h3 { color: #f9a8d4; font-size: 0.95rem; font-weight: 700; margin: 16px 0 8px; }
+  ul { padding-left: 18px; margin-bottom: 12px; }
+  li { margin-bottom: 4px; color: var(--muted); }
+  li strong { color: var(--text); }
+  .quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; }
+  .quiz-q .q-text { font-weight: 600; color: var(--text); margin-bottom: 14px; font-size: 0.95rem; }
+  .quiz-q .q-num { color: var(--muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .opt { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; cursor: pointer; transition: all 0.15s; color: var(--muted); font-size: 0.88rem; text-align: left; }
+  .opt:hover { border-color: var(--accent); color: var(--text); }
+  .opt.correct { background: rgba(52,211,153,0.12); border-color: var(--green); color: var(--green); }
+  .opt.wrong { background: rgba(248,113,113,0.12); border-color: var(--red); color: var(--red); }
+  .opt.reveal-correct { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.4); color: var(--green); }
+  .explanation { background: rgba(244,114,182,0.08); border: 1px solid rgba(244,114,182,0.2); border-radius: 6px; padding: 12px; margin-top: 12px; font-size: 0.87rem; color: #f9a8d4; display: none; }
+  .explanation.show { display: block; }
+  .quiz-score { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px; text-align: center; display: none; }
+  .quiz-score.show { display: block; }
+  .score-num { font-size: 2.5rem; font-weight: 800; color: var(--accent); }
+  #quiz-btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 12px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 16px; display: block; }
+  .export-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.82rem; float: right; margin-top: -4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Domain 4 — Prompt Engineering</h1>
+  <p>CCA-F Exam Prep · 20% of exam · 5 exercises</p>
+  <div class="header-meta">
+    <span class="badge">4.1/4.2 Few-Shot</span>
+    <span class="badge">4.3 Structured Output</span>
+    <span class="badge">4.4 tool_choice</span>
+    <span class="badge">4.5 Batch API</span>
+    <span class="badge">4.3/4.6 Retry Feedback</span>
+  </div>
+</header>
+
+<div class="container">
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="showTab('ex1')">Ex1: Few-Shot</button>
+    <button class="tab-btn" onclick="showTab('ex2')">Ex2: Structured Output</button>
+    <button class="tab-btn" onclick="showTab('ex3')">Ex3: tool_choice</button>
+    <button class="tab-btn" onclick="showTab('ex4')">Ex4: Batch API</button>
+    <button class="tab-btn" onclick="showTab('ex5')">Ex5: Retry Feedback</button>
+    <button class="tab-btn" onclick="showTab('quiz')">Quiz</button>
+    <button class="export-btn" onclick="window.print()">⬇ Print</button>
+  </div>
+
+  <!-- EX1: FEW-SHOT -->
+  <div id="ex1" class="tab-panel active">
+    <div class="card">
+      <div class="card-title"><span class="num">1</span> Few-Shot Prompting (4.1, 4.2)</div>
+      <div class="concept-box">
+        <p>When detailed instructions alone produce <strong>inconsistent results</strong>, the fix is <strong>concrete contrastive examples</strong> — not stronger instructions. Examples teach the model what the boundary IS, not just what "typical" looks like.</p>
+      </div>
+
+      <h3>Three Approaches (in order of effectiveness)</h3>
+      <table>
+        <thead><tr><th>Approach</th><th>Problem</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Vague instruction</strong> — "be conservative"</td><td>"Conservative" is undefined — model has no concrete boundary</td><td class="td-trap">Inconsistent output</td></tr>
+          <tr><td><strong>Explicit criteria only</strong> — "CRITICAL when: SQL injection, hardcoded creds..."</td><td>Covers clear cases but misses ambiguous edge cases</td><td class="td-correct">Better but not reliable</td></tr>
+          <tr><td><strong>Explicit criteria + contrastive examples</strong></td><td>—</td><td class="td-correct">Consistent and accurate</td></tr>
+        </tbody>
+      </table>
+
+      <h3>What Makes Examples Contrastive</h3>
+      <div class="good-box">
+        <div class="good-title">Contrastive (Correct)</div>
+        <p>Two similar-looking cases with <strong>different classifications</strong> + an explanation of WHY they differ. This teaches the boundary between categories.</p>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>Example 1: name = request.form['name']; print(f"Hello, {name}")  → OK
+  "User input used only for display — no DB query, safe in context"
+
+Example 2: user_id = request.args.get('id'); db.execute(f"... {user_id}")  → CRITICAL
+  "User input in SQL string — difference from Example 1: goes into a DB query"</code></pre>
+      </div>
+      <div class="bad-box">
+        <div class="bad-title">Wrong — Grouped / Unambiguous Examples</div>
+        <p>Showing 10-15 obvious examples of each category doesn't help. The model already handles obvious cases — it's the <strong>edge cases</strong> that need examples.</p>
+        <p style="margin-top:6px;">Grouping all CRITICALs together, then all HIGHs, doesn't teach discrimination between similar-looking cases from different categories.</p>
+      </div>
+
+      <h3>High False Positive Rate in One Category</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Correct fix</span><span class="kv-val">Temporarily DISABLE that category while improving its criteria and examples</span></div>
+        <div class="kv-row"><span class="kv-key">Wrong: uniform strictness reduction</span><span class="kv-val">Penalizes accurate categories to fix one broken one</span></div>
+        <div class="kv-row"><span class="kv-key">Wrong: switch to more capable model</span><span class="kv-val">Doesn't fix the prompt quality issue — just moves the problem to a more expensive model</span></div>
+      </div>
+
+      <h3>Exam Trap Table — 4.1/4.2</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">"Be more conservative" fixes false positives</td><td>Vague — model has no concrete definition of "conservative"</td></tr>
+          <tr><td class="td-trap">10-15 unambiguous examples improve accuracy</td><td>Targets easy cases; doesn't help the edge cases causing errors</td></tr>
+          <tr><td class="td-trap">Grouped examples (all CRITICALs, then all HIGHs)</td><td>Doesn't teach discrimination — use adjacent contrastive pairs</td></tr>
+          <tr><td class="td-trap">More capable model fixes classification inconsistency</td><td>Prompt quality is the problem; fix the prompt, not the model</td></tr>
+          <tr><td class="td-trap">2-4 examples are too few</td><td>2-4 targeted contrastive examples outperform 15 unambiguous ones</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EX2: STRUCTURED OUTPUT -->
+  <div id="ex2" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">2</span> Structured Output and JSON Schemas (4.3)</div>
+      <div class="concept-box">
+        <p><strong>tool_use + JSON schema</strong> guarantees <em>syntax</em> compliance — no JSON errors, required fields present, enums enforced. It does <strong>not</strong> guarantee semantic correctness. Cross-field validation must happen in your application code.</p>
+      </div>
+
+      <h3>What Schema Guarantees vs. What It Doesn't</h3>
+      <div class="grid-2">
+        <div class="good-box">
+          <div class="good-title">Schema Guarantees (Syntax)</div>
+          <ul>
+            <li>No JSON syntax errors</li>
+            <li>Required fields are present</li>
+            <li>Enum values are from the allowed list</li>
+            <li>Type constraints respected (string, number, etc.)</li>
+          </ul>
+        </div>
+        <div class="bad-box">
+          <div class="bad-title">Schema Does NOT Guarantee (Semantics)</div>
+          <ul>
+            <li>Line items actually sum to the total</li>
+            <li>Dates are in valid ranges</li>
+            <li>Model didn't fabricate a schema-valid value</li>
+            <li>Cross-field consistency</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Key Schema Design Patterns</h3>
+      <table>
+        <thead><tr><th>Pattern</th><th>Why</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Nullable fields</strong> for optional data</td><td>Required field + absent data = model fabricates. Nullable = honest null.</td><td><code>"type": ["string", "null"]</code> for invoice_number</td></tr>
+          <tr><td><strong>enum + "other" + detail field</strong></td><td>Covers known values cleanly; handles unknowns without fabrication</td><td>currency: ["USD","EUR","GBP","other"] + currency_detail when "other"</td></tr>
+          <tr><td><strong>"unclear" enum value</strong></td><td>Honest escape hatch instead of forcing a wrong guess</td><td>document_type: ["invoice","receipt","credit_note","unclear"]</td></tr>
+          <tr><td><strong>stated_total AND calculated_total</strong></td><td>Cross-validation catches discrepancies the model must flag</td><td>Both required; if they differ → conflict_detected = true</td></tr>
+          <tr><td><strong>conflict_detected boolean</strong></td><td>Machine-readable flag for routing to human review</td><td>True if totals disagree or data is inconsistent</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Semantic Validation Layer (Application Code)</h3>
+      <pre><code># Schema won't catch this — you must check it yourself
+if abs(stated_total - calculated_total) > 0.02:
+    errors.append("Total mismatch: stated vs. calculated")
+
+if stated_total < 0:
+    errors.append("Negative total — likely extraction error")
+
+if currency == "other" and not currency_detail:
+    errors.append("currency is 'other' but detail is null")</code></pre>
+
+      <h3>stop_reason Warning</h3>
+      <div class="trap-box">
+        <div class="trap-title">Critical Exam Trap</div>
+        <p><code>stop_reason: "max_tokens"</code> does <strong>NOT</strong> guarantee schema compliance. Only <code>stop_reason: "tool_use"</code> (or "end_turn" with tool forced) means the schema was completed. If the response was truncated by max_tokens, the JSON may be incomplete.</p>
+      </div>
+
+      <h3>Exam Trap Table — 4.3</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap"><code>strict: true</code> eliminates all errors</td><td>Only eliminates syntax errors — semantic errors still possible</td></tr>
+          <tr><td class="td-trap">Required fields with "N/A" string for absent data</td><td>Use nullable: <code>"type": ["string", "null"]</code></td></tr>
+          <tr><td class="td-trap"><code>stop_reason: "max_tokens"</code> guarantees schema compliance</td><td>It does NOT — truncated response may be incomplete JSON</td></tr>
+          <tr><td class="td-trap">Schema validates that totals add up correctly</td><td>That's semantic validation — must be done in application code</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EX3: TOOL_CHOICE -->
+  <div id="ex3" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">3</span> tool_choice Configuration (4.4)</div>
+      <div class="concept-box">
+        <p>Three settings, three behaviors. Getting these confused is one of the most common exam traps in Domain 4.</p>
+      </div>
+
+      <h3>The Three Settings</h3>
+      <table>
+        <thead><tr><th>Setting</th><th>Behavior</th><th>When to use</th></tr></thead>
+        <tbody>
+          <tr><td><code>"auto"</code></td><td>Model MAY call a tool OR return text — model decides</td><td>General-purpose agents; tool use is optional</td></tr>
+          <tr><td><code>"any"</code></td><td>Model MUST call SOME tool; it picks which one</td><td>Multiple valid schemas, unknown doc type — model picks the right tool</td></tr>
+          <tr><td><code>{"type":"tool","name":"X"}</code></td><td>Model MUST call tool X specifically — no text, no other tools</td><td>Guarantee a specific schema on the first turn</td></tr>
+          <tr><td><code>"none"</code></td><td>Prevents all tool use — text response only</td><td>When you want to suppress tool calls entirely</td></tr>
+        </tbody>
+      </table>
+
+      <div class="trap-box">
+        <div class="trap-title">Most Common Exam Trap</div>
+        <p><strong>"tool_choice: 'any' forces a specific tool"</strong> — WRONG. <code>"any"</code> guarantees SOME tool is called; the model still chooses which one. To guarantee a specific tool, use <code>{"type": "tool", "name": "X"}</code>.</p>
+      </div>
+
+      <h3>The Recommended Pattern: Force First, Auto After</h3>
+      <div class="good-box">
+        <div class="good-title">Turn 1 → Forced | Turn 2+ → Auto</div>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>Turn 1: tool_choice = {"type": "tool", "name": "extract_metadata"}
+  → Guaranteed metadata extraction, model CANNOT skip or return text
+
+Turn 2+: tool_choice = "auto"
+  → Model adapts: can call any tool, ask clarifying questions, or return final answer
+  → Forced for all turns is too rigid — model can't adapt after first turn</code></pre>
+      </div>
+
+      <h3>Behavior with Conversational Questions</h3>
+      <table>
+        <thead><tr><th>Message</th><th>"auto"</th><th>"any"</th><th>forced</th></tr></thead>
+        <tbody>
+          <tr><td>"What is 2 + 2?"</td><td>Returns text: "Four"</td><td>Forced to call SOME tool — model picks one awkwardly</td><td>Forced to call the named tool — ignores that it makes no sense</td></tr>
+          <tr><td>Document for extraction</td><td>Might call tool OR return description</td><td>Guarantees a tool call; picks the right schema</td><td>Guarantees the specific named tool</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Exam Trap Table — 4.4</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">"any" forces a specific tool</td><td>"any" forces A tool — model still picks WHICH one. Use forced selection for a specific tool.</td></tr>
+          <tr><td class="td-trap">"auto" + stronger prompts guarantees a tool call</td><td>"auto" still allows text even with strong prompts — use "any" or forced</td></tr>
+          <tr><td class="td-trap">"any" for all turns in a multi-turn workflow</td><td>Works but too rigid — model can't adapt or return final text. Use auto after turn 1.</td></tr>
+          <tr><td class="td-trap">Forced selection for all turns</td><td>Same problem — model always forced to call same tool even when done</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EX4: BATCH API -->
+  <div id="ex4" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">4</span> Message Batches API (4.5)</div>
+      <div class="concept-box">
+        <p>The Batch API is for <strong>latency-tolerant, non-blocking work</strong>. It saves 50% on cost but provides no guaranteed latency SLA — up to 24 hours. Never use it for workflows where something is waiting on the result.</p>
+      </div>
+
+      <h3>Use Batch vs. Don't Use Batch</h3>
+      <div class="grid-2">
+        <div class="good-box">
+          <div class="good-title">USE Batch API</div>
+          <ul>
+            <li>Overnight technical debt reports</li>
+            <li>Weekly security audits</li>
+            <li>Nightly test generation</li>
+            <li>Large-scale batch extraction</li>
+            <li>Non-blocking document analysis</li>
+          </ul>
+        </div>
+        <div class="bad-box">
+          <div class="bad-title">DO NOT USE Batch API</div>
+          <ul>
+            <li>Pre-merge code review (devs are waiting)</li>
+            <li>Real-time customer chat</li>
+            <li>Interactive coding sessions</li>
+            <li>CI/CD pipeline steps blocking deployment</li>
+            <li>Any workflow with SLA under ~48h</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>Key Facts (Memorize These)</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Cost savings</span><span class="kv-val">50% vs real-time — NOT 90% (that's prompt caching)</span></div>
+        <div class="kv-row"><span class="kv-key">Processing time</span><span class="kv-val">Up to 24 hours — no guaranteed latency SLA</span></div>
+        <div class="kv-row"><span class="kv-key">Result order</span><span class="kv-val">Results come back OUT of order — always use custom_id to correlate</span></div>
+        <div class="kv-row"><span class="kv-key">Failure recovery</span><span class="kv-val">Resubmit ONLY failed items using their custom_id</span></div>
+        <div class="kv-row"><span class="kv-key">Multi-turn tool calling</span><span class="kv-val">NOT supported — each request is single-turn</span></div>
+        <div class="kv-row"><span class="kv-key">Max requests per batch</span><span class="kv-val">100,000 requests OR 256 MB per batch</span></div>
+      </div>
+
+      <h3>Cost Comparison (Know All Three)</h3>
+      <table>
+        <thead><tr><th>Method</th><th>Relative Cost</th><th>Use for</th></tr></thead>
+        <tbody>
+          <tr><td>Real-time API</td><td>1.0x (baseline)</td><td>Interactive, latency-sensitive</td></tr>
+          <tr><td>Batch API</td><td>0.5x (50% savings)</td><td>Latency-tolerant bulk work</td></tr>
+          <tr><td>Prompt cache reads</td><td>0.1x (90% savings)</td><td>Repeated context across many calls</td></tr>
+        </tbody>
+      </table>
+
+      <h3>SLA Formula</h3>
+      <div class="concept-box">
+        <p><strong>Can you use Batch?</strong> → <code>max_submission_interval = SLA_hours - 24h</code></p>
+        <ul style="margin-top:8px;">
+          <li>48h SLA → submit every 24h ✓</li>
+          <li>30h SLA → submit every 6h ✓</li>
+          <li>4h SLA → <strong>DO NOT USE BATCH</strong> (4 - 24 = negative)</li>
+        </ul>
+      </div>
+
+      <h3>Failure Recovery Pattern</h3>
+      <div class="bad-box">
+        <div class="bad-title">Wrong</div>
+        <p>Resubmit the entire original batch — wastes cost on requests that already succeeded.</p>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Correct</div>
+        <p>Parse results for failed custom_ids → resubmit ONLY those specific requests. If a document exceeded context limit, split it into chunks before resubmitting.</p>
+      </div>
+
+      <h3>Exam Trap Table — 4.5</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Batch API saves 90% like prompt caching</td><td>Batch saves 50%. Prompt cache READS save 90%. Different mechanisms.</td></tr>
+          <tr><td class="td-trap">Use Batch for pre-merge CI checks</td><td>CI checks are blocking — use real-time API</td></tr>
+          <tr><td class="td-trap">Results come back in submission order</td><td>Results are OUT of order — always correlate via custom_id</td></tr>
+          <tr><td class="td-trap">Resubmit entire batch on partial failure</td><td>Resubmit ONLY failed items — wastes cost otherwise</td></tr>
+          <tr><td class="td-trap"><code>priority: critical</code> flag to expedite</td><td>This field does not exist in the Batch API</td></tr>
+          <tr><td class="td-trap">Batch supports multi-turn tool calling</td><td>NOT supported — each batch request is single-turn only</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EX5: RETRY FEEDBACK -->
+  <div id="ex5" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">5</span> Retry-with-Error-Feedback (4.3 / 4.6)</div>
+      <div class="concept-box">
+        <p>When schema-valid extraction fails semantic validation, the retry prompt must include <strong>three things</strong>: the original document, the failed extraction, and the specific validation errors. Without all three, the model gets no new signal.</p>
+      </div>
+
+      <h3>What to Include in the Retry Prompt</h3>
+      <div class="bad-box">
+        <div class="bad-title">Blind Retry (Wrong)</div>
+        <p>Re-send the original prompt unchanged. The model has no new information — same mistake is likely or a different random mistake occurs. Does not converge.</p>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Retry-with-Feedback (Correct)</div>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>ORIGINAL DOCUMENT:
+[the source text]
+
+PREVIOUS (INCORRECT) EXTRACTION:
+{"revenue_q1": 1200000, "total_h1": 2100000, "conflict_detected": false}
+
+VALIDATION ERRORS TO FIX:
+- total_h1 mismatch: Q1 + Q2 = 2,050,000 but total_h1 is 2,100,000
+- conflict_detected should be True but is False
+
+Please provide a corrected extraction that resolves these errors.</code></pre>
+      </div>
+
+      <h3>Retry Limits</h3>
+      <table>
+        <thead><tr><th>Situation</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Retryable:</strong> Info EXISTS in source, was extracted wrong</td><td>Retry with error feedback — model can fix it</td></tr>
+          <tr><td><strong>Non-retryable:</strong> Info does NOT exist in source at all</td><td>Accept null/unclear — retrying will cause fabrication</td></tr>
+        </tbody>
+      </table>
+      <div class="trap-box">
+        <div class="trap-title">Fabrication Risk</div>
+        <p>If you retry when the data is simply absent, the model may start <strong>fabricating a schema-valid value</strong> to "help" — now you have wrong data that looks correct. Nullable fields in your schema let the model honestly return null instead.</p>
+      </div>
+
+      <h3>detected_pattern Field</h3>
+      <div class="concept-box">
+        <p>Add a <code>detected_pattern</code> field to your extraction schema. When the model encounters difficulty, it describes what made extraction hard:</p>
+        <ul style="margin-top:8px;">
+          <li>"totals stated without itemized breakdown"</li>
+          <li>"ambiguous currency (both USD and EUR mentioned)"</li>
+          <li>"Q4 figures missing, only YTD available"</li>
+        </ul>
+        <p style="margin-top:8px;">Analyze these across dismissed/false-positive findings to find <strong>systematic prompt weaknesses</strong> → targeted fix instead of guesswork.</p>
+      </div>
+
+      <h3>Self-Review Bias (4.6)</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Problem</span><span class="kv-val">Same session reviews its own output → retains generation reasoning → defends its own decisions</span></div>
+        <div class="kv-row"><span class="kv-key">Fix</span><span class="kv-val">Independent fresh instance (separate invocation, no context from generation)</span></div>
+        <div class="kv-row"><span class="kv-key">Doesn't fix it</span><span class="kv-val">Extended thinking in the same session — still shares the same generation context</span></div>
+      </div>
+
+      <h3>Exam Trap Table — 4.3/4.6</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Blind retry (same prompt) fixes extraction errors</td><td>No new information = no improvement. Include doc + failed extraction + specific errors.</td></tr>
+          <tr><td class="td-trap">Loosen schema to fix semantic errors</td><td>Semantic errors propagate silently — add application-layer validation instead</td></tr>
+          <tr><td class="td-trap">Retry fixes absent data</td><td>If data isn't in the source, retry causes fabrication. Accept null and route to human review.</td></tr>
+          <tr><td class="td-trap">Ask Claude to explain its mistakes in natural language, then parse</td><td>Include specific machine-readable validation errors in the retry prompt</td></tr>
+          <tr><td class="td-trap">Extended thinking in same session overcomes self-review bias</td><td>Still shares generation context — use an independent fresh invocation</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz" class="tab-panel">
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-title">Domain 4 Quiz — 12 Questions</div>
+      <p style="color:var(--muted); font-size:0.88rem;">Select an answer to see immediate feedback.</p>
+    </div>
+
+    <div class="quiz-q" id="q1">
+      <div class="q-num">Question 1 of 12</div>
+      <div class="q-text">A classification system has high false positive rates in one category. What is the correct fix?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q1',false)">A. Switch to a more capable model.</div>
+        <div class="opt" onclick="answer(this,'q1',false)">B. Add more unambiguous examples of every category.</div>
+        <div class="opt" onclick="answer(this,'q1',true)">C. Temporarily disable that category while improving its explicit criteria and contrastive examples.</div>
+        <div class="opt" onclick="answer(this,'q1',false)">D. Add a general instruction to "be more conservative."</div>
+      </div>
+      <div class="explanation" id="exp-q1">Disabling the broken category preserves accuracy for others while you fix the root cause: the criteria and examples for that specific category. Uniform strictness reduction or vague instructions hurt accurate categories too.</div>
+    </div>
+
+    <div class="quiz-q" id="q2">
+      <div class="q-num">Question 2 of 12</div>
+      <div class="q-text">What does <code>tool_choice: "any"</code> guarantee?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q2',false)">A. The model calls the first tool in the tools array.</div>
+        <div class="opt" onclick="answer(this,'q2',true)">B. The model calls some tool — it chooses which one.</div>
+        <div class="opt" onclick="answer(this,'q2',false)">C. The model calls the most relevant tool based on the message.</div>
+        <div class="opt" onclick="answer(this,'q2',false)">D. The model calls the tool named in the system prompt.</div>
+      </div>
+      <div class="explanation" id="exp-q2">"any" guarantees SOME tool is called but the model picks which one. To guarantee a specific tool, use <code>{"type": "tool", "name": "X"}</code>.</div>
+    </div>
+
+    <div class="quiz-q" id="q3">
+      <div class="q-num">Question 3 of 12</div>
+      <div class="q-text">A JSON schema requires <code>invoice_number</code> as a string. The invoice document has no invoice number. What happens?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q3',false)">A. The model returns an error because a required field is missing.</div>
+        <div class="opt" onclick="answer(this,'q3',true)">B. The model fabricates a plausible-looking invoice number to satisfy the required field.</div>
+        <div class="opt" onclick="answer(this,'q3',false)">C. The model returns null for the field anyway.</div>
+        <div class="opt" onclick="answer(this,'q3',false)">D. The model refuses to extract the document.</div>
+      </div>
+      <div class="explanation" id="exp-q3">Required fields with absent data lead to fabrication. The fix is nullable: <code>"type": ["string", "null"]</code> and a description saying "null if not present." This gives the model an honest way to say the data isn't there.</div>
+    </div>
+
+    <div class="quiz-q" id="q4">
+      <div class="q-num">Question 4 of 12</div>
+      <div class="q-text">The Batch API response for a 5-request batch comes back with results for requests 5, 2, 4, 1, 3. How should you match results to requests?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q4',false)">A. Sort results by timestamp to restore original order.</div>
+        <div class="opt" onclick="answer(this,'q4',true)">B. Match each result to its request using the <code>custom_id</code> field.</div>
+        <div class="opt" onclick="answer(this,'q4',false)">C. Batch results always come back in submission order — no special handling needed.</div>
+        <div class="opt" onclick="answer(this,'q4',false)">D. Use the batch's <code>request_index</code> field.</div>
+      </div>
+      <div class="explanation" id="exp-q4">Batch results come back in any order. The <code>custom_id</code> you assign to each request is how you correlate results. There is no request_index or timestamp ordering guarantee.</div>
+    </div>
+
+    <div class="quiz-q" id="q5">
+      <div class="q-num">Question 5 of 12</div>
+      <div class="q-text">A structured extraction passes JSON schema validation but the stated total ($200) doesn't match the sum of line items ($147.48). What catches this error?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q5',false)">A. The JSON schema — it enforces semantic correctness.</div>
+        <div class="opt" onclick="answer(this,'q5',false)">B. Setting <code>strict: true</code> on the schema.</div>
+        <div class="opt" onclick="answer(this,'q5',true)">C. Application-layer semantic validation after extraction.</div>
+        <div class="opt" onclick="answer(this,'q5',false)">D. The <code>conflict_detected</code> field — the model always sets it correctly.</div>
+      </div>
+      <div class="explanation" id="exp-q5">Schema validates syntax only. Cross-field consistency (totals matching) must be checked in application code. The <code>conflict_detected</code> field relies on the model setting it correctly — which is why you also need your own validation check.</div>
+    </div>
+
+    <div class="quiz-q" id="q6">
+      <div class="q-num">Question 6 of 12</div>
+      <div class="q-text">How much does the Batch API save compared to the real-time API?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q6',false)">A. 90% — same as prompt caching.</div>
+        <div class="opt" onclick="answer(this,'q6',true)">B. 50% — half the standard pricing.</div>
+        <div class="opt" onclick="answer(this,'q6',false)">C. 75% — based on throughput tier.</div>
+        <div class="opt" onclick="answer(this,'q6',false)">D. 30% — fixed discount rate.</div>
+      </div>
+      <div class="explanation" id="exp-q6">Batch API = 50% savings. Prompt cache reads = 90% savings. These are different mechanisms. The exam tests this confusion frequently.</div>
+    </div>
+
+    <div class="quiz-q" id="q7">
+      <div class="q-num">Question 7 of 12</div>
+      <div class="q-text">A multi-turn workflow extracts metadata in Turn 1 and then does follow-up analysis. What is the recommended <code>tool_choice</code> configuration?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q7',false)">A. <code>"any"</code> for all turns — guarantees tool use throughout.</div>
+        <div class="opt" onclick="answer(this,'q7',false)">B. Forced selection for all turns — most predictable behavior.</div>
+        <div class="opt" onclick="answer(this,'q7',true)">C. Forced specific tool for Turn 1, then <code>"auto"</code> for subsequent turns.</div>
+        <div class="opt" onclick="answer(this,'q7',false)">D. <code>"auto"</code> for all turns — most flexible.</div>
+      </div>
+      <div class="explanation" id="exp-q7">Force the specific extraction tool on Turn 1 to guarantee structured output. Switch to "auto" for Turn 2+ so the model can adapt — call different tools, ask questions, or return a final text response as appropriate.</div>
+    </div>
+
+    <div class="quiz-q" id="q8">
+      <div class="q-num">Question 8 of 12</div>
+      <div class="q-text">An extraction returns null for a phone number field. When you retry with error feedback, the model fabricates a phone number. What went wrong?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q8',false)">A. The retry prompt didn't include the original document.</div>
+        <div class="opt" onclick="answer(this,'q8',true)">B. The phone number doesn't exist in the source document — this is a non-retryable situation.</div>
+        <div class="opt" onclick="answer(this,'q8',false)">C. The schema should have made phone a required field to prevent null.</div>
+        <div class="opt" onclick="answer(this,'q8',false)">D. Extended thinking would have found the phone number.</div>
+      </div>
+      <div class="explanation" id="exp-q8">Retrying when data is absent causes fabrication. Null on a nullable field is correct behavior — the data isn't there. Only retry when information EXISTS in the source but was extracted incorrectly.</div>
+    </div>
+
+    <div class="quiz-q" id="q9">
+      <div class="q-num">Question 9 of 12</div>
+      <div class="q-text">You have 3 document extraction tools (invoice, receipt, contract). The document type is unknown. What <code>tool_choice</code> lets the model pick the right schema?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q9',false)">A. <code>{"type": "tool", "name": "invoice"}</code> — default to most common type.</div>
+        <div class="opt" onclick="answer(this,'q9',true)">B. <code>"any"</code> — model must call a tool and will pick the most appropriate one.</div>
+        <div class="opt" onclick="answer(this,'q9',false)">C. <code>"auto"</code> — model will figure out the right schema.</div>
+        <div class="opt" onclick="answer(this,'q9',false)">D. Call all 3 tools and pick the best result.</div>
+      </div>
+      <div class="explanation" id="exp-q9">"any" is the right choice when you have multiple valid tools and want the model to pick. "auto" might return text instead of calling any tool. Forced selection requires knowing the type in advance.</div>
+    </div>
+
+    <div class="quiz-q" id="q10">
+      <div class="q-num">Question 10 of 12</div>
+      <div class="q-text">A batch of 1,000 extraction requests completes with 50 failures. What is the correct recovery?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q10',false)">A. Resubmit the entire original batch of 1,000 requests.</div>
+        <div class="opt" onclick="answer(this,'q10',false)">B. Switch the 50 failed items to the real-time API to restore the 50% batch discount.</div>
+        <div class="opt" onclick="answer(this,'q10',true)">C. Identify the 50 failed custom_ids and resubmit only those requests.</div>
+        <div class="opt" onclick="answer(this,'q10',false)">D. Discard the 50 failed items and proceed with the 950 successes.</div>
+      </div>
+      <div class="explanation" id="exp-q10">Resubmit only failed items identified by custom_id. Resubmitting all 1,000 wastes the cost of 950 successful requests. Discarding failures creates coverage gaps.</div>
+    </div>
+
+    <div class="quiz-q" id="q11">
+      <div class="q-num">Question 11 of 12</div>
+      <div class="q-text">What is the purpose of the <code>detected_pattern</code> field in an extraction schema?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q11',false)">A. It stores the model's confidence score for the extraction.</div>
+        <div class="opt" onclick="answer(this,'q11',false)">B. It flags whether the extraction matches a known good template.</div>
+        <div class="opt" onclick="answer(this,'q11',true)">C. It records what made extraction difficult, enabling systematic identification of prompt weaknesses over time.</div>
+        <div class="opt" onclick="answer(this,'q11',false)">D. It triggers automatic retry when populated.</div>
+      </div>
+      <div class="explanation" id="exp-q11">detected_pattern lets the model describe what made extraction hard ("totals without breakdown," "ambiguous currency"). Analyzing these across dismissed findings reveals systematic prompt weaknesses for targeted improvement — instead of guesswork.</div>
+    </div>
+
+    <div class="quiz-q" id="q12">
+      <div class="q-num">Question 12 of 12</div>
+      <div class="q-text">A CI pipeline needs Claude to review code and post results to a PR comment. Should you use the Batch API?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q12',false)">A. Yes — it saves 50% and the PR comment doesn't need to be immediate.</div>
+        <div class="opt" onclick="answer(this,'q12',true)">B. No — CI code review is blocking; developers are waiting on the result.</div>
+        <div class="opt" onclick="answer(this,'q12',false)">C. Yes — use the <code>priority: critical</code> flag to get results within minutes.</div>
+        <div class="opt" onclick="answer(this,'q12',false)">D. Only if the codebase has more than 100 files.</div>
+      </div>
+      <div class="explanation" id="exp-q12">Batch API is for latency-tolerant work. A CI pre-merge review blocks the developer — they're waiting on it. Use the real-time API for CI. Also: <code>priority: critical</code> does not exist in the Batch API.</div>
+    </div>
+
+    <button id="quiz-btn" onclick="showScore()">Show My Score</button>
+    <div class="quiz-score" id="quiz-score">
+      <div class="score-num" id="score-display">0/12</div>
+      <p id="score-msg" style="color:var(--muted); margin-top:8px;"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
+  let scores = {};
+  function answer(el, qid, correct) {
+    const q = document.getElementById(qid);
+    if (q.dataset.answered) return;
+    q.dataset.answered = 'true';
+    scores[qid] = correct;
+    q.querySelectorAll('.opt').forEach(o => {
+      o.style.pointerEvents = 'none';
+      if (o === el) o.classList.add(correct ? 'correct' : 'wrong');
+      else if (!correct && o.onclick.toString().includes('true')) o.classList.add('reveal-correct');
+    });
+    const exp = document.getElementById('exp-' + qid);
+    if (exp) exp.classList.add('show');
+  }
+  function showScore() {
+    const got = Object.values(scores).filter(Boolean).length;
+    document.getElementById('score-display').textContent = got + '/12';
+    const pct = Math.round(got / 12 * 100);
+    const msg = pct >= 90 ? 'Excellent — Domain 4 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the exercise tabs again.';
+    document.getElementById('score-msg').textContent = pct + '% — ' + msg;
+    document.getElementById('quiz-score').classList.add('show');
+    document.getElementById('quiz-btn').style.display = 'none';
+  }
+</script>
+</body>
+</html>

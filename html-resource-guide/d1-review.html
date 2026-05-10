@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCA-F Domain 1 — Agentic Architecture</title>
+<style>
+  :root {
+    --bg: #0f1117; --surface: #1a1d27; --surface2: #22263a; --border: #2e3250;
+    --accent: #818cf8; --green: #34d399; --red: #f87171; --yellow: #fbbf24;
+    --text: #e2e8f0; --muted: #94a3b8; --code-bg: #141824;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6; }
+  header { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); padding: 28px 32px; border-bottom: 1px solid var(--border); }
+  header h1 { font-size: 1.7rem; font-weight: 700; color: #fff; }
+  header p { color: #a5b4fc; margin-top: 4px; font-size: 0.9rem; }
+  .header-meta { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+  .badge { background: rgba(129,140,248,0.15); border: 1px solid rgba(129,140,248,0.3); color: var(--accent); padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+  .container { max-width: 1000px; margin: 0 auto; padding: 24px 20px 60px; }
+  .nav-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px; border-bottom: 1px solid var(--border); }
+  .tab-btn { background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); padding: 8px 14px; cursor: pointer; font-size: 0.85rem; font-weight: 600; white-space: nowrap; transition: all 0.15s; margin-bottom: -1px; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
+  .card-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .card-title .num { background: var(--accent); color: #1e1b4b; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; flex-shrink: 0; }
+  .concept-box { background: rgba(129,140,248,0.07); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .trap-box { background: rgba(251,191,36,0.07); border-left: 3px solid var(--yellow); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .trap-box .trap-title { font-weight: 700; color: var(--yellow); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .good-box { background: rgba(52,211,153,0.07); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .good-box .good-title { font-weight: 700; color: var(--green); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .bad-box { background: rgba(248,113,113,0.07); border-left: 3px solid var(--red); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .bad-box .bad-title { font-weight: 700; color: var(--red); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 0.88rem; }
+  th { background: var(--surface2); color: var(--accent); font-weight: 700; padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .td-trap { color: var(--red); }
+  .td-correct { color: var(--green); }
+  code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; font-family: 'Cascadia Code','Consolas',monospace; font-size: 0.84em; color: #a5f3fc; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; margin-bottom: 16px; }
+  pre code { background: none; border: none; padding: 0; font-size: 0.85rem; color: #e2e8f0; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+  .kv-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .kv-row { display: flex; gap: 10px; align-items: baseline; }
+  .kv-key { color: var(--accent); font-weight: 700; font-family: monospace; font-size: 0.9em; min-width: 200px; flex-shrink: 0; }
+  .kv-val { color: var(--muted); font-size: 0.88em; }
+  h3 { color: #a5b4fc; font-size: 0.95rem; font-weight: 700; margin: 16px 0 8px; }
+  ul, ol { padding-left: 18px; margin-bottom: 12px; }
+  li { margin-bottom: 4px; color: var(--muted); }
+  li strong { color: var(--text); }
+  .quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; }
+  .q-text { font-weight: 600; color: var(--text); margin-bottom: 14px; font-size: 0.95rem; }
+  .q-num { color: var(--muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .opt { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; cursor: pointer; transition: all 0.15s; color: var(--muted); font-size: 0.88rem; text-align: left; }
+  .opt:hover { border-color: var(--accent); color: var(--text); }
+  .opt.correct { background: rgba(52,211,153,0.12); border-color: var(--green); color: var(--green); }
+  .opt.wrong { background: rgba(248,113,113,0.12); border-color: var(--red); color: var(--red); }
+  .opt.reveal-correct { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.4); color: var(--green); }
+  .explanation { background: rgba(129,140,248,0.08); border: 1px solid rgba(129,140,248,0.2); border-radius: 6px; padding: 12px; margin-top: 12px; font-size: 0.87rem; color: #a5b4fc; display: none; }
+  .explanation.show { display: block; }
+  .quiz-score { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px; text-align: center; display: none; }
+  .quiz-score.show { display: block; }
+  .score-num { font-size: 2.5rem; font-weight: 800; color: var(--accent); }
+  #quiz-btn { background: var(--accent); color: #1e1b4b; border: none; border-radius: 8px; padding: 12px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 16px; display: block; }
+  .export-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.82rem; float: right; margin-top: -4px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Domain 1 — Agentic Architecture</h1>
+  <p>CCA-F Exam Prep · 27% of exam · 6 exercises</p>
+  <div class="header-meta">
+    <span class="badge">1.1 Agentic Loop</span>
+    <span class="badge">1.2 Parallel Tools</span>
+    <span class="badge">1.3 Coordinator/Subagent</span>
+    <span class="badge">1.4 Hooks</span>
+    <span class="badge">1.5 Tool Sequencing</span>
+    <span class="badge">1.6 Task Decomposition</span>
+  </div>
+</header>
+
+<div class="container">
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="showTab('ex1')">Ex1: Agentic Loop</button>
+    <button class="tab-btn" onclick="showTab('ex2')">Ex2: Coordinator</button>
+    <button class="tab-btn" onclick="showTab('ex3')">Ex3: Hooks</button>
+    <button class="tab-btn" onclick="showTab('ex4')">Ex4: Tool Sequencing</button>
+    <button class="tab-btn" onclick="showTab('ex5')">Ex5: Decomposition</button>
+    <button class="tab-btn" onclick="showTab('quiz')">Quiz</button>
+    <button class="export-btn" onclick="window.print()">⬇ Print</button>
+  </div>
+
+  <!-- EX1: AGENTIC LOOP -->
+  <div id="ex1" class="tab-panel active">
+    <div class="card">
+      <div class="card-title"><span class="num">1</span> Basic Agentic Loop + Parallel Tools (1.1, 1.2)</div>
+      <div class="concept-box">
+        <p><strong>stop_reason</strong> is the ONLY termination signal. Never parse response text to determine if the loop is done. Never check for phrases like "I have completed."</p>
+      </div>
+
+      <h3>The Four stop_reason Values</h3>
+      <table>
+        <thead><tr><th>stop_reason</th><th>Meaning</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><code>"end_turn"</code></td><td>Agent is done — final response</td><td>Extract text, exit loop</td></tr>
+          <tr><td><code>"tool_use"</code></td><td>Agent wants to call tool(s)</td><td>Execute ALL tool_use blocks, return ALL results in ONE message</td></tr>
+          <tr><td><code>"max_tokens"</code></td><td>Response was TRUNCATED — not complete</td><td>Raise max_tokens and retry — do NOT treat as end_turn</td></tr>
+          <tr><td><code>"stop_sequence"</code></td><td>Hit a defined stop sequence</td><td>Exit loop (intentional stop)</td></tr>
+        </tbody>
+      </table>
+      <div class="trap-box">
+        <div class="trap-title">max_tokens Trap</div>
+        <p><code>stop_reason: "max_tokens"</code> means the response was <strong>truncated mid-generation</strong>. The agent is NOT done — it ran out of space. Double max_tokens and retry with a continuation prompt. Do NOT treat it as completion.</p>
+      </div>
+
+      <h3>The Tool Call Loop Pattern</h3>
+      <pre><code>while True:
+    response = client.messages.create(...)
+    messages.append({"role": "assistant", "content": response.content})
+
+    if response.stop_reason == "end_turn":
+        return final_text    # Done
+
+    if response.stop_reason == "max_tokens":
+        max_tokens *= 2      # Truncated — not done
+        continue
+
+    if response.stop_reason == "tool_use":
+        tool_results = []
+        for block in response.content:
+            if block.type == "tool_use":
+                result = execute_tool(block.name, block.input)
+                tool_results.append({
+                    "type": "tool_result",
+                    "tool_use_id": block.id,   # links result to specific call
+                    "content": json.dumps(result)
+                })
+        # ALL results in ONE message
+        messages.append({"role": "user", "content": tool_results})</code></pre>
+
+      <h3>Parallel Tool Calls (Ex1b)</h3>
+      <div class="concept-box">
+        <p>When the model returns multiple <code>tool_use</code> blocks in a single response, it is requesting <strong>parallel execution</strong>. The pattern is identical — execute all blocks, return all results in one message.</p>
+      </div>
+      <div class="bad-box">
+        <div class="bad-title">Wrong — One Result Per Message</div>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>for block in tool_use_blocks:
+    messages.append({"role": "user", "content": [one_result]})  # WRONG
+    # This sends a partial result before the model has all the data</code></pre>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Correct — All Results in One Message</div>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>tool_results = [execute_tool(b) for b in tool_use_blocks]
+messages.append({"role": "user", "content": tool_results})  # ONE message</code></pre>
+      </div>
+
+      <h3>Exam Trap Table — 1.1/1.2</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Check text content to determine if the agent is done</td><td>Only check <code>stop_reason == "end_turn"</code></td></tr>
+          <tr><td class="td-trap"><code>stop_reason: "max_tokens"</code> = agent finished</td><td>Truncation — raise max_tokens and retry</td></tr>
+          <tr><td class="td-trap">Send one tool_result per message for parallel calls</td><td>All tool_results in ONE user message</td></tr>
+          <tr><td class="td-trap">Execute only the first tool_use block per turn</td><td>Execute ALL tool_use blocks in the response</td></tr>
+          <tr><td class="td-trap">tool_result blocks mixed with text blocks arbitrarily</td><td>tool_result blocks must be in the content array of the user message</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EX2: COORDINATOR -->
+  <div id="ex2" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">2</span> Coordinator / Subagent Architecture (1.3)</div>
+      <div class="concept-box">
+        <p>Subagents do <strong>NOT inherit coordinator context</strong>. Every subagent starts fresh. Pass everything it needs explicitly via system prompt + task message. The coordinator's full conversation history is invisible to subagents.</p>
+      </div>
+
+      <h3>Coordinator Pattern (4 Steps)</h3>
+      <ol style="color:var(--muted); padding-left:20px; margin-bottom:16px;">
+        <li style="margin-bottom:8px;"><strong style="color:var(--text);">Decompose</strong> the task into scoped subtasks with explicit context</li>
+        <li style="margin-bottom:8px;"><strong style="color:var(--text);">Dispatch in parallel</strong> — multiple Task calls in one response turn (not sequential)</li>
+        <li style="margin-bottom:8px;"><strong style="color:var(--text);">Collect structured outputs</strong> (JSON, not prose) from all subagents</li>
+        <li><strong style="color:var(--text);">Synthesis pass</strong> — dedicated subagent integrates findings; never concatenate raw outputs</li>
+      </ol>
+
+      <h3>Context Passing Rules</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">What subagents receive</span><span class="kv-val">Only what you explicitly pass via system prompt + task message</span></div>
+        <div class="kv-row"><span class="kv-key">Format to pass</span><span class="kv-val">Structured JSON — NOT conversational prose or raw text</span></div>
+        <div class="kv-row"><span class="kv-key">Coordinator instructions</span><span class="kv-val">Specify GOALS + quality criteria — NOT step-by-step procedures</span></div>
+        <div class="kv-row"><span class="kv-key">Synthesis step</span><span class="kv-val">Separate pass — integrates and resolves tensions; never just concatenates</span></div>
+      </div>
+
+      <div class="bad-box">
+        <div class="bad-title">Wrong — Assuming Shared Context</div>
+        <p>Sending a subagent task like "Analyze the pros of what we just discussed" — the subagent has no "what we just discussed." Pass the full context explicitly.</p>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Correct — Explicit Context Injection</div>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>system = "You are a pros analyst. Return JSON: {topic, pros, confidence}"
+task = f"Analyze the pros of: {user_request}"
+# Full context in the task message — subagent needs nothing else</code></pre>
+      </div>
+
+      <h3>Exam Trap Table — 1.3</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Subagents automatically share the coordinator's conversation history</td><td>They don't — pass all necessary context explicitly</td></tr>
+          <tr><td class="td-trap">Dispatch subagents sequentially for efficiency</td><td>Dispatch in PARALLEL — multiple Task calls in one response turn</td></tr>
+          <tr><td class="td-trap">Concatenate raw subagent outputs as the final answer</td><td>Run a dedicated synthesis pass to integrate findings</td></tr>
+          <tr><td class="td-trap">Pass prose summaries between agents</td><td>Pass structured JSON — exact values survive, not paraphrased descriptions</td></tr>
+          <tr><td class="td-trap">Give coordinator step-by-step execution instructions</td><td>Coordinator specifies goals + quality criteria; agents determine how</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EX3: HOOKS -->
+  <div id="ex3" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">3</span> Hooks: PreToolUse + PostToolUse (1.4)</div>
+      <div class="concept-box">
+        <p>Hooks give you <strong>deterministic guarantees</strong>. System prompt instructions give you probabilistic compliance. For business rules that MUST always hold, use hooks.</p>
+      </div>
+
+      <h3>Hook Types</h3>
+      <table>
+        <thead><tr><th>Hook</th><th>When it fires</th><th>What it can do</th></tr></thead>
+        <tbody>
+          <tr><td><code>PreToolUse</code></td><td>Before a tool executes</td><td>Allow (exit 0), deny (exit 1), ask user (exit 2), or modify input via <code>updatedInput</code></td></tr>
+          <tr><td><code>PostToolUse</code></td><td>After a tool executes</td><td>Transform the result BEFORE the model processes it</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Hook Exit Codes</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">exit 0</span><span class="kv-val">Allow — proceed normally</span></div>
+        <div class="kv-row"><span class="kv-key">exit 1</span><span class="kv-val">Deny — block the tool call</span></div>
+        <div class="kv-row"><span class="kv-key">exit 2</span><span class="kv-val">Ask user — pause and prompt for approval</span></div>
+      </div>
+
+      <h3>PreToolUse: Production Path Gate</h3>
+      <pre><code># hook_pre_production_gate.py
+import json, sys
+tool_input = json.load(sys.stdin)
+file_path = tool_input.get("file_path", "")
+
+if "/production/" in file_path:
+    print(json.dumps({"decision": "ask",
+                      "reason": f"Write to production path: {file_path}. Approve?"}))
+    sys.exit(2)   # pause, ask user
+
+sys.exit(0)       # allow</code></pre>
+
+      <h3>PostToolUse: PII Trimming</h3>
+      <pre><code># hook_post_pii_trim.py — strips emails from tool results BEFORE model sees them
+import json, re, sys
+tool_result = json.load(sys.stdin)
+result_str = json.dumps(tool_result)
+cleaned = re.sub(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',
+                 '[REDACTED]', result_str)
+print(cleaned)
+sys.exit(0)</code></pre>
+      <div class="trap-box">
+        <div class="trap-title">PII Hook Limitation</div>
+        <p>PostToolUse PII trimming only strips the <strong>current tool result</strong>. PII already in conversation history from earlier turns is NOT affected. For full hygiene, sanitize at the source (in the tool itself).</p>
+      </div>
+
+      <h3>PreToolUse: Programmatic Prerequisite Gate</h3>
+      <div class="concept-box">
+        <p>Track whether <code>get_customer</code> has run and returned verified. A PostToolUse hook on <code>get_customer</code> writes <code>{"verified": true}</code> to a temp file. A PreToolUse hook on <code>process_refund</code> reads it and denies if not verified.</p>
+        <p style="margin-top:6px;"><strong>Key point:</strong> This is deterministic. Even if the model ignores the system prompt instruction, the gate always fires.</p>
+      </div>
+
+      <h3>Exam Trap Table — 1.4</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">"Add a system prompt rule: never write to /production/"</td><td>PreToolUse hook with exit 2 (ask user) — deterministic enforcement</td></tr>
+          <tr><td class="td-trap">PostToolUse PII hook keeps full conversation history clean</td><td>Only current result is cleaned — sanitize at tool source for history</td></tr>
+          <tr><td class="td-trap">"Add a verification reminder in system prompt"</td><td>Programmatic gate (PreToolUse) blocking downstream tool — deterministic</td></tr>
+          <tr><td class="td-trap">Hooks are optional quality improvements</td><td>For business rules that MUST hold (identity gates, production writes), hooks are the required approach</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EX4: TOOL SEQUENCING -->
+  <div id="ex4" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">4</span> Tool Sequencing and Programmatic Prerequisites (1.5)</div>
+      <div class="concept-box">
+        <p>Prompt instructions have a non-zero failure rate for hard compliance. For operations that MUST run in sequence (verify identity → then process refund), enforce the prerequisite <strong>inside the tool itself</strong> — not only in the system prompt.</p>
+      </div>
+
+      <h3>Two Enforcement Layers</h3>
+      <div class="grid-2">
+        <div class="bad-box">
+          <div class="bad-title">Soft Layer (Probabilistic)</div>
+          <p>System prompt: "Always call verify_customer before process_refund." The model usually follows this — but can skip it on rare inputs or adversarial prompts.</p>
+        </div>
+        <div class="good-box">
+          <div class="good-title">Hard Layer (Deterministic)</div>
+          <p>process_refund checks shared state at the start: if not verified → return structured error. This fires regardless of what the model does.</p>
+        </div>
+      </div>
+      <pre><code>def process_refund(customer_id, amount, reason):
+    # PROGRAMMATIC GATE — fires regardless of model behavior
+    if not state.customer_verified:
+        return {
+            "success": False,
+            "blocked_by": "prerequisite_gate",
+            "error": "PREREQUISITE NOT MET: Call verify_customer first."
+        }</code></pre>
+
+      <h3>Model-Driven Tool Selection</h3>
+      <div class="concept-box">
+        <p>Good tool descriptions eliminate the need for routing classifiers. The model selects tools based on intent and descriptions. A keyword classifier in front of the agent is a sign that tool descriptions need to be improved.</p>
+      </div>
+      <div class="bad-box">
+        <div class="bad-title">Wrong — Keyword Routing Classifier</div>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>if "refund" in user_message.lower():
+    require_verification()
+# Fails on paraphrasing: "Can I get my money back?" doesn't match "refund"</code></pre>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Correct — Clear Tool Descriptions + Gate in Tool</div>
+        <p>Description: "Process a refund for a verified customer. Requires prior successful verify_customer call — will fail with error if unverified."</p>
+      </div>
+
+      <h3>Exam Trap Table — 1.5</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Prompt-only enforcement is sufficient for critical sequences</td><td>Prompt = probabilistic; tool-level gate = deterministic. Use both.</td></tr>
+          <tr><td class="td-trap">Add a routing classifier to manage tool selection order</td><td>Write precise tool descriptions — model selects naturally based on intent</td></tr>
+          <tr><td class="td-trap">Read-only operations (balance lookup) require identity verification</td><td>Only financial operations need verification — good descriptions distinguish this</td></tr>
+          <tr><td class="td-trap">Shared state for prerequisite tracking requires a database</td><td>In-memory flag, temp file, or session store all work — just persist across tool calls</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- EX5: TASK DECOMPOSITION -->
+  <div id="ex5" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">5</span> Task Decomposition Strategies (1.6)</div>
+      <div class="concept-box">
+        <p>Two decomposition strategies — choose based on whether the scope is known upfront or discovered as you go.</p>
+      </div>
+
+      <h3>Prompt Chaining vs. Adaptive Decomposition</h3>
+      <table>
+        <thead><tr><th></th><th>Prompt Chaining</th><th>Adaptive Decomposition</th></tr></thead>
+        <tbody>
+          <tr><td><strong>When to use</strong></td><td>Steps are KNOWN before execution starts</td><td>Steps are DISCOVERED based on findings</td></tr>
+          <tr><td><strong>Example</strong></td><td>Per-file review → cross-file review → ranking</td><td>Security triage → generate targeted subtasks → execute subtasks</td></tr>
+          <tr><td><strong>Characteristic</strong></td><td>Fixed sequential pipeline; each output feeds the next</td><td>Triage output determines what subtasks exist</td></tr>
+          <tr><td><strong>Use for</strong></td><td>Structured reviews, predictable multi-aspect pipelines</td><td>Open-ended investigations, unknown scope</td></tr>
+          <tr><td><strong>Exam phrase</strong></td><td>"Fixed sequential pipeline"</td><td>"Generate subtasks based on what is discovered"</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Large Codebase Review: Per-file + Cross-file Passes</h3>
+      <div class="good-box">
+        <div class="good-title">Correct — Two Passes</div>
+        <ul>
+          <li><strong>Local pass (per-file):</strong> SQL injection, null checks, unused imports, off-by-one — all per-file issues</li>
+          <li><strong>Cross-file pass (separate):</strong> inconsistent API contracts, authorization gaps spanning services, data model mismatches</li>
+          <li>Run local passes in parallel, then one cross-file integration pass with all local findings as input</li>
+        </ul>
+      </div>
+      <div class="bad-box">
+        <div class="bad-title">Wrong — Single Pass on All Files</div>
+        <p>Attention dilutes across 14+ files. Local and cross-file issues blur together. Inconsistent review depth. Missing bugs from the middle. Contradictory feedback across files.</p>
+      </div>
+
+      <h3>Cross-file Issues Are Invisible in Local Passes</h3>
+      <pre><code># api_gateway.py calls get_orders(order_id) — but get_orders expects user_id
+# This bug only appears when you see BOTH files together
+# Per-file review of api_gateway.py alone misses it
+# Per-file review of order_service.py alone misses it
+# Only the cross-file integration pass catches it</code></pre>
+
+      <h3>Exam Trap Table — 1.6</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Single-pass review on all files for thoroughness</td><td>Per-file local pass first, then separate cross-file integration pass</td></tr>
+          <tr><td class="td-trap">Adaptive decomposition for structured, predictable tasks</td><td>Adaptive adds complexity for known-scope tasks — use prompt chaining</td></tr>
+          <tr><td class="td-trap">Prompt chaining for open-ended security investigations</td><td>Adaptive decomposition — steps can't be written before triage runs</td></tr>
+          <tr><td class="td-trap">Coordinator provides step-by-step execution instructions</td><td>Coordinator specifies goals + quality criteria; agents determine HOW</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="quiz" class="tab-panel">
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-title">Domain 1 Quiz — 12 Questions</div>
+      <p style="color:var(--muted); font-size:0.88rem;">Select an answer to see immediate feedback.</p>
+    </div>
+
+    <div class="quiz-q" id="q1">
+      <div class="q-num">Question 1 of 12</div>
+      <div class="q-text">The model returns <code>stop_reason: "max_tokens"</code>. What should the agentic loop do?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q1',false)">A. Treat it as <code>end_turn</code> — the model is done.</div>
+        <div class="opt" onclick="answer(this,'q1',true)">B. The response was truncated — raise max_tokens and retry with a continuation prompt.</div>
+        <div class="opt" onclick="answer(this,'q1',false)">C. Send the partial response to the user and ask them to continue.</div>
+        <div class="opt" onclick="answer(this,'q1',false)">D. Restart the loop from the beginning.</div>
+      </div>
+      <div class="explanation" id="exp-q1">max_tokens = truncation mid-generation. The agent is NOT done. Double max_tokens and send a continuation prompt to finish the response.</div>
+    </div>
+
+    <div class="quiz-q" id="q2">
+      <div class="q-num">Question 2 of 12</div>
+      <div class="q-text">The model returns a response with 3 tool_use blocks. How should the loop handle them?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q2',false)">A. Execute the first one, return the result, then execute the second, etc.</div>
+        <div class="opt" onclick="answer(this,'q2',true)">B. Execute all 3, collect all results, then return all 3 tool_results in ONE user message.</div>
+        <div class="opt" onclick="answer(this,'q2',false)">C. Execute all 3, but return each result in a separate user message.</div>
+        <div class="opt" onclick="answer(this,'q2',false)">D. Execute only the most relevant one based on the user's original request.</div>
+      </div>
+      <div class="explanation" id="exp-q2">All tool_use blocks must be executed and all tool_results returned in ONE user message. Sending results one by one breaks the conversation structure. The tool_use_id links each result to its specific call.</div>
+    </div>
+
+    <div class="quiz-q" id="q3">
+      <div class="q-num">Question 3 of 12</div>
+      <div class="q-text">A coordinator dispatches a subagent with the task: "Analyze what we discussed earlier about microservices." The subagent returns generic output. Why?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q3',false)">A. The subagent model is less capable than the coordinator model.</div>
+        <div class="opt" onclick="answer(this,'q3',true)">B. Subagents don't inherit coordinator context — "what we discussed" is invisible to the subagent.</div>
+        <div class="opt" onclick="answer(this,'q3',false)">C. The subagent needs a longer max_tokens setting.</div>
+        <div class="opt" onclick="answer(this,'q3',false)">D. Subagents require a separate API key.</div>
+      </div>
+      <div class="explanation" id="exp-q3">Subagents start fresh — they have zero access to the coordinator's conversation history. All necessary context must be passed explicitly via system prompt and task message.</div>
+    </div>
+
+    <div class="quiz-q" id="q4">
+      <div class="q-num">Question 4 of 12</div>
+      <div class="q-text">Which enforcement approach guarantees that identity verification happens before a financial operation?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q4',false)">A. System prompt instruction: "Always verify identity before processing refunds."</div>
+        <div class="opt" onclick="answer(this,'q4',true)">B. A programmatic gate inside process_refund that checks shared state and returns an error if verification hasn't occurred.</div>
+        <div class="opt" onclick="answer(this,'q4',false)">C. Tool descriptions that mention the prerequisite requirement.</div>
+        <div class="opt" onclick="answer(this,'q4',false)">D. A routing classifier that intercepts refund requests and enforces verification.</div>
+      </div>
+      <div class="explanation" id="exp-q4">Prompt instructions = probabilistic (model can skip). Tool-level gate = deterministic (fires regardless of what the model does). The gate inside process_refund cannot be bypassed even if the model ignores the system prompt.</div>
+    </div>
+
+    <div class="quiz-q" id="q5">
+      <div class="q-num">Question 5 of 12</div>
+      <div class="q-text">A PostToolUse hook strips email addresses from tool results. A customer's email appeared in turn 3 of a 10-turn conversation. Is turn 3's email now redacted?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q5',false)">A. Yes — PostToolUse hooks retroactively clean conversation history.</div>
+        <div class="opt" onclick="answer(this,'q5',true)">B. No — PostToolUse only cleans the current result. History from earlier turns is not affected.</div>
+        <div class="opt" onclick="answer(this,'q5',false)">C. Only if the hook was active in turn 3 when the email first appeared.</div>
+        <div class="opt" onclick="answer(this,'q5',false)">D. Yes — hooks process all tool results in the session at once.</div>
+      </div>
+      <div class="explanation" id="exp-q5">PostToolUse hooks only affect the current tool result being returned. They don't retroactively clean history. For full PII hygiene, sanitize at the source — in the tool implementation itself.</div>
+    </div>
+
+    <div class="quiz-q" id="q6">
+      <div class="q-num">Question 6 of 12</div>
+      <div class="q-text">A security audit of an unknown codebase has an open-ended scope. Which decomposition strategy is correct?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q6',false)">A. Prompt chaining — define fixed steps: scan → analyze → report.</div>
+        <div class="opt" onclick="answer(this,'q6',true)">B. Adaptive decomposition — triage first, then generate subtasks based on what the triage discovers.</div>
+        <div class="opt" onclick="answer(this,'q6',false)">C. Single-pass review of all files simultaneously for maximum coverage.</div>
+        <div class="opt" onclick="answer(this,'q6',false)">D. Prompt chaining with a fallback step if anything is missed.</div>
+      </div>
+      <div class="explanation" id="exp-q6">Adaptive decomposition: when scope is unknown upfront, triage first to identify high-risk areas, then generate targeted subtasks from those findings. The subtasks can't be written before triage runs.</div>
+    </div>
+
+    <div class="quiz-q" id="q7">
+      <div class="q-num">Question 7 of 12</div>
+      <div class="q-text">A code review of a 15-file codebase is done in a single pass. What specific problem does this cause?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q7',false)">A. The model runs out of context window space.</div>
+        <div class="opt" onclick="answer(this,'q7',true)">B. Attention dilutes across files; local and cross-file issues blur together; cross-file bugs that require seeing multiple files are missed.</div>
+        <div class="opt" onclick="answer(this,'q7',false)">C. Tool descriptions become ambiguous with many files involved.</div>
+        <div class="opt" onclick="answer(this,'q7',false)">D. The model can only reliably review 5 files at once.</div>
+      </div>
+      <div class="explanation" id="exp-q7">Single-pass: attention dilutes, inconsistent depth, local/cross-file issues blend together. Correct approach: per-file local pass (catches SQL injection, null errors, etc.) + separate cross-file integration pass (catches API contract mismatches, authorization gaps spanning services).</div>
+    </div>
+
+    <div class="quiz-q" id="q8">
+      <div class="q-num">Question 8 of 12</div>
+      <div class="q-text">A coordinator receives structured JSON from two subagents and needs to produce a final answer. What should it do?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q8',false)">A. Concatenate the two outputs and return them directly to the user.</div>
+        <div class="opt" onclick="answer(this,'q8',false)">B. Return whichever subagent's output is higher confidence.</div>
+        <div class="opt" onclick="answer(this,'q8',true)">C. Run a dedicated synthesis pass that integrates the outputs, resolves tensions, and produces a unified answer.</div>
+        <div class="opt" onclick="answer(this,'q8',false)">D. Ask the user to select which subagent's output they prefer.</div>
+      </div>
+      <div class="explanation" id="exp-q8">Synthesis is a separate pass — integrate and resolve tensions between subagent outputs. Never concatenate raw outputs as a final answer.</div>
+    </div>
+
+    <div class="quiz-q" id="q9">
+      <div class="q-num">Question 9 of 12</div>
+      <div class="q-text">What is the correct way to determine if the agentic loop should stop?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q9',false)">A. Check if the response text contains "I have completed" or "Done."</div>
+        <div class="opt" onclick="answer(this,'q9',false)">B. Check if response.content has only text blocks (no tool_use blocks).</div>
+        <div class="opt" onclick="answer(this,'q9',true)">C. Check <code>stop_reason == "end_turn"</code> — the ONLY termination signal.</div>
+        <div class="opt" onclick="answer(this,'q9',false)">D. Count the number of tool calls and stop after a fixed limit.</div>
+      </div>
+      <div class="explanation" id="exp-q9">stop_reason is the ONLY termination signal. Parsing text content is unreliable — the model might include phrases like "Done" before calling more tools, or might not. Only "end_turn" means the loop should stop.</div>
+    </div>
+
+    <div class="quiz-q" id="q10">
+      <div class="q-num">Question 10 of 12</div>
+      <div class="q-text">A PreToolUse hook should block a file write and prompt the user for approval. Which exit code achieves this?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q10',false)">A. exit 0 — allow</div>
+        <div class="opt" onclick="answer(this,'q10',false)">B. exit 1 — deny</div>
+        <div class="opt" onclick="answer(this,'q10',true)">C. exit 2 — ask user</div>
+        <div class="opt" onclick="answer(this,'q10',false)">D. exit 3 — log and allow</div>
+      </div>
+      <div class="explanation" id="exp-q10">exit 0 = allow, exit 1 = deny (block entirely), exit 2 = ask user (pause execution and prompt for approval). There is no exit 3.</div>
+    </div>
+
+    <div class="quiz-q" id="q11">
+      <div class="q-num">Question 11 of 12</div>
+      <div class="q-text">A structured code review pipeline has fixed steps: per-file analysis → cross-file integration → severity ranking. Which decomposition strategy is this?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q11',true)">A. Prompt chaining — steps are known upfront; each output feeds the next.</div>
+        <div class="opt" onclick="answer(this,'q11',false)">B. Adaptive decomposition — subtasks are generated from findings.</div>
+        <div class="opt" onclick="answer(this,'q11',false)">C. Parallel decomposition — all steps run simultaneously.</div>
+        <div class="opt" onclick="answer(this,'q11',false)">D. Single-pass decomposition — all work in one step.</div>
+      </div>
+      <div class="explanation" id="exp-q11">Prompt chaining: steps are KNOWN before execution, each output explicitly feeds the next. The cross-file pass depends on per-file findings; ranking depends on both. This is the defining pattern of prompt chaining.</div>
+    </div>
+
+    <div class="quiz-q" id="q12">
+      <div class="q-num">Question 12 of 12</div>
+      <div class="q-text">A tool called <code>process_refund</code> keeps being called without prior identity verification, despite a system prompt instruction. What is the correct fix?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q12',false)">A. Make the system prompt instruction more explicit and detailed.</div>
+        <div class="opt" onclick="answer(this,'q12',false)">B. Add a few-shot example showing the verify → refund sequence.</div>
+        <div class="opt" onclick="answer(this,'q12',true)">C. Add a programmatic gate inside process_refund that checks verified state and returns an error if not met.</div>
+        <div class="opt" onclick="answer(this,'q12',false)">D. Use tool_choice: "any" to force the model to call verify_customer first.</div>
+      </div>
+      <div class="explanation" id="exp-q12">Prompt instructions = probabilistic. Hard compliance requires a programmatic gate inside the tool. The gate fires regardless of what the model does — it's deterministic. tool_choice: "any" guarantees some tool is called, but not which one or in what order.</div>
+    </div>
+
+    <button id="quiz-btn" onclick="showScore()">Show My Score</button>
+    <div class="quiz-score" id="quiz-score">
+      <div class="score-num" id="score-display">0/12</div>
+      <p id="score-msg" style="color:var(--muted); margin-top:8px;"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
+  let scores = {};
+  function answer(el, qid, correct) {
+    const q = document.getElementById(qid);
+    if (q.dataset.answered) return;
+    q.dataset.answered = 'true';
+    scores[qid] = correct;
+    q.querySelectorAll('.opt').forEach(o => {
+      o.style.pointerEvents = 'none';
+      if (o === el) o.classList.add(correct ? 'correct' : 'wrong');
+      else if (!correct && o.onclick.toString().includes('true')) o.classList.add('reveal-correct');
+    });
+    const exp = document.getElementById('exp-' + qid);
+    if (exp) exp.classList.add('show');
+  }
+  function showScore() {
+    const got = Object.values(scores).filter(Boolean).length;
+    document.getElementById('score-display').textContent = got + '/12';
+    const pct = Math.round(got / 12 * 100);
+    const msg = pct >= 90 ? 'Excellent — Domain 1 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the exercise tabs again.';
+    document.getElementById('score-msg').textContent = pct + '% — ' + msg;
+    document.getElementById('quiz-score').classList.add('show');
+    document.getElementById('quiz-btn').style.display = 'none';
+  }
+</script>
+</body>
+</html>

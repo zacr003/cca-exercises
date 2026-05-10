@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCA-F Domain 3 — Claude Code Workflows</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: #2e3250;
+    --accent: #6c8ef7;
+    --accent2: #a78bfa;
+    --green: #34d399;
+    --red: #f87171;
+    --yellow: #fbbf24;
+    --orange: #fb923c;
+    --text: #e2e8f0;
+    --muted: #94a3b8;
+    --code-bg: #141824;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6; }
+
+  header { background: linear-gradient(135deg, #1e2a5e 0%, #2d1b69 100%); padding: 28px 32px; border-bottom: 1px solid var(--border); }
+  header h1 { font-size: 1.7rem; font-weight: 700; color: #fff; }
+  header p { color: #a0aec0; margin-top: 4px; font-size: 0.9rem; }
+  .header-meta { display: flex; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+  .badge { background: rgba(108,142,247,0.15); border: 1px solid rgba(108,142,247,0.3); color: var(--accent); padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
+
+  .container { max-width: 1000px; margin: 0 auto; padding: 24px 20px 60px; }
+
+  .nav-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+  .tab-btn { background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); padding: 8px 14px; cursor: pointer; font-size: 0.85rem; font-weight: 600; white-space: nowrap; transition: all 0.15s; margin-bottom: -1px; }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
+  .card-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .card-title .num { background: var(--accent); color: #fff; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0; }
+
+  .concept-box { background: rgba(108,142,247,0.08); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .concept-box p { margin-bottom: 6px; }
+  .concept-box p:last-child { margin-bottom: 0; }
+
+  .trap-box { background: rgba(251,191,36,0.07); border-left: 3px solid var(--yellow); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .trap-box .trap-title { font-weight: 700; color: var(--yellow); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+
+  .good-box { background: rgba(52,211,153,0.07); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .good-box .good-title { font-weight: 700; color: var(--green); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+
+  .bad-box { background: rgba(248,113,113,0.07); border-left: 3px solid var(--red); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .bad-box .bad-title { font-weight: 700; color: var(--red); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+
+  table { width: 100%; border-collapse: collapse; margin-bottom: 16px; font-size: 0.88rem; }
+  th { background: var(--surface2); color: var(--accent); font-weight: 700; padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .td-trap { color: var(--red); }
+  .td-correct { color: var(--green); }
+
+  code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 2px 6px; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 0.84em; color: #a5f3fc; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; margin-bottom: 16px; }
+  pre code { background: none; border: none; padding: 0; font-size: 0.85rem; color: #e2e8f0; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .kv-list { display: flex; flex-direction: column; gap: 8px; }
+  .kv-row { display: flex; gap: 10px; align-items: baseline; }
+  .kv-key { color: var(--accent); font-weight: 700; font-family: monospace; font-size: 0.9em; min-width: 180px; flex-shrink: 0; }
+  .kv-val { color: var(--muted); font-size: 0.88em; }
+
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.78em; font-weight: 700; margin-right: 4px; }
+  .tag-green { background: rgba(52,211,153,0.15); color: var(--green); border: 1px solid rgba(52,211,153,0.3); }
+  .tag-red { background: rgba(248,113,113,0.15); color: var(--red); border: 1px solid rgba(248,113,113,0.3); }
+  .tag-yellow { background: rgba(251,191,36,0.15); color: var(--yellow); border: 1px solid rgba(251,191,36,0.3); }
+  .tag-blue { background: rgba(108,142,247,0.15); color: var(--accent); border: 1px solid rgba(108,142,247,0.3); }
+
+  h3 { color: #c7d2fe; font-size: 0.95rem; font-weight: 700; margin: 16px 0 8px; }
+  ul { padding-left: 18px; margin-bottom: 12px; }
+  li { margin-bottom: 4px; color: var(--muted); }
+  li strong { color: var(--text); }
+
+  /* Quiz */
+  .quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; }
+  .quiz-q .q-text { font-weight: 600; color: var(--text); margin-bottom: 14px; font-size: 0.95rem; }
+  .quiz-q .q-num { color: var(--muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .opt { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; cursor: pointer; transition: all 0.15s; color: var(--muted); font-size: 0.88rem; }
+  .opt:hover { border-color: var(--accent); color: var(--text); }
+  .opt.correct { background: rgba(52,211,153,0.12); border-color: var(--green); color: var(--green); }
+  .opt.wrong { background: rgba(248,113,113,0.12); border-color: var(--red); color: var(--red); }
+  .opt.reveal-correct { background: rgba(52,211,153,0.08); border-color: rgba(52,211,153,0.4); color: var(--green); }
+  .explanation { background: rgba(108,142,247,0.08); border: 1px solid rgba(108,142,247,0.2); border-radius: 6px; padding: 12px; margin-top: 12px; font-size: 0.87rem; color: #a5b4fc; display: none; }
+  .explanation.show { display: block; }
+  .quiz-score { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 24px; text-align: center; display: none; }
+  .quiz-score.show { display: block; }
+  .score-num { font-size: 2.5rem; font-weight: 800; color: var(--accent); }
+  #quiz-btn { background: var(--accent); color: #fff; border: none; border-radius: 8px; padding: 12px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 16px; display: block; }
+  #quiz-btn:hover { opacity: 0.9; }
+
+  .export-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.82rem; float: right; margin-top: -4px; }
+  .export-btn:hover { color: var(--text); }
+
+  .flag { display: inline-block; background: rgba(251,191,36,0.1); border: 1px solid rgba(251,191,36,0.3); color: var(--yellow); border-radius: 4px; padding: 1px 7px; font-size: 0.78em; font-weight: 700; margin-left: 6px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Domain 3 — Claude Code Workflows</h1>
+  <p>CCA-F Exam Prep · 20% of exam · 5 exercises</p>
+  <div class="header-meta">
+    <span class="badge">3.1 CLAUDE.md Hierarchy</span>
+    <span class="badge">3.2 Skills &amp; Commands</span>
+    <span class="badge">3.3 Path-Scoped Rules</span>
+    <span class="badge">3.4 Plan Mode</span>
+    <span class="badge">3.6 CI/CD Headless</span>
+  </div>
+</header>
+
+<div class="container">
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="showTab('ex1')">Ex1: CLAUDE.md</button>
+    <button class="tab-btn" onclick="showTab('ex2')">Ex2: Skills</button>
+    <button class="tab-btn" onclick="showTab('ex3')">Ex3: Path Rules</button>
+    <button class="tab-btn" onclick="showTab('ex4')">Ex4: Plan Mode</button>
+    <button class="tab-btn" onclick="showTab('ex5')">Ex5: CI/CD</button>
+    <button class="tab-btn" onclick="showTab('quiz')">Quiz</button>
+    <button class="export-btn" onclick="window.print()">⬇ Print</button>
+  </div>
+
+  <!-- ===== EX1: CLAUDE.MD HIERARCHY ===== -->
+  <div id="ex1" class="tab-panel active">
+    <div class="card">
+      <div class="card-title"><span class="num">1</span> CLAUDE.md Configuration Hierarchy (3.1)</div>
+      <div class="concept-box">
+        <p>CLAUDE.md files stack like <strong>layers</strong> — they are <strong>concatenated, not overridden</strong>. All discovered files are merged into one combined instruction set. <strong>More specific scope wins</strong> when rules conflict across scopes.</p>
+      </div>
+      <h3>The Three Scopes</h3>
+      <table>
+        <thead><tr><th>Layer</th><th>Path</th><th>Who it's for</th><th>Shared via git?</th></tr></thead>
+        <tbody>
+          <tr><td>User</td><td><code>~/.claude/CLAUDE.md</code></td><td>Personal preferences, machine-local</td><td class="td-trap">No — machine local</td></tr>
+          <tr><td>Project</td><td><code>.claude/CLAUDE.md</code> or <code>./CLAUDE.md</code></td><td>Team-wide standards</td><td class="td-correct">Yes — committed</td></tr>
+          <tr><td>Directory</td><td><code>./subdirectory/CLAUDE.md</code></td><td>Area-specific context</td><td class="td-correct">Yes — committed</td></tr>
+        </tbody>
+      </table>
+
+      <h3>@import and .claude/rules/</h3>
+      <div class="good-box">
+        <div class="good-title">Correct Pattern — Modular via @import</div>
+        <p>When CLAUDE.md grows past <strong>200 lines</strong>, split into topic-specific files in <code>.claude/rules/</code> and import them. <code>@import</code> is for explicitly pulling in shared rule files.</p>
+      </div>
+      <pre><code># .claude/CLAUDE.md (hub file)
+@import .claude/rules/testing.md
+@import .claude/rules/api-conventions.md
+@import .claude/rules/deployment.md</code></pre>
+      <p style="color:var(--muted); font-size:0.87em; margin-bottom:14px;">Subdirectory CLAUDE.md files do <em>not</em> require @import — they are auto-discovered when Claude Code works in that directory.</p>
+
+      <h3>Conflict Resolution</h3>
+      <div class="kv-list" style="margin-bottom:14px;">
+        <div class="kv-row"><span class="kv-key">Cross-scope conflict</span><span class="kv-val">More specific wins: directory > project > user</span></div>
+        <div class="kv-row"><span class="kv-key">Same-scope conflict</span><span class="kv-val">Claude picks arbitrarily — eliminate them at source</span></div>
+        <div class="kv-row"><span class="kv-key">Load timing</span><span class="kv-val">Re-read fresh each session — not cached</span></div>
+        <div class="kv-row"><span class="kv-key">Size target</span><span class="kv-val">Under 200 lines — split into .claude/rules/ with @import</span></div>
+        <div class="kv-row"><span class="kv-key">Diagnose loaded files</span><span class="kv-val">Run <code>/memory</code> in Claude Code</span></div>
+      </div>
+
+      <h3>Exam Trap Table — 3.1</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Team instructions in <code>~/.claude/CLAUDE.md</code></td><td>User-level is machine-local, NOT shared. Use project-level <code>.claude/CLAUDE.md</code></td></tr>
+          <tr><td class="td-trap">Nested CLAUDE.md files override parents</td><td>They CONCATENATE — all are loaded and merged</td></tr>
+          <tr><td class="td-trap">CLAUDE.md files are cached across sessions</td><td>Re-read fresh every session</td></tr>
+          <tr><td class="td-trap"><code>/setup</code> or <code>/config init</code> generates CLAUDE.md</td><td>Correct command is <code>/init</code></td></tr>
+          <tr><td class="td-trap"><code>README.md</code> works like CLAUDE.md</td><td>Only CLAUDE.md, CLAUDE.local.md, and .claude/rules/*.md are loaded</td></tr>
+          <tr><td class="td-trap"><code>.claude/config.yaml</code> maps file patterns to sections</td><td>This file does not exist</td></tr>
+          <tr><td class="td-trap">Same-scope conflicts resolve predictably</td><td>Claude picks arbitrarily — eliminate conflicts</td></tr>
+          <tr><td class="td-trap">600-line CLAUDE.md is fine</td><td>Target under 200 lines — split into .claude/rules/ with @import</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== EX2: SKILLS AND COMMANDS ===== -->
+  <div id="ex2" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">2</span> Skills and Slash Commands (3.2)</div>
+      <div class="concept-box">
+        <p><strong>CLAUDE.md</strong> = always-loaded universal standards. Rules that always apply belong here.<br>
+        <strong>Skills / Commands</strong> = on-demand workflows. Invoked explicitly when you type <code>/command</code>.</p>
+      </div>
+
+      <h3>Three Ways to Give Claude Instructions</h3>
+      <table>
+        <thead><tr><th>Mechanism</th><th>When it activates</th><th>Scope</th><th>Use for</th></tr></thead>
+        <tbody>
+          <tr><td>CLAUDE.md / rules</td><td>Always, automatically</td><td>Project or user</td><td>Universal standards (always-on)</td></tr>
+          <tr><td>Slash commands</td><td>When you type <code>/command</code></td><td>Project or user</td><td>Quick team workflows</td></tr>
+          <tr><td>Skills</td><td>When you type <code>/skill-name</code></td><td>Project or user</td><td>Complex isolated tasks</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Slash Commands</h3>
+      <div class="grid-2">
+        <div class="good-box">
+          <div class="good-title">Project-Scoped (Shared)</div>
+          <p>Create <code>.claude/commands/review.md</code> — becomes <code>/review</code> for the whole team. Version-controlled.</p>
+        </div>
+        <div class="good-box">
+          <div class="good-title">User-Scoped (Personal)</div>
+          <p>Create <code>~/.claude/commands/standup.md</code> — only available on your machine. Never shared via git pull.</p>
+        </div>
+      </div>
+
+      <h3>SKILL.md Frontmatter Fields (know all three cold)</h3>
+      <pre><code>---
+context: fork          # run in isolated sub-agent (default: inline)
+allowed-tools:         # restrict which tools the skill can call
+  - Read
+  - Grep
+  - Glob
+argument-hint: "Path to the module to analyze"   # prompts for input when invoked without args
+---</code></pre>
+      <table>
+        <thead><tr><th>Field</th><th>What it does</th><th>When to use</th></tr></thead>
+        <tbody>
+          <tr><td><code>context: fork</code></td><td>Runs skill in isolated sub-agent; verbose output stays OUT of main session</td><td>Always for exploration/analysis skills that produce a lot of output</td></tr>
+          <tr><td><code>allowed-tools</code></td><td>Restricts which tools the skill can call</td><td>When you want a read-only skill (no Write, no Edit)</td></tr>
+          <tr><td><code>argument-hint</code></td><td>Shows prompt "Enter: [hint]" when invoked without arguments</td><td>When the skill needs a specific input to work</td></tr>
+        </tbody>
+      </table>
+      <div class="trap-box">
+        <div class="trap-title">Exam Trap</div>
+        <p><code>model: haiku</code> is <strong>NOT</strong> a documented SKILL.md frontmatter field. Only <code>context</code>, <code>allowed-tools</code>, and <code>argument-hint</code> are valid.</p>
+      </div>
+
+      <h3>Personal Skill Customization</h3>
+      <div class="bad-box">
+        <div class="bad-title">Wrong</div>
+        <p>Add <code>override: true</code> to your SKILL.md — this field does not exist.</p>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Correct</div>
+        <p>Create a skill in <code>~/.claude/skills/</code> with a <strong>different name</strong>.<br>
+        Team has <code>/analyze</code> → you have <code>/analyze-verbose</code>. Both coexist.</p>
+      </div>
+
+      <h3>Skills vs. CLAUDE.md Decision Table</h3>
+      <table>
+        <thead><tr><th>Scenario</th><th>Answer</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Enforce all functions have docstrings</td><td class="td-correct">CLAUDE.md</td><td>Always-on standard</td></tr>
+          <tr><td>Run a security audit of this module</td><td class="td-correct">Skill</td><td>On-demand, explicit invocation</td></tr>
+          <tr><td>Keep PII out of log statements</td><td class="td-correct">CLAUDE.md</td><td>Always-on enforcement</td></tr>
+          <tr><td>Generate a PR description from git diff</td><td class="td-correct">Skill or command</td><td>Task-specific, invoked when needed</td></tr>
+          <tr><td>Analyze test coverage for a directory</td><td class="td-correct">Skill</td><td>Specific task, produces verbose output</td></tr>
+          <tr><td>Add 'use TypeScript strict mode' to team standards</td><td class="td-correct">CLAUDE.md</td><td>Team convention, always applies</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Exam Trap Table — 3.2</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap"><code>model: haiku</code> in SKILL.md frontmatter</td><td>Not valid — only <code>context</code>, <code>allowed-tools</code>, <code>argument-hint</code></td></tr>
+          <tr><td class="td-trap"><code>override: true</code> to personalize a team skill</td><td>Doesn't exist — create a personal variant with a different name in <code>~/.claude/skills/</code></td></tr>
+          <tr><td class="td-trap">User-scoped commands shared via git pull</td><td><code>~/.claude/commands/</code> is machine-local — use <code>.claude/commands/</code> for team commands</td></tr>
+          <tr><td class="td-trap">Skills for always-on convention enforcement</td><td>That's CLAUDE.md or .claude/rules/ — skills are on-demand</td></tr>
+          <tr><td class="td-trap"><code>context: fork</code> is just "quiet mode"</td><td>It runs the skill in an isolated sub-agent — verbose output never enters the main session</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== EX3: PATH-SCOPED RULES ===== -->
+  <div id="ex3" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">3</span> Path-Scoped Rules (3.3)</div>
+      <div class="concept-box">
+        <p>Files in <code>.claude/rules/</code> with YAML <code>paths:</code> frontmatter load <strong>only when Claude Code edits a matching file</strong> — regardless of which directory it's in. This solves the problem that directory CLAUDE.md files can't reach files in other directories.</p>
+      </div>
+
+      <h3>The Problem They Solve</h3>
+      <p style="color:var(--muted); margin-bottom:12px;">Test files scattered across a codebase (<code>Button.test.tsx</code> next to <code>Button.tsx</code>, <code>api.test.ts</code> next to <code>api.ts</code>) — a directory CLAUDE.md in <code>/components/</code> won't help a test file in <code>/services/</code>.</p>
+
+      <h3>Frontmatter Syntax</h3>
+      <pre><code>---
+paths:
+  - "**/*.test.py"
+  - "**/*.spec.py"
+  - "**/test_*.py"
+---
+# Test File Conventions
+
+- Every test function must start with `test_`
+- Use pytest fixtures for shared setup — never duplicate setup code
+- Never make real API calls in tests — mock all external services</code></pre>
+      <div class="trap-box">
+        <div class="trap-title">Frontmatter Key</div>
+        <p>The key is <code>paths:</code> — NOT <code>projects:</code>, NOT <code>directories:</code>, NOT <code>files:</code></p>
+      </div>
+
+      <h3>Path-Scoped Rules vs. Directory CLAUDE.md</h3>
+      <table>
+        <thead><tr><th>Situation</th><th>Right choice</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Test files scattered across many directories</td><td class="td-correct">.claude/rules/testing.md with <code>**/*.test.*</code></td><td>Can't reach files across directories with directory CLAUDE.md</td></tr>
+          <tr><td>Conventions only for the <code>backend/</code> directory</td><td class="td-correct">backend/CLAUDE.md</td><td>Naturally bounded by directory</td></tr>
+          <tr><td>Terraform conventions in /infra/, /deploy/, /modules/</td><td class="td-correct">.claude/rules/terraform.md with <code>**/*.tf</code></td><td>Files span multiple directories</td></tr>
+          <tr><td>API endpoint conventions for <code>src/api/</code> only</td><td class="td-correct">src/api/CLAUDE.md</td><td>Clear directory boundary</td></tr>
+          <tr><td>All Python files regardless of location</td><td class="td-correct">.claude/rules/python.md with <code>**/*.py</code></td><td>Cross-cutting by file type</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Key Behaviors</h3>
+      <div class="kv-list" style="margin-bottom:16px;">
+        <div class="kv-row"><span class="kv-key">Rules without paths:</span><span class="kv-val">Load at launch alongside CLAUDE.md — same as project-level</span></div>
+        <div class="kv-row"><span class="kv-key">Rules with paths:</span><span class="kv-val">Conditional — load only when editing a matching file</span></div>
+        <div class="kv-row"><span class="kv-key">Override behavior</span><span class="kv-val">None — all matching sources are concatenated, not overridden</span></div>
+        <div class="kv-row"><span class="kv-key">Token benefit</span><span class="kv-val">Only loads when relevant — saves tokens when working in unrelated areas</span></div>
+        <div class="kv-row"><span class="kv-key">Diagnose</span><span class="kv-val">Run /memory to see which rules files are currently loaded</span></div>
+      </div>
+
+      <h3>Exam Trap Table — 3.3</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Directory CLAUDE.md for test files spread across codebase</td><td>Use .claude/rules/ with <code>**/*.test.*</code> glob — directory CLAUDE.md can't reach other directories</td></tr>
+          <tr><td class="td-trap"><code>projects:</code> as the frontmatter key</td><td>The correct key is <code>paths:</code></td></tr>
+          <tr><td class="td-trap">Path-scoped rules override directory CLAUDE.md</td><td>All matching sources are concatenated</td></tr>
+          <tr><td class="td-trap">Rules in .claude/rules/ without paths: frontmatter</td><td>They load at launch alongside CLAUDE.md — not conditional</td></tr>
+          <tr><td class="td-trap">Relying on Claude to infer which section applies</td><td>Use explicit glob matching — don't expect inference</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== EX4: PLAN MODE ===== -->
+  <div id="ex4" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">4</span> Plan Mode vs. Direct Execution (3.4)</div>
+      <div class="concept-box">
+        <p>Plan mode = Claude <strong>explores and designs but does not modify source files</strong>. It can read files, run shell commands, and write a plan — but makes zero code changes until you switch to execution mode.</p>
+        <p style="margin-top:8px;"><strong>Architect first, then contractor.</strong> For trivial changes, call the contractor directly.</p>
+      </div>
+
+      <h3>The Decision Framework</h3>
+      <table>
+        <thead><tr><th>Use Plan Mode</th><th>Use Direct Execution</th></tr></thead>
+        <tbody>
+          <tr><td>Refactoring across 20+ files</td><td>Fixing a single bug with a clear stack trace</td></tr>
+          <tr><td>Migrating from REST to GraphQL</td><td>Adding one input validation check</td></tr>
+          <tr><td>Multiple valid approaches — need to compare</td><td>Change where scope and approach are obvious</td></tr>
+          <tr><td>Unknown dependencies across the codebase</td><td>Single-file modification with clear requirement</td></tr>
+          <tr><td>New authentication system</td><td>Fixing a typo in an error message</td></tr>
+          <tr><td>Security-sensitive multi-component change</td><td>Updating a config value</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-box" style="margin-top:4px;">
+        <p><strong>Quick test:</strong> "Do I know exactly what to change and where?" → Direct execution. "Do I need to explore first?" → Plan mode.</p>
+      </div>
+
+      <h3>The Iterative Refinement Pattern</h3>
+      <div class="bad-box">
+        <div class="bad-title">Wrong Mental Model</div>
+        <p>1. Activate plan mode → 2. Get plan → 3. Execute. This is one-shot oracle thinking.</p>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Correct Mental Model</div>
+        <p>1. Activate plan mode → 2. Get plan → 3. Give feedback ("this doesn't account for X") → 4. Revised plan → 5. More feedback if needed → 6. Execute once plan is satisfactory.</p>
+        <p style="margin-top:8px;">The <strong>back-and-forth before any code changes</strong> is the value. Starting execution and realizing you need to rethink = costly rework.</p>
+      </div>
+      <div class="trap-box">
+        <div class="trap-title">Critical Exam Trap</div>
+        <p>Plan mode does <strong>not</strong> pause mid-execution at specific steps. Plan mode = safe exploration BEFORE execution. For mid-execution gating, use a <strong>PreToolUse hook</strong> instead.</p>
+      </div>
+
+      <h3>Explore Subagent</h3>
+      <div class="concept-box">
+        <p>Reading 30 files fills your main conversation context. The <strong>Explore subagent</strong> handles verbose discovery in a sub-agent and returns only a concise summary to the main session — keeping context clean.</p>
+        <p style="margin-top:6px;">Same principle as <code>context: fork</code> for skills: isolate verbose output from the session doing real work.</p>
+      </div>
+
+      <h3>Exam Trap Table — 3.4</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Plan mode gates steps mid-execution</td><td>Plan mode is before execution only; use PreToolUse hook for mid-execution gating</td></tr>
+          <tr><td class="td-trap">Plan mode: used once, generates plan, done</td><td>Plan mode is iterative — refine through conversation before executing</td></tr>
+          <tr><td class="td-trap">Direct execution for complex multi-file changes</td><td>Use plan mode — risks costly rework</td></tr>
+          <tr><td class="td-trap">Plan mode for a single-file bug fix</td><td>Direct execution — plan mode overhead isn't justified</td></tr>
+          <tr><td class="td-trap">"Plan mode pauses before each file edit"</td><td>Plan mode does not touch source files at all; it only reads and writes a plan</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== EX5: CI/CD HEADLESS ===== -->
+  <div id="ex5" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">5</span> CI/CD and Headless Mode (3.6)</div>
+      <div class="concept-box">
+        <p>Without <code>-p</code>, Claude Code waits for interactive input. In CI, there is no human — the pipeline <strong>hangs indefinitely</strong>. The <code>-p</code> flag is the only way to use Claude Code in automated pipelines.</p>
+      </div>
+
+      <h3>Flags and What They Do</h3>
+      <table>
+        <thead><tr><th>Flag</th><th>What it does</th><th>When to use</th></tr></thead>
+        <tbody>
+          <tr><td><code>-p</code> / <code>--print</code></td><td>Non-interactive mode — runs prompt, prints result, exits</td><td><strong>Required for all CI/CD pipelines</strong></td></tr>
+          <tr><td><code>--output-format json</code></td><td>Wraps response in structured JSON envelope</td><td>When pipeline needs to parse the output</td></tr>
+          <tr><td><code>--bare</code></td><td>Skips ALL auto-discovery: hooks, skills, MCP, CLAUDE.md</td><td>Reproducible isolated CI execution</td></tr>
+          <tr><td><code>--append-system-prompt</code></td><td>Appends text to system prompt for that invocation only</td><td>Ephemeral per-run instructions</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Settings Precedence (highest → lowest)</h3>
+      <div class="kv-list" style="margin-bottom:16px;">
+        <div class="kv-row"><span class="kv-key">1. .claude/settings.local.json</span><span class="kv-val">Local overrides — usually gitignored</span></div>
+        <div class="kv-row"><span class="kv-key">2. .claude/settings.json</span><span class="kv-val">Project settings — version-controlled</span></div>
+        <div class="kv-row"><span class="kv-key">3. ~/.claude/settings.json</span><span class="kv-val">User settings</span></div>
+      </div>
+
+      <h3>--bare vs Default</h3>
+      <div class="grid-2">
+        <div class="bad-box">
+          <div class="bad-title">Without --bare (default)</div>
+          <ul>
+            <li>Loads CLAUDE.md files</li>
+            <li>Discovers and runs hooks</li>
+            <li>Loads skills from .claude/skills/</li>
+            <li>Connects MCP servers</li>
+            <li>Applies all local configuration</li>
+          </ul>
+        </div>
+        <div class="good-box">
+          <div class="good-title">With --bare</div>
+          <ul>
+            <li>Skips CLAUDE.md files</li>
+            <li>Skips hooks</li>
+            <li>Skips skills and plugins</li>
+            <li>Skips MCP server connections</li>
+            <li>Sets CLAUDE_CODE_SIMPLE env var</li>
+            <li>Clean, reproducible execution</li>
+          </ul>
+        </div>
+      </div>
+      <div class="trap-box">
+        <div class="trap-title">Docker Trap</div>
+        <p>"Docker containers automatically isolate Claude Code config" — <strong>WRONG.</strong> Docker still auto-discovers config inside the container. Use <code>--bare</code> explicitly for stripped execution.</p>
+      </div>
+
+      <h3>Independent Review Instance</h3>
+      <div class="bad-box">
+        <div class="bad-title">Wrong — Same Session</div>
+        <pre style="margin:8px 0 0; background: transparent; border: none; padding: 0;"><code>claude -p "Generate tests"
+# (same session) "Now review the tests you just wrote"
+# → Self-review bias: generator and reviewer share reasoning context</code></pre>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Correct — Independent Instance</div>
+        <pre style="margin:8px 0 0; background: transparent; border: none; padding: 0;"><code>claude -p "Generate tests" > tests.py
+claude -p "Review these tests" &lt; tests.py   # fresh invocation
+# → Reviewer has NO context from generation; catches issues generator rationalized away</code></pre>
+      </div>
+
+      <h3>CLAUDE.md for CI</h3>
+      <div class="concept-box">
+        <p>CI-invoked Claude Code reads the <strong>same project CLAUDE.md</strong> as interactive use. Document testing standards, fixtures, and review criteria in CLAUDE.md — your CI review automatically follows the same quality bar as interactive development.</p>
+      </div>
+
+      <h3>Flags That Do NOT Exist (Exam Distractors)</h3>
+      <table>
+        <thead><tr><th>Fake flag</th><th>What to use instead</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap"><code>CLAUDE_HEADLESS=true</code></td><td>Use <code>-p</code> flag</td></tr>
+          <tr><td class="td-trap"><code>--batch</code></td><td>Use <code>-p</code> for non-interactive</td></tr>
+          <tr><td class="td-trap"><code>--no-config</code></td><td>Use <code>--bare</code></td></tr>
+          <tr><td class="td-trap"><code>--skip-config</code></td><td>Use <code>--bare</code></td></tr>
+          <tr><td class="td-trap"><code>--security-only</code></td><td>Does not exist</td></tr>
+          <tr><td class="td-trap"><code>--auto-test</code></td><td>Does not exist</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== QUIZ ===== -->
+  <div id="quiz" class="tab-panel">
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-title">Domain 3 Quiz — 12 Questions</div>
+      <p style="color:var(--muted); font-size:0.88rem;">Select an answer to see immediate feedback. Complete all questions, then check your score.</p>
+    </div>
+
+    <!-- Q1 -->
+    <div class="quiz-q" id="q1">
+      <div class="q-num">Question 1 of 12</div>
+      <div class="q-text">A developer writes team-wide coding standards in <code>~/.claude/CLAUDE.md</code>. After teammates pull the repo, they don't see the standards. Why?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q1', false)">A. The file requires <code>/init</code> to activate.</div>
+        <div class="opt" onclick="answer(this, 'q1', true)">B. User-level CLAUDE.md is machine-local and is not version-controlled.</div>
+        <div class="opt" onclick="answer(this, 'q1', false)">C. CLAUDE.md files must be in the project root to be shared.</div>
+        <div class="opt" onclick="answer(this, 'q1', false)">D. Team standards require a <code>shared: true</code> frontmatter flag.</div>
+      </div>
+      <div class="explanation" id="exp-q1">Team standards belong in <code>.claude/CLAUDE.md</code> (project-level, version-controlled). The <code>~/.claude/CLAUDE.md</code> is personal and machine-local — it never gets committed to git.</div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="quiz-q" id="q2">
+      <div class="q-num">Question 2 of 12</div>
+      <div class="q-text">Which command shows exactly which CLAUDE.md and rules files are currently loaded?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q2', false)">A. <code>/config</code></div>
+        <div class="opt" onclick="answer(this, 'q2', false)">B. <code>/status</code></div>
+        <div class="opt" onclick="answer(this, 'q2', true)">C. <code>/memory</code></div>
+        <div class="opt" onclick="answer(this, 'q2', false)">D. <code>/debug</code></div>
+      </div>
+      <div class="explanation" id="exp-q2"><code>/memory</code> is the diagnostic command that lists every memory file currently loaded. Use it to diagnose "why isn't my rule applying?"</div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="quiz-q" id="q3">
+      <div class="q-num">Question 3 of 12</div>
+      <div class="q-text">Which fields are valid in SKILL.md frontmatter? (Select the correct set)</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q3', false)">A. <code>context</code>, <code>allowed-tools</code>, <code>model</code></div>
+        <div class="opt" onclick="answer(this, 'q3', true)">B. <code>context</code>, <code>allowed-tools</code>, <code>argument-hint</code></div>
+        <div class="opt" onclick="answer(this, 'q3', false)">C. <code>context</code>, <code>tools</code>, <code>argument-hint</code></div>
+        <div class="opt" onclick="answer(this, 'q3', false)">D. <code>fork</code>, <code>allowed-tools</code>, <code>argument-hint</code></div>
+      </div>
+      <div class="explanation" id="exp-q3">The only three documented SKILL.md frontmatter fields are <code>context</code>, <code>allowed-tools</code>, and <code>argument-hint</code>. <code>model: haiku</code> is a common distractor — it is not a valid field.</div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="quiz-q" id="q4">
+      <div class="q-num">Question 4 of 12</div>
+      <div class="q-text">A developer wants their analysis skill to not fill the main conversation context with verbose file exploration output. Which frontmatter setting achieves this?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q4', true)">A. <code>context: fork</code></div>
+        <div class="opt" onclick="answer(this, 'q4', false)">B. <code>context: quiet</code></div>
+        <div class="opt" onclick="answer(this, 'q4', false)">C. <code>allowed-tools: []</code></div>
+        <div class="opt" onclick="answer(this, 'q4', false)">D. <code>output: summary</code></div>
+      </div>
+      <div class="explanation" id="exp-q4"><code>context: fork</code> runs the skill in an isolated sub-agent. The verbose exploration output stays in the sub-agent's context — only the final summary returns to the main session.</div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="quiz-q" id="q5">
+      <div class="q-num">Question 5 of 12</div>
+      <div class="q-text">Test files are scattered throughout a codebase (<code>Button.test.tsx</code>, <code>api.test.ts</code>, <code>utils.spec.py</code> in different directories). What is the correct way to enforce test file conventions?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q5', false)">A. Create a <code>CLAUDE.md</code> in the root with a "Test Files" section.</div>
+        <div class="opt" onclick="answer(this, 'q5', false)">B. Create a <code>tests/CLAUDE.md</code> directory-level file.</div>
+        <div class="opt" onclick="answer(this, 'q5', true)">C. Create <code>.claude/rules/testing.md</code> with <code>paths: ["**/*.test.*", "**/*.spec.*"]</code> frontmatter.</div>
+        <div class="opt" onclick="answer(this, 'q5', false)">D. Create a <code>.claude/rules/testing.md</code> with <code>directories:</code> frontmatter.</div>
+      </div>
+      <div class="explanation" id="exp-q5">Path-scoped rules with glob patterns load for any matching file regardless of directory. A directory CLAUDE.md only loads when working inside that specific directory. The frontmatter key is <code>paths:</code> not <code>directories:</code>.</div>
+    </div>
+
+    <!-- Q6 -->
+    <div class="quiz-q" id="q6">
+      <div class="q-num">Question 6 of 12</div>
+      <div class="q-text">A project CLAUDE.md says "use 4 spaces for indentation." A user's <code>~/.claude/CLAUDE.md</code> says "use tabs." Which wins?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q6', false)">A. User-level wins because it's loaded first.</div>
+        <div class="opt" onclick="answer(this, 'q6', true)">B. Project-level wins because more specific scope takes precedence.</div>
+        <div class="opt" onclick="answer(this, 'q6', false)">C. Both apply and Claude alternates between them.</div>
+        <div class="opt" onclick="answer(this, 'q6', false)">D. Claude picks arbitrarily between same-scope conflicts.</div>
+      </div>
+      <div class="explanation" id="exp-q6">Cross-scope conflicts resolve by specificity: directory > project > user. The project-level rule beats the user-level rule. Option D would be correct for same-scope conflicts, but this is a cross-scope scenario.</div>
+    </div>
+
+    <!-- Q7 -->
+    <div class="quiz-q" id="q7">
+      <div class="q-num">Question 7 of 12</div>
+      <div class="q-text">A CI pipeline invokes Claude Code and hangs indefinitely, waiting for input. What is the fix?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q7', false)">A. Set <code>CLAUDE_HEADLESS=true</code> environment variable.</div>
+        <div class="opt" onclick="answer(this, 'q7', false)">B. Use the <code>--batch</code> flag.</div>
+        <div class="opt" onclick="answer(this, 'q7', true)">C. Add the <code>-p</code> (or <code>--print</code>) flag to the invocation.</div>
+        <div class="opt" onclick="answer(this, 'q7', false)">D. Run Claude Code inside Docker — it automatically switches to non-interactive mode.</div>
+      </div>
+      <div class="explanation" id="exp-q7"><code>-p</code> (print mode) is the only way to run Claude Code non-interactively. <code>CLAUDE_HEADLESS</code> and <code>--batch</code> do not exist. Docker does not auto-switch to non-interactive mode.</div>
+    </div>
+
+    <!-- Q8 -->
+    <div class="quiz-q" id="q8">
+      <div class="q-num">Question 8 of 12</div>
+      <div class="q-text">A CI pipeline needs to parse Claude Code's output programmatically to post it as a PR comment. Which flag enables this?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q8', false)">A. <code>--structured</code></div>
+        <div class="opt" onclick="answer(this, 'q8', true)">B. <code>--output-format json</code></div>
+        <div class="opt" onclick="answer(this, 'q8', false)">C. <code>--json-output</code></div>
+        <div class="opt" onclick="answer(this, 'q8', false)">D. <code>--format=machine</code></div>
+      </div>
+      <div class="explanation" id="exp-q8"><code>--output-format json</code> wraps the response in a structured JSON envelope with a <code>result</code> field. This makes pipeline parsing reliable — no fragile string parsing of prose output.</div>
+    </div>
+
+    <!-- Q9 -->
+    <div class="quiz-q" id="q9">
+      <div class="q-num">Question 9 of 12</div>
+      <div class="q-text">A team wants Claude Code in CI to execute without any hooks, skills, or CLAUDE.md loading for a reproducible build. Which flag achieves this?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q9', false)">A. <code>--no-config</code></td></tr></div>
+        <div class="opt" onclick="answer(this, 'q9', true)">B. <code>--bare</code></div>
+        <div class="opt" onclick="answer(this, 'q9', false)">C. Running inside Docker (isolates all config automatically)</div>
+        <div class="opt" onclick="answer(this, 'q9', false)">D. <code>--skip-config</code></div>
+      </div>
+      <div class="explanation" id="exp-q9"><code>--bare</code> skips ALL auto-discovery: hooks, skills, MCP servers, and CLAUDE.md files. <code>--no-config</code> and <code>--skip-config</code> don't exist. Docker does NOT automatically isolate config — use <code>--bare</code> explicitly.</div>
+    </div>
+
+    <!-- Q10 -->
+    <div class="quiz-q" id="q10">
+      <div class="q-num">Question 10 of 12</div>
+      <div class="q-text">A developer wants to use plan mode to pause and approve each individual file edit before Claude makes it. Is this how plan mode works?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q10', false)">A. Yes — plan mode pauses before each file modification.</div>
+        <div class="opt" onclick="answer(this, 'q10', true)">B. No — plan mode prevents all source file modifications. For mid-execution gating, use a PreToolUse hook.</div>
+        <div class="opt" onclick="answer(this, 'q10', false)">C. Yes — plan mode pauses at steps the developer marks with <code>[CHECKPOINT]</code>.</div>
+        <div class="opt" onclick="answer(this, 'q10', false)">D. No — use <code>--approve-each-edit</code> flag for per-file approval.</div>
+      </div>
+      <div class="explanation" id="exp-q10">Plan mode = safe exploration BEFORE execution. It does not gate steps during execution. Claude can read files and write a plan, but makes zero source file changes. For mid-execution approval on specific operations, use a PreToolUse hook. <code>--approve-each-edit</code> doesn't exist.</div>
+    </div>
+
+    <!-- Q11 -->
+    <div class="quiz-q" id="q11">
+      <div class="q-num">Question 11 of 12</div>
+      <div class="q-text">A CI pipeline generates tests in Step 1 and then has Claude Code review them in Step 2, all in the same session. What problem does this create?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q11', false)">A. The second call will fail because Claude doesn't accept piped input.</div>
+        <div class="opt" onclick="answer(this, 'q11', true)">B. Self-review bias — the reviewer shares the generator's reasoning context and is less likely to question its own decisions.</div>
+        <div class="opt" onclick="answer(this, 'q11', false)">C. The session will run out of tokens after two large operations.</div>
+        <div class="opt" onclick="answer(this, 'q11', false)">D. No problem — reviewing in the same session improves coherence.</div>
+      </div>
+      <div class="explanation" id="exp-q11">Self-review bias: the reviewer retains the generator's reasoning and tends to defend its own choices. The fix is an independent review instance — a separate, fresh Claude invocation for the review step with no context from generation.</div>
+    </div>
+
+    <!-- Q12 -->
+    <div class="quiz-q" id="q12">
+      <div class="q-num">Question 12 of 12</div>
+      <div class="q-text">A developer wants to customize the team's <code>/analyze</code> skill with additional verbosity options, just for themselves, without changing the shared skill. What is the correct approach?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q12', false)">A. Add <code>override: true</code> to their local copy of <code>.claude/skills/analyze/SKILL.md</code>.</div>
+        <div class="opt" onclick="answer(this, 'q12', false)">B. Edit the team's SKILL.md and add a <code>personal:</code> section.</div>
+        <div class="opt" onclick="answer(this, 'q12', true)">C. Create <code>~/.claude/skills/analyze-verbose/SKILL.md</code> with a different name.</div>
+        <div class="opt" onclick="answer(this, 'q12', false)">D. Copy the team skill to <code>~/.claude/skills/analyze/SKILL.md</code> — user scope overrides project scope.</div>
+      </div>
+      <div class="explanation" id="exp-q12">Create a personal variant with a <strong>different name</strong> in <code>~/.claude/skills/</code>. The different name means both coexist without conflict. <code>override: true</code> doesn't exist. Option D would create conflicts since both would be named <code>/analyze</code>.</div>
+    </div>
+
+    <button id="quiz-btn" onclick="showScore()">Show My Score</button>
+
+    <div class="quiz-score" id="quiz-score">
+      <div class="score-num" id="score-display">0/12</div>
+      <p id="score-msg" style="color:var(--muted); margin-top:8px;"></p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  let scores = {};
+
+  function answer(el, qid, correct) {
+    const q = document.getElementById(qid);
+    if (q.dataset.answered) return;
+    q.dataset.answered = 'true';
+    scores[qid] = correct;
+
+    const opts = q.querySelectorAll('.opt');
+    opts.forEach(o => {
+      o.style.pointerEvents = 'none';
+      if (o === el) {
+        o.classList.add(correct ? 'correct' : 'wrong');
+      } else if (correct === false && o.onclick.toString().includes('true')) {
+        o.classList.add('reveal-correct');
+      }
+    });
+
+    const exp = document.getElementById('exp-' + qid);
+    if (exp) exp.classList.add('show');
+  }
+
+  function showScore() {
+    const total = 12;
+    const got = Object.values(scores).filter(Boolean).length;
+    document.getElementById('score-display').textContent = got + '/' + total;
+    const pct = Math.round(got / total * 100);
+    let msg = pct >= 90 ? 'Excellent — Domain 3 mastered.' :
+              pct >= 75 ? 'Good — review the questions you missed.' :
+              pct >= 60 ? 'Getting there — re-read the exam trap tables.' :
+              'Needs work — walk through the exercise tabs again.';
+    document.getElementById('score-msg').textContent = pct + '% — ' + msg;
+    document.getElementById('quiz-score').classList.add('show');
+    document.getElementById('quiz-btn').style.display = 'none';
+  }
+</script>
+</body>
+</html>
