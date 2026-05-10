@@ -171,7 +171,7 @@
         <div class="kv-row"><span class="kv-key">Same-scope conflict</span><span class="kv-val">Claude picks arbitrarily — eliminate them at source</span></div>
         <div class="kv-row"><span class="kv-key">Load timing</span><span class="kv-val">Re-read fresh each session — not cached</span></div>
         <div class="kv-row"><span class="kv-key">Size target</span><span class="kv-val">Under 200 lines — split into .claude/rules/ with @import</span></div>
-        <div class="kv-row"><span class="kv-key">Diagnose loaded files</span><span class="kv-val">Run <code>/memory</code> in Claude Code</span></div>
+        <div class="kv-row"><span class="kv-key">Diagnose loaded files</span><span class="kv-val">Ask Claude directly: "Which CLAUDE.md files are you currently loading?" — <code>/memory</code> opens the file for editing, not a list</span></div>
       </div>
 
       <h3>Exam Trap Table — 3.1</h3>
@@ -328,7 +328,7 @@ paths:
         <div class="kv-row"><span class="kv-key">Rules with paths:</span><span class="kv-val">Conditional — load only when editing a matching file</span></div>
         <div class="kv-row"><span class="kv-key">Override behavior</span><span class="kv-val">None — all matching sources are concatenated, not overridden</span></div>
         <div class="kv-row"><span class="kv-key">Token benefit</span><span class="kv-val">Only loads when relevant — saves tokens when working in unrelated areas</span></div>
-        <div class="kv-row"><span class="kv-key">Diagnose</span><span class="kv-val">Run /memory to see which rules files are currently loaded</span></div>
+        <div class="kv-row"><span class="kv-key">Diagnose</span><span class="kv-val">Ask Claude directly: "Which CLAUDE.md files are you currently loading?"</span></div>
       </div>
 
       <h3>Exam Trap Table — 3.3</h3>
@@ -593,7 +593,7 @@ Grep("isError", glob="**/*.json")
       <table>
         <thead><tr><th>Command</th><th>What it does</th><th>Exam relevance</th></tr></thead>
         <tbody>
-          <tr><td><code>/memory</code></td><td>Lists all loaded CLAUDE.md and rules files</td><td>Primary diagnostic for "why isn't my rule applying?"</td></tr>
+          <tr><td><code>/memory</code></td><td>Opens CLAUDE.md for editing — does NOT list loaded files. To diagnose which files are active, ask Claude: "Which CLAUDE.md files are you currently loading?"</td><td>Primary diagnostic for "why isn't my rule applying?"</td></tr>
           <tr><td><code>/compact</code></td><td>Summarizes conversation to reclaim token budget; project CLAUDE.md is re-read from disk after compacting</td><td>Fix for context degradation in long sessions (D5.4)</td></tr>
           <tr><td><code>/init</code></td><td>Generates a starter CLAUDE.md by analyzing the current project</td><td>Correct command — NOT /setup or /config init</td></tr>
           <tr><td><code>/clear</code></td><td>Clears conversation history entirely (fresh start)</td><td>Use when prior tool results are stale — not just long</td></tr>
@@ -661,7 +661,7 @@ Grep("isError", glob="**/*.json")
         <div class="opt" onclick="answer(this, 'q2', true)">C. <code>/memory</code></div>
         <div class="opt" onclick="answer(this, 'q2', false)">D. <code>/debug</code></div>
       </div>
-      <div class="explanation" id="exp-q2"><code>/memory</code> is the diagnostic command that lists every memory file currently loaded. Use it to diagnose "why isn't my rule applying?"</div>
+      <div class="explanation" id="exp-q2"><code>/memory</code> opens your CLAUDE.md for editing — it does <strong>not</strong> list loaded files. To see which CLAUDE.md and rules files are currently active, ask Claude directly: "Which CLAUDE.md files are you currently loading?" Among the four options, C is correct by elimination — /config, /status, and /debug are not real Claude Code commands.</div>
     </div>
 
     <!-- Q3 -->

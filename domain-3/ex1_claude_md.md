@@ -36,11 +36,11 @@ If two rules at the same scope conflict, Claude picks one arbitrarily. Eliminate
 
 ### Step 1: Look at what this project already has
 
-Open the `cca-exercises/` folder in Claude Code, then ask:
+Open the `cca-exercises/` folder in Claude Code, then ask Claude directly:
 ```
-/memory
+Which CLAUDE.md files are you currently loading?
 ```
-This lists every memory file currently loaded. You'll see the project-level `.claude/settings.json`.
+Claude Code will report all active CLAUDE.md files from its context. `/memory` opens the CLAUDE.md for editing — it does NOT list loaded files.
 
 ### Step 2: Create a project-level CLAUDE.md
 
