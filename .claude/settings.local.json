@@ -6,7 +6,11 @@
       "Bash(awk -F: ':*)",
       "Bash(awk ':*)",
       "Bash(grep -A 80 '^SUBDOMAIN: __TRACKED_VAR__$' /tmp/all_domain1_clean.txt)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(python:*)",
+      "Bash(git -C \"C:\\\\Users\\\\zac.ramsey\\\\Desktop\\\\cca-exercises\" add domain-4/ex3_tool_choice.py html-resource-guide/d4-review.html)",
+      "Bash(git -C 'C:\\\\Users\\\\zac.ramsey\\\\Desktop\\\\cca-exercises' commit -m ':*)",
+      "Bash(git:*)"
     ]
   }
 }
