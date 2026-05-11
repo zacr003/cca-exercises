@@ -516,8 +516,8 @@ file_path = tool_input.get("file_path", "")
       <div class="q-text">The model returns <code>stop_reason: "max_tokens"</code>. What should the agentic loop do?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q1',false)">A. Treat it as <code>end_turn</code> — the model is done.</div>
-        <div class="opt" onclick="answer(this,'q1',true)">B. The response was truncated — raise max_tokens and retry with a continuation prompt.</div>
-        <div class="opt" onclick="answer(this,'q1',false)">C. Send the partial response to the user and ask them to continue.</div>
+        <div class="opt" onclick="answer(this,'q1',false)">B. Send the partial response to the user and ask them to continue.</div>
+        <div class="opt" onclick="answer(this,'q1',true)">C. The response was truncated — raise max_tokens and retry with a continuation prompt.</div>
         <div class="opt" onclick="answer(this,'q1',false)">D. Restart the loop from the beginning.</div>
       </div>
       <div class="explanation" id="exp-q1">max_tokens = truncation mid-generation. The agent is NOT done. Double max_tokens and send a continuation prompt to finish the response.</div>
@@ -527,8 +527,8 @@ file_path = tool_input.get("file_path", "")
       <div class="q-num">Question 2 of 12</div>
       <div class="q-text">The model returns a response with 3 tool_use blocks. How should the loop handle them?</div>
       <div class="options">
-        <div class="opt" onclick="answer(this,'q2',false)">A. Execute the first one, return the result, then execute the second, etc.</div>
-        <div class="opt" onclick="answer(this,'q2',true)">B. Execute all 3, collect all results, then return all 3 tool_results in ONE user message.</div>
+        <div class="opt" onclick="answer(this,'q2',true)">A. Execute all 3, collect all results, then return all 3 tool_results in ONE user message.</div>
+        <div class="opt" onclick="answer(this,'q2',false)">B. Execute the first one, return the result, then execute the second, etc.</div>
         <div class="opt" onclick="answer(this,'q2',false)">C. Execute all 3, but return each result in a separate user message.</div>
         <div class="opt" onclick="answer(this,'q2',false)">D. Execute only the most relevant one based on the user's original request.</div>
       </div>
@@ -540,9 +540,9 @@ file_path = tool_input.get("file_path", "")
       <div class="q-text">A coordinator dispatches a subagent with the task: "Analyze what we discussed earlier about microservices." The subagent returns generic output. Why?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q3',false)">A. The subagent model is less capable than the coordinator model.</div>
-        <div class="opt" onclick="answer(this,'q3',true)">B. Subagents don't inherit coordinator context — "what we discussed" is invisible to the subagent.</div>
-        <div class="opt" onclick="answer(this,'q3',false)">C. The subagent needs a longer max_tokens setting.</div>
-        <div class="opt" onclick="answer(this,'q3',false)">D. Subagents require a separate API key.</div>
+        <div class="opt" onclick="answer(this,'q3',false)">B. The subagent needs a longer max_tokens setting.</div>
+        <div class="opt" onclick="answer(this,'q3',false)">C. Subagents require a separate API key.</div>
+        <div class="opt" onclick="answer(this,'q3',true)">D. Subagents don't inherit coordinator context — "what we discussed" is invisible to the subagent.</div>
       </div>
       <div class="explanation" id="exp-q3">Subagents start fresh — they have zero access to the coordinator's conversation history. All necessary context must be passed explicitly via system prompt and task message.</div>
     </div>
@@ -564,9 +564,9 @@ file_path = tool_input.get("file_path", "")
       <div class="q-text">A PostToolUse hook strips email addresses from tool results. A customer's email appeared in turn 3 of a 10-turn conversation. Is turn 3's email now redacted?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q5',false)">A. Yes — PostToolUse hooks retroactively clean conversation history.</div>
-        <div class="opt" onclick="answer(this,'q5',true)">B. No — PostToolUse only cleans the current result. History from earlier turns is not affected.</div>
-        <div class="opt" onclick="answer(this,'q5',false)">C. Only if the hook was active in turn 3 when the email first appeared.</div>
-        <div class="opt" onclick="answer(this,'q5',false)">D. Yes — hooks process all tool results in the session at once.</div>
+        <div class="opt" onclick="answer(this,'q5',false)">B. Only if the hook was active in turn 3 when the email first appeared.</div>
+        <div class="opt" onclick="answer(this,'q5',false)">C. Yes — hooks process all tool results in the session at once.</div>
+        <div class="opt" onclick="answer(this,'q5',true)">D. No — PostToolUse only cleans the current result. History from earlier turns is not affected.</div>
       </div>
       <div class="explanation" id="exp-q5">PostToolUse hooks only affect the current tool result being returned. They don't retroactively clean history. For full PII hygiene, sanitize at the source — in the tool implementation itself.</div>
     </div>
@@ -587,8 +587,8 @@ file_path = tool_input.get("file_path", "")
       <div class="q-num">Question 7 of 12</div>
       <div class="q-text">A code review of a 15-file codebase is done in a single pass. What specific problem does this cause?</div>
       <div class="options">
-        <div class="opt" onclick="answer(this,'q7',false)">A. The model runs out of context window space.</div>
-        <div class="opt" onclick="answer(this,'q7',true)">B. Attention dilutes across files; local and cross-file issues blur together; cross-file bugs that require seeing multiple files are missed.</div>
+        <div class="opt" onclick="answer(this,'q7',true)">A. Attention dilutes across files; local and cross-file issues blur together; cross-file bugs that require seeing multiple files are missed.</div>
+        <div class="opt" onclick="answer(this,'q7',false)">B. The model runs out of context window space.</div>
         <div class="opt" onclick="answer(this,'q7',false)">C. Tool descriptions become ambiguous with many files involved.</div>
         <div class="opt" onclick="answer(this,'q7',false)">D. The model can only reliably review 5 files at once.</div>
       </div>
@@ -612,8 +612,8 @@ file_path = tool_input.get("file_path", "")
       <div class="q-text">What is the correct way to determine if the agentic loop should stop?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q9',false)">A. Check if the response text contains "I have completed" or "Done."</div>
-        <div class="opt" onclick="answer(this,'q9',false)">B. Check if response.content has only text blocks (no tool_use blocks).</div>
-        <div class="opt" onclick="answer(this,'q9',true)">C. Check <code>stop_reason == "end_turn"</code> — the ONLY termination signal.</div>
+        <div class="opt" onclick="answer(this,'q9',true)">B. Check <code>stop_reason == "end_turn"</code> — the ONLY termination signal.</div>
+        <div class="opt" onclick="answer(this,'q9',false)">C. Check if response.content has only text blocks (no tool_use blocks).</div>
         <div class="opt" onclick="answer(this,'q9',false)">D. Count the number of tool calls and stop after a fixed limit.</div>
       </div>
       <div class="explanation" id="exp-q9">stop_reason is the ONLY termination signal. Parsing text content is unreliable — the model might include phrases like "Done" before calling more tools, or might not. Only "end_turn" means the loop should stop.</div>
@@ -649,8 +649,8 @@ file_path = tool_input.get("file_path", "")
       <div class="options">
         <div class="opt" onclick="answer(this,'q12',false)">A. Make the system prompt instruction more explicit and detailed.</div>
         <div class="opt" onclick="answer(this,'q12',false)">B. Add a few-shot example showing the verify → refund sequence.</div>
-        <div class="opt" onclick="answer(this,'q12',true)">C. Add a programmatic gate inside process_refund that checks verified state and returns an error if not met.</div>
-        <div class="opt" onclick="answer(this,'q12',false)">D. Use tool_choice: "any" to force the model to call verify_customer first.</div>
+        <div class="opt" onclick="answer(this,'q12',false)">C. Use tool_choice: "any" to force the model to call verify_customer first.</div>
+        <div class="opt" onclick="answer(this,'q12',true)">D. Add a programmatic gate inside process_refund that checks verified state and returns an error if not met.</div>
       </div>
       <div class="explanation" id="exp-q12">Prompt instructions = probabilistic. Hard compliance requires a programmatic gate inside the tool. The gate fires regardless of what the model does — it's deterministic. tool_choice: "any" guarantees some tool is called, but not which one or in what order.</div>
     </div>
