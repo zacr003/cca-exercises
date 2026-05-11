@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mark Kashef — CCA-F Study Guide</title>
+<style>
+  :root {
+    --bg: #0f0f0f;
+    --surface: #1a1a1a;
+    --card: #222;
+    --border: #333;
+    --accent: #e8a045;
+    --accent2: #c87320;
+    --text: #e0e0e0;
+    --muted: #888;
+    --green: #4caf50;
+    --red: #ef5350;
+    --blue: #42a5f5;
+    --purple: #ab47bc;
+    --teal: #26a69a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; line-height: 1.6; }
+
+  header { background: linear-gradient(135deg, #1a0f00, #2d1800); border-bottom: 2px solid var(--accent); padding: 24px 32px; }
+  header h1 { font-size: 1.6rem; color: var(--accent); letter-spacing: 0.04em; }
+  header p { color: var(--muted); margin-top: 4px; font-size: 0.85rem; }
+  .badge { display: inline-block; background: var(--accent2); color: #fff; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; margin-left: 10px; vertical-align: middle; }
+
+  nav { display: flex; flex-wrap: wrap; gap: 4px; padding: 12px 24px; background: var(--surface); border-bottom: 1px solid var(--border); }
+  nav button { background: transparent; border: 1px solid var(--border); color: var(--muted); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; transition: all 0.15s; }
+  nav button:hover { border-color: var(--accent); color: var(--accent); }
+  nav button.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
+
+  .tab { display: none; padding: 28px 32px; max-width: 1100px; margin: 0 auto; }
+  .tab.active { display: block; }
+
+  h2 { font-size: 1.2rem; color: var(--accent); margin-bottom: 18px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+  h3 { font-size: 1rem; color: #ddd; margin: 20px 0 8px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px; }
+
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; position: relative; }
+  .card-title { font-size: 0.95rem; font-weight: 700; color: var(--accent); margin-bottom: 10px; }
+  .card ul { padding-left: 18px; }
+  .card li { margin-bottom: 5px; color: var(--text); }
+
+  .tldr { background: #1c1200; border-left: 3px solid var(--accent); border-radius: 0 6px 6px 0; padding: 10px 14px; margin-top: 14px; font-size: 0.85rem; color: #d4a050; }
+  .tldr strong { color: var(--accent); }
+
+  .exam-tip { background: #0d1a0d; border: 1px solid #2d5a2d; border-radius: 6px; padding: 10px 14px; margin-top: 10px; font-size: 0.82rem; color: #7ec87e; }
+  .exam-tip strong { color: var(--green); }
+
+  .trap { background: #1a0d0d; border-left: 3px solid var(--red); border-radius: 0 6px 6px 0; padding: 10px 14px; margin-top: 10px; font-size: 0.82rem; color: #e07070; }
+  .trap strong { color: var(--red); }
+
+  table { width: 100%; border-collapse: collapse; margin: 12px 0; }
+  th { background: #1f1f1f; color: var(--accent); text-align: left; padding: 8px 12px; font-size: 0.8rem; border-bottom: 1px solid var(--border); }
+  td { padding: 8px 12px; border-bottom: 1px solid #2a2a2a; font-size: 0.83rem; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+
+  .domain-bar { display: flex; align-items: center; gap: 10px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; margin-bottom: 8px; }
+  .domain-pct { font-size: 1.4rem; font-weight: 700; color: var(--accent); min-width: 52px; }
+  .domain-label { flex: 1; font-size: 0.9rem; font-weight: 600; }
+  .domain-desc { font-size: 0.78rem; color: var(--muted); }
+
+  .rule-row { display: grid; grid-template-columns: 40px 1fr 1fr; gap: 12px; align-items: start; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 10px; }
+  .rule-num { font-size: 1.6rem; font-weight: 900; color: var(--accent); line-height: 1; }
+  .rule-title { font-size: 0.95rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .rule-body { font-size: 0.85rem; color: var(--text); }
+  .rule-map { font-size: 0.78rem; color: var(--muted); background: #1f1f1f; border-radius: 4px; padding: 4px 8px; }
+
+  .quote { border-left: 3px solid var(--accent2); padding: 8px 14px; margin: 10px 0; font-style: italic; color: #bbb; font-size: 0.88rem; }
+  .quote cite { display: block; color: var(--muted); font-size: 0.78rem; margin-top: 4px; font-style: normal; }
+
+  .resource-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 12px; }
+  .resource-card h4 { color: var(--accent); font-size: 0.95rem; margin-bottom: 6px; }
+  .resource-card p { font-size: 0.84rem; color: var(--muted); }
+  .resource-card a { color: var(--blue); text-decoration: none; font-size: 0.83rem; }
+  .resource-card a:hover { text-decoration: underline; }
+
+  .section-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 24px 0 10px; }
+
+  code { background: #1e1e1e; border: 1px solid #333; border-radius: 4px; padding: 1px 5px; font-family: 'Consolas', monospace; font-size: 0.82rem; color: #ce9178; }
+
+  .five-rules-table { border: 2px solid var(--accent2); border-radius: 10px; overflow: hidden; }
+  .five-rules-table th { background: var(--accent2); color: #000; font-size: 0.85rem; }
+  .five-rules-table td:first-child { color: var(--accent); font-weight: 700; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>CCA-F Study Guide <span class="badge">Mark Kashef · Mar 2026</span></h1>
+  <p>26-page visual guide · All 5 domains · The 5 Rules cheat sheet · Exam tips with Q&amp;A answers</p>
+</header>
+
+<nav>
+  <button class="active" onclick="show('overview')">Overview</button>
+  <button onclick="show('d1')">D1 · Agentic (27%)</button>
+  <button onclick="show('d2')">D2 · Tool Design (18%)</button>
+  <button onclick="show('d3')">D3 · Config (20%)</button>
+  <button onclick="show('d4')">D4 · Prompt Eng (20%)</button>
+  <button onclick="show('d5')">D5 · Context (15%)</button>
+  <button onclick="show('rules')">The 5 Rules</button>
+  <button onclick="show('resources')">Resources</button>
+</nav>
+
+<!-- ===== OVERVIEW ===== -->
+<div id="overview" class="tab active">
+  <h2>The 5 Domains Overview</h2>
+
+  <div class="domain-bar">
+    <div class="domain-pct">27%</div>
+    <div>
+      <div class="domain-label">Domain 1 — Agentic Architecture</div>
+      <div class="domain-desc">How agents loop, coordinate with subagents, and enforce rules with hooks vs prompts</div>
+    </div>
+  </div>
+  <div class="domain-bar">
+    <div class="domain-pct">20%</div>
+    <div>
+      <div class="domain-label">Domain 3 — Claude Code Configuration</div>
+      <div class="domain-desc">CLAUDE.md hierarchy, skills, commands, plan mode, and CI/CD</div>
+    </div>
+  </div>
+  <div class="domain-bar">
+    <div class="domain-pct">20%</div>
+    <div>
+      <div class="domain-label">Domain 4 — Prompt Engineering</div>
+      <div class="domain-desc">Few-shot examples, structured output with JSON schemas, and validation loops</div>
+    </div>
+  </div>
+  <div class="domain-bar">
+    <div class="domain-pct">18%</div>
+    <div>
+      <div class="domain-label">Domain 2 — Tool Design &amp; MCP</div>
+      <div class="domain-desc">How Claude connects to external systems and how tool descriptions determine routing</div>
+    </div>
+  </div>
+  <div class="domain-bar">
+    <div class="domain-pct">15%</div>
+    <div>
+      <div class="domain-label">Domain 5 — Context Management</div>
+      <div class="domain-desc">Lost-in-the-middle effect, escalation patterns, and error propagation</div>
+    </div>
+  </div>
+
+  <div class="section-label">How to Use This Guide</div>
+  <table>
+    <tr><th>Step</th><th>What to Do</th></tr>
+    <tr><td>1</td><td>Study one domain at a time — work through one tab per study session</td></tr>
+    <tr><td>2</td><td>Read the <strong>TL;DR</strong> first (the coral box) — that's the one thing to remember</td></tr>
+    <tr><td>3</td><td>Memorize the <strong>Exam Tips</strong> — they tell you exactly how Anthropic tests each concept</td></tr>
+    <tr><td>4</td><td>Print the <strong>5 Rules</strong> tab and keep it visible while studying</td></tr>
+    <tr><td>5</td><td>If you only study one domain: <strong>Domain 1 (27%)</strong> — it's the foundation for everything else</td></tr>
+  </table>
+
+  <div class="quote">
+    "The cert covers a lot of ground. This guide distills each domain into the concepts that matter for both the exam and real-world usage — so you get the 80/20 without reading 40 pages."
+    <cite>— Mark Kashef</cite>
+  </div>
+</div>
+
+<!-- ===== D1 ===== -->
+<div id="d1" class="tab">
+  <h2>Domain 1 — Agentic Architecture (27%)</h2>
+
+  <div class="section-label">Concept 1 of 3 — The Agentic Loop</div>
+  <div class="card">
+    <div class="card-title">The Agentic Loop</div>
+    <ul>
+      <li>Your code sends a request. Claude responds. You check the <code>stop_reason</code> field.</li>
+      <li>If <code>stop_reason == "tool_use"</code>: execute the tool, add the result back, send again</li>
+      <li>If <code>stop_reason == "end_turn"</code>: Claude is done. Print the response.</li>
+      <li><strong>Anti-patterns to memorize:</strong></li>
+      <li>Don't parse text for "I'm done" — text content is NOT a control signal</li>
+      <li>Don't set arbitrary iteration limits as the primary stop mechanism</li>
+      <li>Don't check if Claude said "complete"</li>
+      <li>Just read <code>stop_reason</code>. That's the only reliable signal.</li>
+    </ul>
+    <div class="tldr"><strong>TL;DR:</strong> The loop is: send request → check stop_reason → execute tool or stop. Nothing else.</div>
+    <div class="exam-tip"><strong>Exam Tip:</strong> The exam tests whether you know the three anti-patterns. Memorize them. <code>max_tokens</code> = truncated (not complete) → raise max_tokens and retry.</div>
+  </div>
+
+  <div class="section-label">Concept 2 of 3 — Hub-and-Spoke Architecture</div>
+  <div class="card">
+    <div class="card-title">Hub-and-Spoke (Coordinator/Subagent)</div>
+    <ul>
+      <li>One coordinator breaks tasks down, delegates to specialized subagents, combines results</li>
+      <li>Each subagent has <strong>isolated context</strong> — they cannot see each other's work</li>
+      <li>The coordinator must <strong>explicitly pass</strong> all information between subagents</li>
+      <li>Common mistake: coordinator decomposes too narrowly, missing entire categories</li>
+      <li>Fix: give broad research goals, not narrow checklists</li>
+      <li>Emit multiple <code>Task</code> calls in a <strong>single coordinator response</strong> for parallelism — not across separate turns</li>
+    </ul>
+    <div class="tldr"><strong>TL;DR:</strong> Subagents are isolated. If the coordinator doesn't pass it, the subagent doesn't know it.</div>
+    <div class="exam-tip"><strong>Exam Tip:</strong> The exam has questions about narrow decomposition causing incomplete coverage. Coordinator prompts should specify goals + quality criteria, not step-by-step procedures.</div>
+  </div>
+
+  <div class="section-label">Concept 3 of 3 — The Enforcement Question: Prompts vs. Hooks</div>
+  <div class="card">
+    <div class="card-title">Prompts vs. Hooks — The Most Important Concept in the Cert</div>
+    <ul>
+      <li>Prompts are <strong>probabilistic</strong> — they work most of the time, but not always</li>
+      <li><strong>Canonical example:</strong> a well-crafted system prompt can still fail ~12% of the time</li>
+      <li>Hooks are <strong>deterministic</strong> — they physically block actions unless conditions are met. 100% enforcement.</li>
+      <li>Prompts = best for style, tone, formatting (occasional inconsistency acceptable)</li>
+      <li>Hooks = best for financial, compliance, security (one failure has real consequences)</li>
+    </ul>
+    <div class="tldr"><strong>TL;DR — Prompts are suggestions. Hooks are laws.</strong> When money is on the line, use hooks, not prompts.</div>
+    <div class="exam-tip"><strong>Exam Tip:</strong> Q1 correct answer: <strong>A</strong> — programmatic prerequisite that blocks downstream tools. "PreToolUse hook" is always the correct answer when the scenario describes compliance/financial enforcement.</div>
+    <div class="trap"><strong>Trap:</strong> "A well-crafted system prompt" or "detailed instructions" are always the wrong answer for hard compliance scenarios.</div>
+  </div>
+
+  <div class="section-label">Quick Reference</div>
+  <table>
+    <tr><th>stop_reason</th><th>Meaning</th><th>Action</th></tr>
+    <tr><td><code>"tool_use"</code></td><td>Claude wants to call a tool</td><td>Execute ALL tool_use blocks, return ALL results in ONE message</td></tr>
+    <tr><td><code>"end_turn"</code></td><td>Claude is done</td><td>Stop the loop, return result</td></tr>
+    <tr><td><code>"max_tokens"</code></td><td>Response was TRUNCATED</td><td>Raise max_tokens and retry — do NOT treat as completion</td></tr>
+    <tr><td><code>"refusal"</code></td><td>Claude declined</td><td>Do not retry identically</td></tr>
+  </table>
+</div>
+
+<!-- ===== D2 ===== -->
+<div id="d2" class="tab">
+  <h2>Domain 2 — Tool Design &amp; MCP (18%)</h2>
+
+  <div class="section-label">Concept 1 of 3 — Tool Descriptions Matter</div>
+  <div class="card">
+    <div class="card-title">Tool Descriptions — The Highest-Leverage Fix</div>
+    <ul>
+      <li>Tool descriptions are how Claude decides which tool to call</li>
+      <li>Vague, overlapping descriptions cause frequent misrouting</li>
+      <li>Fix: include <strong>input format</strong>, <strong>return type</strong>, and <strong>when to use this tool vs alternatives</strong></li>
+      <li>Adding a <em>"do NOT use this for…"</em> line dramatically reduces errors</li>
+      <li>Better descriptions beat few-shot examples, routing layers, or any other fix</li>
+      <li>Fix <strong>both</strong> overlapping tools, not just one</li>
+    </ul>
+    <div class="tldr"><strong>TL;DR:</strong> The description IS the interface. Fix descriptions before trying anything more complex. Every wrong tool call costs tokens.</div>
+    <div class="exam-tip"><strong>Exam Tip:</strong> Q2 correct answer: <strong>B</strong> — expand tool descriptions. If an agent ignores a custom tool and uses built-ins instead → the description is too thin, not a config problem.</div>
+    <div class="trap"><strong>Trap:</strong> "Add a routing classifier" or "add few-shot examples" are over-engineered wrong answers. Description first.</div>
+  </div>
+
+  <div class="section-label">Concept 2 of 3 — MCP Server Scoping</div>
+  <div class="card">
+    <div class="card-title">Project vs. User Level MCP Configuration</div>
+    <ul>
+      <li>MCP is how Claude connects to external tools like GitHub, Slack, databases</li>
+      <li><strong>Project-level</strong> (<code>.mcp.json</code>): shared with team via git. Uses <code>${ENV_VAR}</code> for secrets.</li>
+      <li><strong>User-level</strong> (<code>~/.claude.json</code>): personal sandbox. Not shared. For experiments.</li>
+      <li>Use <strong>community MCP servers</strong> for standard integrations (GitHub, Slack, etc.)</li>
+      <li>Only build <strong>custom MCP</strong> for unique workflows not covered by community servers</li>
+      <li>Skills are more token-efficient than custom MCP for simple workflows</li>
+    </ul>
+    <div class="tldr"><strong>TL;DR:</strong> Project MCP = team tools (shared). User MCP = your playground (personal). Never hardcode secrets — use <code>${ENV_VAR}</code>.</div>
+    <div class="exam-tip"><strong>Exam Tip:</strong> Hardcoded secrets in <code>.mcp.json</code> = wrong. Always <code>${GITHUB_TOKEN}</code> style. Team tools go in project-level config so they're version-controlled and shared.</div>
+  </div>
+
+  <div class="section-label">Concept 3 of 3 — The Tool Overload Problem</div>
+  <div class="card">
+    <div class="card-title">Fewer Tools = Better Decisions</div>
+    <ul>
+      <li>18 tools = confused agent. <strong>4–5 focused tools = precise, reliable agent.</strong></li>
+      <li><code>tool_choice</code> modes: <code>"auto"</code> (Claude decides), <code>"any"</code> (must use a tool, Claude picks), <code>"forced"</code> (must use this specific tool)</li>
+      <li>Pattern: force the right tool on step one, then switch to <code>"auto"</code> for the rest</li>
+      <li>Constraint makes agents precise — fewer choices = better decisions</li>
+      <li>15+ tools → misrouting becomes common → split into specialized agents</li>
+    </ul>
+    <div class="tldr"><strong>TL;DR:</strong> Keep agents to 4–5 tools max. An agent with 18 tools makes worse decisions than one with 5. Constraint is a feature, not a limitation.</div>
+    <div class="trap"><strong>Trap:</strong> "tool_choice: any" forces tool use but lets Claude pick which one. "tool_choice: auto" may return plain text (no tool call). These are not the same.</div>
+  </div>
+
+  <div class="section-label">Tool Count Spectrum</div>
+  <table>
+    <tr><th>Agent Role</th><th>Tool Count</th><th>Notes</th></tr>
+    <tr><td>Specialized subagent</td><td>2–4</td><td>Focused on a single domain</td></tr>
+    <tr><td>General-purpose agent</td><td>4–6</td><td>Covers its full responsibility area</td></tr>
+    <tr><td>Coordinator</td><td>Task tool + own analysis</td><td>Spawns subagents; minimal direct tools</td></tr>
+    <tr><td>15+ tools</td><td>Misrouting common</td><td>Split into multiple specialized agents</td></tr>
+  </table>
+</div>
+
+<!-- ===== D3 ===== -->
+<div id="d3" class="tab">
+  <h2>Domain 3 — Claude Code Configuration (20%)</h2>
+
+  <div class="section-label">Concept 1 of 3 — The Configuration Hierarchy</div>
+  <div class="card">
+    <div class="card-title">Three Layers — Stop Dumping Everything in One File</div>
+    <ul>
+      <li><strong>User-level</strong> (<code>~/.claude/CLAUDE.md</code>): personal preferences — not shared via git</li>
+      <li><strong>Project-level</strong> (<code>.claude/CLAUDE.md</code>): team rules and conventions — shared via version control</li>
+      <li><strong>Path-specific</strong> (<code>.claude/rules/*.md</code>): conditional rules that only load for matching files</li>
+      <li>Example: testing rules only load when editing test files; API rules only in the API folder</li>
+      <li>This saves tokens and keeps Claude focused on what's relevant</li>
+      <li>Priority order: user > project > directory (all concatenated, not overridden)</li>
+    </ul>
+    <div class="tldr"><strong>TL;DR:</strong> CLAUDE.md is an instruction set, not a knowledge base. Split your monolith into three layers. Path-specific rules are the golden nugget — only load what applies.</div>
+    <div class="exam-tip"><strong>Exam Tip:</strong> The <code>paths:</code> frontmatter key is what makes rules path-scoped (NOT <code>projects:</code> or <code>directories:</code>). Files under <code>.claude/rules/</code> with <code>paths:</code> frontmatter only inject when editing matching files.</div>
+    <div class="trap"><strong>Trap:</strong> Directory-level CLAUDE.md loads on active generation/editing <em>in</em> that directory — NOT just from referencing files there.</div>
+  </div>
+
+  <div class="section-label">Concept 2 of 3 — Commands vs. Skills vs. Plan Mode</div>
+  <div class="card">
+    <div class="card-title">When to Use What</div>
+    <ul>
+      <li><strong>Commands:</strong> reusable prompts triggered with <code>/slash</code>. Team-wide in <code>.claude/commands/</code>, personal in <code>~/.claude/commands/</code></li>
+      <li><strong>Skills:</strong> runs in isolated context (<code>context: fork</code>). Defines allowed tools. Can prompt for arguments with <code>argument-hint</code>.</li>
+      <li><strong>Plan mode:</strong> for complex, ambiguous, multi-file tasks. Claude explores without modifying anything.</li>
+      <li><strong>Direct execution:</strong> for simple, single-file fixes. Don't over-plan straightforward changes.</li>
+      <li>All three share the same goal: keep the main conversation clean</li>
+    </ul>
+    <div class="tldr"><strong>TL;DR:</strong> Match the tool to task complexity. Skills isolate. Plan mode explores. Direct execution just does it.</div>
+    <div class="exam-tip"><strong>Exam Tip:</strong> Skill frontmatter has exactly 3 valid keys: <code>context</code>, <code>allowed-tools</code>, <code>argument-hint</code>. Nothing else. <code>context: fork</code> is what enables isolation.</div>
+    <div class="trap"><strong>Trap:</strong> Commands are prompts (text injected into conversation). Skills are isolated sub-agents. They are not the same thing.</div>
+  </div>
+
+  <div class="section-label">Concept 3 of 3 — Claude Code in CI/CD</div>
+  <div class="card">
+    <div class="card-title">Two Flags Turn Claude Code into an Automation Tool</div>
+    <ul>
+      <li><code>-p</code> flag: non-interactive. No prompts, no confirmations. Runs and returns the result.</li>
+      <li><code>--output-format json</code>: structured output that other tools can parse</li>
+      <li>Together, these let you trigger Claude Code from any CI/CD pipeline</li>
+      <li><strong>Critical:</strong> use a <strong>SEPARATE session</strong> for review. Same session that wrote the code is biased.</li>
+      <li>Fresh eyes — even AI eyes — catch more than self-review</li>
+      <li><code>--bare</code>: skips all auto-discovery (CLAUDE.md, settings). Use for clean isolated runs.</li>
+    </ul>
+    <div class="tldr"><strong>TL;DR:</strong> Write in one session, review in a different one. Self-review is inherently biased by prior reasoning. A fresh instance is a genuinely independent reviewer.</div>
+    <div class="exam-tip"><strong>Exam Tip:</strong> The CI/CD pattern always uses two separate Claude Code invocations: one to generate, one to review. Single-session review is explicitly the wrong answer.</div>
+  </div>
+
+  <div class="section-label">Quick Reference — Claude Code CLI Flags</div>
+  <table>
+    <tr><th>Flag</th><th>Purpose</th></tr>
+    <tr><td><code>-p</code></td><td>Non-interactive mode — no confirmations, runs headlessly in CI</td></tr>
+    <tr><td><code>--output-format json</code></td><td>Structured JSON output for pipeline consumption</td></tr>
+    <tr><td><code>--bare</code></td><td>Skip auto-discovery (CLAUDE.md, settings) — clean isolated run</td></tr>
+    <tr><td><code>--resume</code></td><td>Resume a previous session by ID</td></tr>
+  </table>
+</div>
+
+<!-- ===== D4 ===== -->
+<div id="d4" class="tab">
+  <h2>Domain 4 — Prompt Engineering &amp; Structured Output (20%)</h2>
+
+  <div class="section-label">Concept 1 of 3 — The Few-Shot Advantage</div>
+  <div class="card">
+    <div class="card-title">Why 2–3 Examples Beat a Full Page of Instructions</div>
+    <ul>
+      <li>When Claude gives inconsistent output, show it 2–3 examples instead of writing more instructions</li>
+      <li>Claude doesn't memorize — it <strong>generalizes the pattern</strong>. Show null for missing data once, it uses null everywhere.</li>
+      <li>Few-shot examples also reduce hallucination in extraction tasks</li>
+      <li>2–3 targeted, <strong>contrastive</strong> examples beat a paragraph of detailed instructions every single time</li>
+      <li>Contrastive = show what TO do AND what NOT to do side by side</li>
+      <li>Fix both overlapping tools when misrouting — not just one</li>
+    </ul>
+    <div class="tldr"><strong>TL;DR:</strong> Show, don't tell. Examples teach Claude judgment, not just format. That's why two examples outperform a page of instructions.</div>
+    <div class="exam-tip"><strong>Exam Tip:</strong> "Add more detailed instructions" is always the wrong answer when the question describes inconsistent output. The correct answer is always "add few-shot examples."</div>
+    <div class="trap"><strong>Trap:</strong> 15 unambiguous typical-case examples don't fix an ambiguous-scenario failure. Target the failure mode with 2–4 contrastive examples for the edge cases specifically.</div>
+  </div>
+
+  <div class="section-label">Concept 2 of 3 — Guaranteed JSON with tool_use</div>
+  <div class="card">
+    <div class="card-title">Structured Output That Never Breaks</div>
+    <ul>
+      <li>Define a tool with a JSON schema. Force Claude to call it with <code>tool_choice</code>.</li>
+      <li>Make fields <strong>nullable</strong> when source data might be missing — prevents Claude from fabricating values</li>
+      <li>This eliminates <strong>syntax errors</strong> (malformed JSON) but NOT <strong>semantic errors</strong> (wrong values)</li>
+      <li>You still need validation loops for content correctness</li>
+      <li>Required fields with missing data → Claude fabricates. Nullable fields → Claude returns null.</li>
+    </ul>
+    <div class="tldr"><strong>TL;DR:</strong> <code>tool_use</code> + JSON schema = guaranteed valid JSON. But validate the values separately — schema only catches structure, not meaning.</div>
+    <div class="exam-tip"><strong>Exam Tip:</strong> The exam distinguishes syntax errors (schema fixes these) from semantic errors (application code must fix these). Knowing this distinction is critical for D4 questions.</div>
+    <div class="trap"><strong>Trap:</strong> <code>strict: true</code> in schema → guaranteed syntax conformance only. "Revenue field always populated correctly" is NOT guaranteed by schema.</div>
+  </div>
+
+  <div class="section-label">Concept 3 of 3 — The Validation Loop</div>
+  <div class="card">
+    <div class="card-title">Extract → Validate → Retry with Specific Feedback</div>
+    <ul>
+      <li>Pattern: extract → validate → retry with <strong>SPECIFIC error feedback</strong>. Not "try again."</li>
+      <li>Good feedback: <em>"revenue says 0 but document clearly states 4.2 million on page 3"</em></li>
+      <li>Know when to stop: if the data isn't in the source, retrying won't produce it</li>
+      <li>Claude will start <strong>fabricating</strong> if you push retries past the point of available information</li>
+      <li>Non-retryable = when information is genuinely absent from the source document</li>
+    </ul>
+    <div class="tldr"><strong>TL;DR:</strong> Retry with specific errors. Stop when the data isn't in the source. Validation is as much about knowing when to stop as catching errors.</div>
+    <div class="exam-tip"><strong>Exam Tip:</strong> The exam asks what to do when retries aren't helping. Correct answer: the data is absent — mark as unextractable, not retryable. Do NOT keep retrying.</div>
+    <div class="trap"><strong>Trap:</strong> "Retry with feedback" is correct only when the data exists but was extracted incorrectly. If the data isn't there, retrying causes hallucination.</div>
+  </div>
+
+  <div class="section-label">API Cost Hierarchy</div>
+  <table>
+    <tr><th>Mode</th><th>Cost Multiplier</th><th>Use When</th></tr>
+    <tr><td>Real-time (synchronous)</td><td>1.0× base</td><td>SLA-sensitive, blocking pipelines</td></tr>
+    <tr><td>Batch API</td><td>0.5× (50% savings)</td><td>Latency-tolerant, overnight runs, no SLA</td></tr>
+    <tr><td>Prompt cache READS</td><td>0.1× (90% savings)</td><td>Stable prefix (system prompt + tools) repeated across requests</td></tr>
+    <tr><td>Prompt cache WRITES</td><td>&gt;1.0× (more than base)</td><td>First pass that populates cache — cost amortized over reads</td></tr>
+  </table>
+  <div class="trap"><strong>Trap:</strong> Cache WRITES cost MORE than baseline — not less. The savings come on reads. Invalidation order: Tools → System → Messages. Changing tools invalidates everything.</div>
+</div>
+
+<!-- ===== D5 ===== -->
+<div id="d5" class="tab">
+  <h2>Domain 5 — Context Management &amp; Reliability (15%)</h2>
+
+  <div class="section-label">Concept 1 of 3 — The Context Window Problem</div>
+  <div class="card">
+    <div class="card-title">Claude Reads Start and End Well. The Middle Gets Fuzzy.</div>
+    <ul>
+      <li><strong>"Lost in the middle"</strong> effect: Claude processes beginning and end reliably; may miss middle</li>
+      <li>Every tool result adds data to the middle — 40 fields when you need 5</li>
+      <li><strong>Fix 1:</strong> pin key facts at the TOP of context in a summary block</li>
+      <li><strong>Fix 2:</strong> trim verbose tool outputs to only relevant fields</li>
+      <li><strong>Fix 3:</strong> delegate verbose exploration to subagents — their output stays in their context</li>
+      <li>A new session with a summary beats a stale, bloated conversation</li>
+      <li><code>/compact</code> summarizes history; CLAUDE.md is re-read after. <code>/clear</code> is a full wipe with no preservation.</li>
+    </ul>
+    <div class="tldr"><strong>TL;DR:</strong> Pin key facts at top. Trim tool outputs. Delegate heavy research to subagents. Attention degrades on a long context window the same way it degrades on a long drive.</div>
+    <div class="exam-tip"><strong>Exam Tip:</strong> The exam tests all three fixes. Correct answer combos: key-facts-at-top + trim tool output + delegate to subagent. "Increase context window" is never the correct fix.</div>
+  </div>
+
+  <div class="section-label">Concept 2 of 3 — When to Escalate</div>
+  <div class="card">
+    <div class="card-title">Agent-to-Human Handoff Rules</div>
+    <ul>
+      <li><strong>Customer asks for a human:</strong> escalate immediately. No exceptions. No investigation first.</li>
+      <li><strong>Policy is ambiguous:</strong> escalate with full handoff package (customer ID, root cause, what was tried)</li>
+      <li><strong>Straightforward issue:</strong> resolve, but offer to transfer</li>
+      <li>Do NOT use <strong>sentiment analysis</strong> or <strong>confidence scores</strong> — both are unreliable proxies</li>
+      <li>Frustrated user + solvable issue: acknowledge → offer to resolve → only escalate if they reiterate wanting human</li>
+      <li>Escalation triggers: explicit human request, policy gap, inability to make meaningful progress</li>
+    </ul>
+    <div class="tldr"><strong>TL;DR:</strong> If they ask for a human, give them a human. No exceptions. Sentiment and confidence scores misfire on sarcasm, cultural differences, and edge cases — only explicit signals are reliable.</div>
+    <div class="exam-tip"><strong>Exam Tip:</strong> Sentiment alone is NOT sufficient for escalation. "Customer seems frustrated" → try to resolve first. "Customer explicitly asks for human" → escalate immediately, no matter what.</div>
+    <div class="trap"><strong>Trap:</strong> Investigating before escalating when the customer explicitly asked for a human = wrong answer. Explicit request = immediate handoff.</div>
+  </div>
+
+  <div class="section-label">Concept 3 of 3 — Error Propagation</div>
+  <div class="card">
+    <div class="card-title">Generic Errors Blind the Coordinator. Structured Errors Enable Recovery.</div>
+    <ul>
+      <li>"Search unavailable" tells the coordinator nothing — it can't make intelligent recovery decisions</li>
+      <li>Structured errors include: what failed, what was attempted, partial results, alternatives</li>
+      <li>Now the coordinator can: retry, use cached data, switch sources, or note the gap</li>
+      <li>Silent suppression and total termination are both anti-patterns</li>
+      <li>Error fields: <code>isError</code>, <code>errorCategory</code> (transient/validation/permission), <code>isRetryable</code>, <code>partialResults</code>, <code>suggestedAction</code></li>
+    </ul>
+    <div class="tldr"><strong>TL;DR:</strong> Never return a generic error. Include what broke, what was tried, and what could be done instead. Graceful failure = the system can recover.</div>
+    <div class="exam-tip"><strong>Exam Tip:</strong> Exam scenarios give you "generic error" vs "structured error with context, partialResults, isRetryable." The structured answer is always correct.</div>
+    <div class="trap"><strong>Trap:</strong> "Terminate the workflow" on any subagent error = wrong. "Silently suppress and continue" = also wrong. Return structured context and let the coordinator decide.</div>
+  </div>
+
+  <div class="section-label">Escalation Decision Table</div>
+  <table>
+    <tr><th>Scenario</th><th>Correct Action</th></tr>
+    <tr><td>Customer explicitly requests human</td><td>Escalate immediately — no investigation</td></tr>
+    <tr><td>Policy is ambiguous / gap exists</td><td>Escalate with full handoff package</td></tr>
+    <tr><td>Customer seems frustrated (sentiment only)</td><td>Acknowledge, offer to resolve first</td></tr>
+    <tr><td>Straightforward resolvable issue</td><td>Resolve, then offer to transfer</td></tr>
+    <tr><td>Agent cannot make meaningful progress</td><td>Escalate with context of what was tried</td></tr>
+  </table>
+</div>
+
+<!-- ===== THE 5 RULES ===== -->
+<div id="rules" class="tab">
+  <h2>The 5 Rules — Print This. Pin It Up.</h2>
+
+  <div class="quote">
+    "These aren't five separate ideas. They're the same principle: be explicit, be structured, and don't trust 'probably works' for things that must work every time."
+    <cite>— Mark Kashef</cite>
+  </div>
+
+  <div style="margin: 20px 0;">
+    <div class="rule-row">
+      <div class="rule-num">1</div>
+      <div>
+        <div class="rule-title">HOOKS > PROMPTS</div>
+        <div class="rule-body">When compliance must be 100%, use programmatic enforcement. Prompts are suggestions. Hooks are laws. At financial/compliance scale, a 12% prompt failure rate is unacceptable.</div>
+      </div>
+      <div class="rule-map">Maps to: Patterns 1, 6, 13<br>Domains: 1, 2, 3</div>
+    </div>
+
+    <div class="rule-row">
+      <div class="rule-num">2</div>
+      <div>
+        <div class="rule-title">STRUCTURED ERRORS ALWAYS</div>
+        <div class="rule-body">Never return generic 'failed.' Include what broke, what was tried, what partially worked, what alternatives exist. Generic errors blind the coordinator.</div>
+      </div>
+      <div class="rule-map">Maps to: Pattern 15<br>Domains: 1, 2, 5</div>
+    </div>
+
+    <div class="rule-row">
+      <div class="rule-num">3</div>
+      <div>
+        <div class="rule-title">SCOPE YOUR TOOLS</div>
+        <div class="rule-body">4–5 tools per agent, not 18. An agent with fewer, focused tools makes dramatically better decisions. Constraint is a feature, not a limitation.</div>
+      </div>
+      <div class="rule-map">Maps to: Pattern 14<br>Domain: 2</div>
+    </div>
+
+    <div class="rule-row">
+      <div class="rule-num">4</div>
+      <div>
+        <div class="rule-title">INDEPENDENT REVIEW</div>
+        <div class="rule-body">A second Claude instance catches what the first won't. Self-review is inherently biased by prior reasoning. Write in one session, review in a different one.</div>
+      </div>
+      <div class="rule-map">Maps to: Pattern 8, D3 CI/CD<br>Domain: 3</div>
+    </div>
+
+    <div class="rule-row">
+      <div class="rule-num">5</div>
+      <div>
+        <div class="rule-title">EXAMPLES > INSTRUCTIONS</div>
+        <div class="rule-body">2–3 concrete few-shot examples beat a paragraph of detailed prose instructions every single time. Show, don't tell — examples teach judgment, not just format.</div>
+      </div>
+      <div class="rule-map">Maps to: Pattern 3<br>Domains: 3, 4, 5</div>
+    </div>
+  </div>
+
+  <div class="section-label">Cross-Domain Mapping Table</div>
+  <table class="five-rules-table">
+    <tr>
+      <th>#</th><th>Rule</th><th>One-Liner</th><th>Domains</th><th>Pattern(s)</th>
+    </tr>
+    <tr>
+      <td>1</td><td>Hooks > Prompts</td><td>Deterministic enforcement beats probabilistic guidance</td><td>1, 2, 3</td><td>1, 6, 13</td>
+    </tr>
+    <tr>
+      <td>2</td><td>Structured Errors</td><td>Never generic — always include context, partial results, alternatives</td><td>1, 2, 5</td><td>15</td>
+    </tr>
+    <tr>
+      <td>3</td><td>Scope Your Tools</td><td>4–5 per agent max; 15+ = misrouting</td><td>2</td><td>14</td>
+    </tr>
+    <tr>
+      <td>4</td><td>Independent Review</td><td>Separate sessions for writing and reviewing — self-review is biased</td><td>3</td><td>8</td>
+    </tr>
+    <tr>
+      <td>5</td><td>Examples > Instructions</td><td>Inconsistent output → add examples, not more words</td><td>3, 4, 5</td><td>3</td>
+    </tr>
+  </table>
+</div>
+
+<!-- ===== RESOURCES ===== -->
+<div id="resources" class="tab">
+  <h2>Resources</h2>
+
+  <div class="resource-card">
+    <h4>Official Certification Exam Guide</h4>
+    <p>The original 40-page Anthropic document this study guide is based on. Read alongside this guide for full depth. Already ingested in the wiki as <code>wiki/sources/claude-certified-architect-foundations-exam-guide.md</code>.</p>
+    <a href="https://anthropic.com" target="_blank">anthropic.com</a>
+  </div>
+
+  <div class="resource-card">
+    <h4>Interactive Study Prompts (Community)</h4>
+    <p>Community-created prompts by @hooeem (Mark Kashef) on X. Paste into Claude Code and it interviews you domain by domain, adapting to your level. Available on his X profile.</p>
+    <a href="https://x.com/hooeem" target="_blank">x.com/hooeem</a>
+  </div>
+
+  <div class="resource-card">
+    <h4>Claude Code Documentation (Official)</h4>
+    <p>Official Anthropic docs for CLAUDE.md, skills, hooks, MCP, plan mode, and all CLI flags. The authoritative reference for all D3 content.</p>
+    <a href="https://docs.anthropic.com/en/docs/claude-code" target="_blank">docs.anthropic.com/en/docs/claude-code</a>
+  </div>
+
+  <div class="resource-card">
+    <h4>Early AI Dopters (Mark Kashef's Community)</h4>
+    <p>800+ builders. Coaching, courses, and every resource from this channel.</p>
+    <a href="https://skool.com/earlyaidopters" target="_blank">skool.com/earlyaidopters</a>
+  </div>
+
+  <div class="section-label">Other Ingested Sources in Wiki</div>
+  <table>
+    <tr><th>Source</th><th>File</th><th>Notes</th></tr>
+    <tr><td>Official Exam Guide (PDF)</td><td><code>wiki/sources/claude-certified-architect-foundations-exam-guide.md</code></td><td>40-page Anthropic doc, all 12 sample Q&amp;A</td></tr>
+    <tr><td>CCA-F Question Bank v1.0.0</td><td><code>wiki/sources/cca-f-question-bank-v1.0.0.md</code></td><td>1,309 questions, all 30 subdomains</td></tr>
+    <tr><td>CCA-F Question Bank v1.1.0</td><td><code>wiki/sources/cca-f-question-bank-v1.1.0.md</code></td><td>+180 new untagged (1,489 total)</td></tr>
+    <tr><td>Claude Code Architect Handbook 2026</td><td><code>wiki/sources/claude-code-architect-handbook-2026.md</code></td><td>Unofficial 136pp; enforcement spectrum, error tree</td></tr>
+    <tr><td>Sparq Module 2 — Agentic Workflows</td><td><code>wiki/sources/sparq-module2-agentic-workflows.md</code></td><td>Practical D1/D3 patterns</td></tr>
+    <tr><td>Sparq Module 3 — MCP Integration</td><td><code>wiki/sources/sparq-module3-mcp-integration.md</code></td><td>D2/D3 MCP patterns; hardcoded PAT contradiction flagged</td></tr>
+    <tr><td>Mark Kashef Study Guide (this doc)</td><td><code>wiki/sources/claude-architect-study-guide.md</code></td><td>26pp visual; 5 Rules cheat sheet; exam tips</td></tr>
+  </table>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>

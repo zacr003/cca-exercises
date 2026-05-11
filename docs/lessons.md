@@ -60,6 +60,14 @@ This applies to every subdomain across all domains. For reference-only exercises
 
 ---
 
+## /memory Command Behavior
+
+- `/memory` **opens** the active CLAUDE.md for editing — it does NOT list loaded files.
+- To diagnose which CLAUDE.md and rules files are currently loaded, ask Claude directly: "Which CLAUDE.md files are you currently loading?"
+- The d3-review.html and ex1_claude_md.md originally had this wrong — both corrected 2026-05-10.
+
+---
+
 ## Known Gotchas
 
 - The `production/` folder contains `customer_data.txt` with sample PII used by the `hook_post_pii_trim` exercise. This is fake/sample data only — never put real PII here.

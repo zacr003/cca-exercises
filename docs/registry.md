@@ -60,19 +60,30 @@ cca-exercises/
 
 | File | Description | Status |
 |------|-------------|--------|
-| _(none yet)_ | Review-only domain; exercises added if weak spots surface | — |
+| `ex1_claude_md.md` | CLAUDE.md hierarchy — 3 scopes, @import, conflict resolution | In progress |
+| `ex2_skills_commands.md` | Skills and slash commands — context:fork, allowed-tools, argument-hint | Not started |
+| `ex3_path_scoped_rules.md` | Path-scoped rules — YAML paths frontmatter, glob patterns | Not started |
+| `ex4_plan_mode.md` | Plan mode — decision framework, iterative refinement, Explore subagent | Not started |
+| `ex5_ci_headless.py` | CI/headless mode — -p flag, --output-format json, --bare | Not started |
 
 ### Domain 4 — Prompt Engineering (`domain-4/`)
 
 | File | Description | Status |
 |------|-------------|--------|
-| _(none yet)_ | Targeted exercises based on practice exam results | — |
+| `ex1_few_shot.py` | Few-shot prompting — vague vs explicit vs contrastive examples | Not started |
+| `ex2_structured_output.py` | Structured output — JSON schema, nullable fields, enum+other | Not started |
+| `ex3_tool_choice.py` | tool_choice — auto vs any vs forced, first-turn-then-auto | Not started |
+| `ex4_batch_api.py` | Batch API — submit, poll, correlate via custom_id | Not started |
+| `ex5_retry_feedback.py` | Retry-with-feedback — error feedback loop, retry limits | Not started |
 
 ### Domain 5 — Context Management (`domain-5/`)
 
 | File | Description | Status |
 |------|-------------|--------|
-| _(none yet)_ | Targeted exercises based on practice exam results | — |
+| `ex1_long_context.py` | Long context — lost-in-the-middle, key findings at top | Not started |
+| `ex2_escalation.py` | Escalation — explicit criteria + few-shot, frustrated user pattern | Not started |
+| `ex3_context_degradation.py` | Context degradation — API statelessness, scratchpad files | Not started |
+| `ex4_error_propagation.py` | Error propagation — structured errors, multi-agent recovery | Not started |
 
 ### Production / Scratch (`production/`)
 
@@ -113,4 +124,4 @@ Used explicitly in `.claude/settings.json` hook commands.
 
 ---
 
-_Last updated: 2026-05-08_
+_Last updated: 2026-05-10_
