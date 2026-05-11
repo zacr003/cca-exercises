@@ -82,6 +82,7 @@
     <span class="badge">4.4 tool_choice</span>
     <span class="badge">4.5 Batch API</span>
     <span class="badge">4.3/4.6 Retry Feedback</span>
+    <span class="badge">4.6 Multi-Instance Review</span>
   </div>
 </header>
 
@@ -92,6 +93,7 @@
     <button class="tab-btn" onclick="showTab('ex3')">Ex3: tool_choice</button>
     <button class="tab-btn" onclick="showTab('ex4')">Ex4: Batch API</button>
     <button class="tab-btn" onclick="showTab('ex5')">Ex5: Retry Feedback</button>
+    <button class="tab-btn" onclick="showTab('ex6')">Ex6: Multi-Instance Review</button>
     <button class="tab-btn" onclick="showTab('cache')">Prompt Cache</button>
     <button class="tab-btn" onclick="showTab('quiz')">Quiz</button>
     <button class="export-btn" onclick="window.print()">⬇ Print</button>
@@ -441,6 +443,85 @@ Please provide a corrected extraction that resolves these errors.</code></pre>
     </div>
   </div>
 
+  <!-- EX6: MULTI-INSTANCE REVIEW -->
+  <div id="ex6" class="tab-panel">
+    <div class="card">
+      <div class="card-title"><span class="num">6</span> Multi-Instance Review and Self-Review Bias (4.6)</div>
+      <div class="concept-box">
+        <p>A model instance that generated code retains the reasoning that produced it. When asked to review its own output, it defends its own decisions — this is <strong>self-review bias</strong>. The fix is an <strong>independent review instance</strong>: a fresh context window with no access to the generation history.</p>
+      </div>
+
+      <h3>The Core Problem</h3>
+      <div class="grid-2">
+        <div class="bad-box">
+          <div class="bad-title">Same-Session Review (Wrong)</div>
+          <ul>
+            <li>Generator and reviewer share context</li>
+            <li>Reviewer inherits the reasoning that produced the bug</li>
+            <li>Reviewer defends the decision that introduced the problem</li>
+            <li>Extended thinking does NOT help — still same session</li>
+          </ul>
+        </div>
+        <div class="good-box">
+          <div class="good-title">Independent Instance (Correct)</div>
+          <ul>
+            <li>Fresh context window — no generation history</li>
+            <li>No inherited reasoning bias</li>
+            <li>Same model and model family is fine — independence is about context, not hardware</li>
+            <li>More effective than review instructions or extended thinking</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>What "Independent" Actually Means</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Independent instance =</span><span class="kv-val">A fresh API invocation with a clean context window — no prior messages from the generation turn</span></div>
+        <div class="kv-row"><span class="kv-key">Does NOT require</span><span class="kv-val">A different physical server, a different model version, or a different model family</span></div>
+        <div class="kv-row"><span class="kv-key">What to pass</span><span class="kv-val">The output being reviewed + the review criteria — NOT the generation prompt or generation reasoning</span></div>
+        <div class="kv-row"><span class="kv-key">Passing the generation prompt to the reviewer</span><span class="kv-val">Reintroduces the same bias — reviewer now has the generator's framing</span></div>
+      </div>
+
+      <h3>Handling Re-Run Duplicate Comments</h3>
+      <div class="concept-box">
+        <p>When running independent review passes repeatedly (e.g., after each iteration of a fix), reviewers will re-flag issues that were already addressed in a prior pass. Fix: <strong>include the prior review findings in the new reviewer's context</strong> so it knows what was already flagged.</p>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Re-Run Pattern</div>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>PRIOR REVIEW FINDINGS (already addressed — do not re-flag):
+- Line 42: SQL query used string interpolation → fixed, now uses parameterized query
+- Line 78: Missing null check → fixed
+
+CURRENT CODE TO REVIEW:
+[updated code]
+
+Identify new issues only.</code></pre>
+      </div>
+
+      <h3>Split Review Pattern</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Per-file local passes</span><span class="kv-val">Each file reviewed in isolation — catches syntax, logic errors, within-file issues</span></div>
+        <div class="kv-row"><span class="kv-key">Cross-file integration pass</span><span class="kv-val">Separate pass that sees multiple files together — catches API contract mismatches, shared state bugs, interface consistency</span></div>
+        <div class="kv-row"><span class="kv-key">Per-line review</span><span class="kv-val">Fragments cross-line and cross-file context — does NOT substitute for the integration pass</span></div>
+      </div>
+      <div class="trap-box">
+        <div class="trap-title">Per-Line Review Trap</div>
+        <p>Per-line review cannot catch integration issues — it lacks the cross-file context needed to see API contract mismatches or module boundary bugs. Always run a dedicated cross-file integration pass separately.</p>
+      </div>
+
+      <h3>Exam Trap Table — 4.6</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Extended thinking in the same session fixes self-review bias</td><td>Same session, same generation context, same bias. Use an independent fresh invocation.</td></tr>
+          <tr><td class="td-trap">Independent review requires a different model family</td><td>Independence = fresh context window. Same model, different invocation = independent.</td></tr>
+          <tr><td class="td-trap">Pass the generation prompt to the reviewer for context</td><td>This reintroduces the generator's framing and bias. Pass only the output + review criteria.</td></tr>
+          <tr><td class="td-trap">Per-line review is equivalent to a cross-file integration pass</td><td>Per-line fragments cross-file context. Integration issues require a dedicated multi-file pass.</td></tr>
+          <tr><td class="td-trap">Stronger review instructions overcome self-review bias</td><td>Prompts are suggestions — they don't override the context the model already has. Fresh instance does.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
   <!-- PROMPT CACHE -->
   <div id="cache" class="tab-panel">
     <div class="card">
@@ -511,7 +592,7 @@ Please provide a corrected extraction that resolves these errors.</code></pre>
   <!-- QUIZ -->
   <div id="quiz" class="tab-panel">
     <div class="card" style="margin-bottom:24px;">
-      <div class="card-title">Domain 4 Quiz — 12 Questions</div>
+      <div class="card-title">Domain 4 Quiz — 14 Questions</div>
       <p style="color:var(--muted); font-size:0.88rem;">Select an answer to see immediate feedback.</p>
     </div>
 
@@ -659,9 +740,33 @@ Please provide a corrected extraction that resolves these errors.</code></pre>
       <div class="explanation" id="exp-q12">Batch API is for latency-tolerant work. A CI pre-merge review blocks the developer — they're waiting on it. Use the real-time API for CI. Also: <code>priority: critical</code> does not exist in the Batch API.</div>
     </div>
 
+    <div class="quiz-q" id="q13">
+      <div class="q-num">Question 13 of 14</div>
+      <div class="q-text">A code review pipeline generates code with Claude, then asks the same session to review it. Reviewers keep approving bugs the generator introduced. What is the root cause and correct fix?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q13',false)">A. Enable extended thinking — the reviewer needs more reasoning time to catch subtle bugs.</div>
+        <div class="opt" onclick="answer(this,'q13',false)">B. Switch the reviewer to a different model family for diversity of perspective.</div>
+        <div class="opt" onclick="answer(this,'q13',true)">C. Self-review bias: the same context retains generation reasoning. Fix: use an independent instance with a fresh context window.</div>
+        <div class="opt" onclick="answer(this,'q13',false)">D. Strengthen the review prompt — instruct it to be more critical and assume bugs are present.</div>
+      </div>
+      <div class="explanation" id="exp-q13">Self-review bias occurs because the reviewer shares the generation context and inherits the reasoning that produced the bug. Extended thinking and stronger prompts don't fix this — they still operate in the same biased context. An independent instance (fresh invocation, no prior context) eliminates the bias. A different model family is not required.</div>
+    </div>
+
+    <div class="quiz-q" id="q14">
+      <div class="q-num">Question 14 of 14</div>
+      <div class="q-text">After implementing independent review instances, the reviewer re-flags issues that were already identified and fixed in the previous review pass. What is the correct fix?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q14',false)">A. Switch to per-line review so the reviewer has more granular context about what changed.</div>
+        <div class="opt" onclick="answer(this,'q14',true)">B. Include the prior review findings in the new reviewer's context, marked as already addressed.</div>
+        <div class="opt" onclick="answer(this,'q14',false)">C. Use a lower temperature to make the reviewer less likely to generate repeat comments.</div>
+        <div class="opt" onclick="answer(this,'q14',false)">D. Run the reviewer in the same session as the generator so it has full history.</div>
+      </div>
+      <div class="explanation" id="exp-q14">Independent reviewers have no memory of prior passes — so they re-flag everything they see as an issue. Fix: inject the prior findings list into the reviewer's context with a note that those are resolved. Per-line review would fragment cross-file context and doesn't address the duplicate-comment problem. Running in the same session as the generator reintroduces self-review bias.</div>
+    </div>
+
     <button id="quiz-btn" onclick="showScore()">Show My Score</button>
     <div class="quiz-score" id="quiz-score">
-      <div class="score-num" id="score-display">0/12</div>
+      <div class="score-num" id="score-display">0/14</div>
       <p id="score-msg" style="color:var(--muted); margin-top:8px;"></p>
     </div>
   </div>
@@ -690,8 +795,8 @@ Please provide a corrected extraction that resolves these errors.</code></pre>
   }
   function showScore() {
     const got = Object.values(scores).filter(Boolean).length;
-    document.getElementById('score-display').textContent = got + '/12';
-    const pct = Math.round(got / 12 * 100);
+    document.getElementById('score-display').textContent = got + '/14';
+    const pct = Math.round(got / 14 * 100);
     const msg = pct >= 90 ? 'Excellent — Domain 4 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the exercise tabs again.';
     document.getElementById('score-msg').textContent = pct + '% — ' + msg;
     document.getElementById('quiz-score').classList.add('show');

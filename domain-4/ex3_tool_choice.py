@@ -127,10 +127,10 @@ def part_a_auto():
     print("'auto' = model decides; it may call a tool OR return text")
     print("Watch: conversational question usually gets text, not a tool call")
 
-    run_and_report(CONVERSATIONAL_MESSAGE, "auto", "auto + conversational")
+    run_and_report(CONVERSATIONAL_MESSAGE, {"type": "auto"}, "auto + conversational")
     run_and_report(
         f"Please extract the metadata from this document:\n{SAMPLE_DOCUMENT}",
-        "auto",
+        {"type": "auto"},
         "auto + extraction request"
     )
     print("""
@@ -153,10 +153,10 @@ def part_b_any():
     print("'any' = MUST call a tool; model chooses which one")
     print("Watch: even conversational question gets forced into a tool call")
 
-    run_and_report(CONVERSATIONAL_MESSAGE, "any", "any + conversational")
+    run_and_report(CONVERSATIONAL_MESSAGE, {"type": "any"}, "any + conversational")
     run_and_report(
         f"Please extract the metadata from this document:\n{SAMPLE_DOCUMENT}",
-        "any",
+        {"type": "any"},
         "any + extraction request"
     )
     print("""
@@ -248,11 +248,11 @@ def main():
     print("EXAM DISTINCTION SUMMARY -- 4.4")
     print("=" * 60)
     print("""
-tool_choice options:
-  "auto"                        Model may call tool OR return text (default)
-  "any"                         Model MUST call SOME tool; it picks which
-  {"type":"tool","name":"X"}    Model MUST call tool X specifically
-  "none"                        Prevents any tool use (text only)
+tool_choice options (all must be objects in the API):
+  {"type": "auto"}              Model may call tool OR return text (default)
+  {"type": "any"}               Model MUST call SOME tool; it picks which
+  {"type": "tool","name":"X"}   Model MUST call tool X specifically
+  {"type": "none"}              Prevents any tool use (text only)
 
 When to use each:
   "auto"   -- General-purpose agents; tool use is optional based on context
