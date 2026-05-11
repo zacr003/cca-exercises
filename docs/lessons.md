@@ -68,7 +68,27 @@ This applies to every subdomain across all domains. For reference-only exercises
 
 ---
 
+## tool_choice API Format
+
+- `tool_choice` must always be an **object**, not a bare string. The Anthropic SDK rejects bare strings with a 400 error.
+- Correct: `{"type": "auto"}`, `{"type": "any"}`, `{"type": "tool", "name": "X"}`, `{"type": "none"}`
+- Wrong: `"auto"`, `"any"`, `"none"`
+- Discovered 2026-05-11 when ex3_tool_choice.py failed on first run. Fixed in that file.
+
+---
+
+## Question Bank Location
+
+- Full question bank: `~/Desktop/Ramsey-Brain/raw/cca_f_question_bank_v2.0.0.json`
+- 1,489 questions total; filter by `domain_id` (not `domain`) for per-domain drills
+- D4: 333 questions across subdomains 4.1–4.6
+- Session state saved to `domain-X/dX_session.json` (not committed — transient)
+- Resume a drill by reading `dX_session.json` for `current` index and `score`
+
+---
+
 ## Known Gotchas
 
 - The `production/` folder contains `customer_data.txt` with sample PII used by the `hook_post_pii_trim` exercise. This is fake/sample data only — never put real PII here.
 - `extract_domain1.sh` is a utility script for extracting domain-1 exercise content; not part of the exercise sequence.
+- D4 question bank drill: prefer batches of 10–20 questions, not 50 at once. User preference established 2026-05-11.

@@ -25,7 +25,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | 1 — Agentic Architecture | 27% | Complete | `domain-1/` |
 | 2 — MCP Tool Design | 18% | Exercises complete | `domain-2/` |
 | 3 — Claude Code Workflows | 20% | In progress — ex1 done, ex2–ex5 remaining | `domain-3/` |
-| 4 — Prompt Engineering | 20% | Exercises created, not started | `domain-4/` |
+| 4 — Prompt Engineering | 20% | Exercises complete; practice Qs in progress (20/50, 80%) | `domain-4/` |
 | 5 — Context Management | 15% | Exercises created, not started | `domain-5/` |
 
 ### Exercise Count
@@ -35,7 +35,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | Domain 1 | 7 exercises + 3 hooks | ex1–ex6, hook_pre x2, hook_post x1 |
 | Domain 2 | 5 exercises + 1 hook + 1 config | ex1–ex5, hook_post, sample.mcp.json |
 | Domain 3 | 5 exercises | ex1–ex4 markdown walkthroughs, ex5 Python (CI/headless) |
-| Domain 4 | 5 exercises | ex1–ex5 Python — created, not yet run |
+| Domain 4 | 5 exercises | ex1–ex5 Python — all run; ex3 bug fixed (tool_choice object format) |
 | Domain 5 | 4 exercises | ex1–ex4 Python — created, not yet run |
 
 ### Practice Exam Results
@@ -43,6 +43,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | Exam | Date | Score | D1 | D2 | D3 | D4 | D5 |
 |------|------|-------|----|----|----|----|-----|
 | Exam 1 (Udemy) | 2026-05-10 | **76% (46/60)** | 75% | 82% | 83% | 67% | 78% |
+| D4 question bank drill | 2026-05-11 | **80% (16/20)** | — | — | — | 80% | — |
 | Exam 2 (Udemy) | 2026-05-18 | — | — | — | — | — | — |
 | Exam 3 (Udemy) | 2026-05-19–21 | — | — | — | — | — | — |
 
@@ -89,3 +90,8 @@ _Updated by `/sync` at end of each session._
 - 2026-05-10: d1-review.html quiz fixed — answers redistributed from 7x B to even A/B/C/D spread
 - 2026-05-10: Practice Exam 1 taken — 76% (46/60); weak spots: D4 (67%), D1 (75%)
 - 2026-05-10: Sprint plan updated — Week 2 reoriented to D4 priority; target 83%+ on Exam 2
+- 2026-05-11: D4 all 5 exercises run — ex1 (few-shot), ex2 (structured output), ex3 (tool_choice), ex4 (batch API), ex5 (retry feedback); 14/15 on exercise Q&A
+- 2026-05-11: ex3_tool_choice.py bug fixed — bare strings ("auto","any") replaced with object format ({"type":"auto"}) per API requirement
+- 2026-05-11: d4-review.html updated — Ex6 Multi-Instance Review tab added; quiz expanded 12→14 questions
+- 2026-05-11: D4 question bank drill started — 20/50 done (80%); misses: Q3 system prompt keyword bias, Q5 parallel decomp vs few-shot, Q12 batch polling backoff, Q20 detected_pattern as string
+- 2026-05-11: Question bank v2.0.0 located at ~/Desktop/Ramsey-Brain/raw/cca_f_question_bank_v2.0.0.json (1,489 Qs; 333 D4)

@@ -70,11 +70,12 @@ cca-exercises/
 
 | File | Description | Status |
 |------|-------------|--------|
-| `ex1_few_shot.py` | Few-shot prompting — vague vs explicit vs contrastive examples | Not started |
-| `ex2_structured_output.py` | Structured output — JSON schema, nullable fields, enum+other | Not started |
-| `ex3_tool_choice.py` | tool_choice — auto vs any vs forced, first-turn-then-auto | Not started |
-| `ex4_batch_api.py` | Batch API — submit, poll, correlate via custom_id | Not started |
-| `ex5_retry_feedback.py` | Retry-with-feedback — error feedback loop, retry limits | Not started |
+| `ex1_few_shot.py` | Few-shot prompting — vague vs explicit vs contrastive examples | Complete |
+| `ex2_structured_output.py` | Structured output — JSON schema, nullable fields, enum+other | Complete |
+| `ex3_tool_choice.py` | tool_choice — auto vs any vs forced, first-turn-then-auto; bug fixed 2026-05-11 | Complete |
+| `ex4_batch_api.py` | Batch API — submit, poll, correlate via custom_id | Complete |
+| `ex5_retry_feedback.py` | Retry-with-feedback — error feedback loop, retry limits | Complete |
+| `d4_session.json` | Practice question bank session state (not committed) | Active |
 
 ### Domain 5 — Context Management (`domain-5/`)
 
@@ -124,4 +125,4 @@ Used explicitly in `.claude/settings.json` hook commands.
 
 ---
 
-_Last updated: 2026-05-10_
+_Last updated: 2026-05-11_

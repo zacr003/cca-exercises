@@ -35,13 +35,13 @@ _Current exercise backlog. Updated by `/sync`._
 - [ ] ex5: CI/CD headless mode — -p flag, --output-format json, --bare, independent review instance
 - [ ] Domain 3 practice questions — 50 from the question bank
 
-### Domain 4 — Prompt Engineering (20%) — EXERCISES CREATED, NOT DONE
-- [ ] ex1: Few-shot prompting — vague vs explicit criteria vs contrastive examples (4.1, 4.2)
-- [ ] ex2: Structured output — JSON schema, nullable fields, enum+other, conflict_detected (4.3)
-- [ ] ex3: tool_choice — auto vs any vs forced, the first-turn-then-auto pattern (4.4)
-- [ ] ex4: Batch API — submit, poll, correlate via custom_id, failure recovery (4.5)
-- [ ] ex5: Retry-with-feedback — error feedback loop, retry limits, detected_pattern field (4.3/4.6)
-- [ ] Domain 4 practice questions — 50 from the question bank
+### Domain 4 — Prompt Engineering (20%) — EXERCISES COMPLETE
+- [x] ex1: Few-shot prompting — vague vs explicit criteria vs contrastive examples (4.1, 4.2)
+- [x] ex2: Structured output — JSON schema, nullable fields, enum+other, conflict_detected (4.3)
+- [x] ex3: tool_choice — auto vs any vs forced, the first-turn-then-auto pattern (4.4)
+- [x] ex4: Batch API — submit, poll, correlate via custom_id, failure recovery (4.5)
+- [x] ex5: Retry-with-feedback — error feedback loop, retry limits, detected_pattern field (4.3/4.6)
+- [ ] Domain 4 practice questions — 20/50 done (80%); resume at Q21 next session; weak spots: system prompt keyword bias (4.1), parallel decomp (4.6), batch polling backoff (4.5), detected_pattern as string (4.4)
 
 ### Domain 5 — Context Management (15%) — EXERCISES CREATED, NOT DONE
 - [ ] ex1: Long context — lost-in-the-middle, key findings at top, tool output trimming (5.1)
@@ -68,4 +68,4 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-_Last updated: 2026-05-10 (end of session)_
+_Last updated: 2026-05-11 (end of session)_
