@@ -16,7 +16,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 
 ---
 
-## Current State (as of 2026-05-10)
+## Current State (as of 2026-05-12)
 
 ### Domain Progress
 
@@ -26,7 +26,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | 2 — MCP Tool Design | 18% | Exercises complete | `domain-2/` |
 | 3 — Claude Code Workflows | 20% | In progress — ex1 done, ex2–ex5 remaining | `domain-3/` |
 | 4 — Prompt Engineering | 20% | Exercises complete; practice Qs in progress (20/50, 80%) | `domain-4/` |
-| 5 — Context Management | 15% | Exercises created, not started | `domain-5/` |
+| 5 — Context Management | 15% | Exercises complete; 20 bank Qs queued (paused at Q1) | `domain-5/` |
 
 ### Exercise Count
 
@@ -36,7 +36,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | Domain 2 | 5 exercises + 1 hook + 1 config | ex1–ex5, hook_post, sample.mcp.json |
 | Domain 3 | 5 exercises | ex1–ex4 markdown walkthroughs, ex5 Python (CI/headless) |
 | Domain 4 | 5 exercises | ex1–ex5 Python — all run; ex3 bug fixed (tool_choice object format) |
-| Domain 5 | 4 exercises | ex1–ex4 Python — created, not yet run |
+| Domain 5 | 4 exercises | ex1–ex4 Python — all run 2026-05-12 |
 
 ### Practice Exam Results
 
@@ -95,3 +95,7 @@ _Updated by `/sync` at end of each session._
 - 2026-05-11: d4-review.html updated — Ex6 Multi-Instance Review tab added; quiz expanded 12→14 questions
 - 2026-05-11: D4 question bank drill started — 20/50 done (80%); misses: Q3 system prompt keyword bias, Q5 parallel decomp vs few-shot, Q12 batch polling backoff, Q20 detected_pattern as string
 - 2026-05-11: Question bank v2.0.0 located at ~/Desktop/Ramsey-Brain/raw/cca_f_question_bank_v2.0.0.json (1,489 Qs; 333 D4)
+- 2026-05-12: D5 all 4 exercises complete — ex1 (long context), ex2 (escalation), ex3 (context degradation), ex4 (error propagation); all walkthroughs + runs + Q&A done
+- 2026-05-12: D5 exercise Q&A scores — ex1: 2/3, ex2: 2/3, ex3: 3/3, ex4: 3/3; weak spots: empty result vs. error distinction (5.3), handoff summary content (5.2)
+- 2026-05-12: D5 bank question drill — 20 random questions pulled and saved to memory; paused at Q1 (none answered yet); in-chat drill format (no Python script)
+- 2026-05-12: In-chat question bank drill pattern established — Claude reads JSON directly, filters by domain_id, presents one question at a time; no Python script required

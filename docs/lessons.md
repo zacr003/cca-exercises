@@ -92,3 +92,13 @@ This applies to every subdomain across all domains. For reference-only exercises
 - The `production/` folder contains `customer_data.txt` with sample PII used by the `hook_post_pii_trim` exercise. This is fake/sample data only — never put real PII here.
 - `extract_domain1.sh` is a utility script for extracting domain-1 exercise content; not part of the exercise sequence.
 - D4 question bank drill: prefer batches of 10–20 questions, not 50 at once. User preference established 2026-05-11.
+
+---
+
+## In-Chat Question Bank Drill Pattern
+
+- **No Python script needed** for question bank drills. Claude reads the JSON directly (`~/Desktop/Ramsey-Brain/raw/cca_f_question_bank_v2.0.0.json`), filters by `domain_id`, and presents questions one at a time in chat.
+- Filter field is `domain_id` (integer, e.g. `5`), not `domain` (string).
+- Questions are presented one at a time. User answers; Claude scores and explains immediately before moving to the next.
+- 20-question batches are the standard for a domain drill session.
+- Queue state (unanswered questions + correct answers) is saved to memory file `d5_question_bank_queue.md` when a session is interrupted mid-drill.

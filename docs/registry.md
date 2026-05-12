@@ -81,10 +81,10 @@ cca-exercises/
 
 | File | Description | Status |
 |------|-------------|--------|
-| `ex1_long_context.py` | Long context — lost-in-the-middle, key findings at top | Not started |
-| `ex2_escalation.py` | Escalation — explicit criteria + few-shot, frustrated user pattern | Not started |
-| `ex3_context_degradation.py` | Context degradation — API statelessness, scratchpad files | Not started |
-| `ex4_error_propagation.py` | Error propagation — structured errors, multi-agent recovery | Not started |
+| `ex1_long_context.py` | Long context — lost-in-the-middle, key findings at top | Complete |
+| `ex2_escalation.py` | Escalation — explicit criteria + few-shot, frustrated user pattern | Complete |
+| `ex3_context_degradation.py` | Context degradation — API statelessness, scratchpad files | Complete |
+| `ex4_error_propagation.py` | Error propagation — structured errors, multi-agent recovery | Complete |
 
 ### Production / Scratch (`production/`)
 
@@ -125,4 +125,4 @@ Used explicitly in `.claude/settings.json` hook commands.
 
 ---
 
-_Last updated: 2026-05-11_
+_Last updated: 2026-05-12_

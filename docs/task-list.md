@@ -43,12 +43,12 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] ex5: Retry-with-feedback — error feedback loop, retry limits, detected_pattern field (4.3/4.6)
 - [ ] Domain 4 practice questions — 20/50 done (80%); resume at Q21 next session; weak spots: system prompt keyword bias (4.1), parallel decomp (4.6), batch polling backoff (4.5), detected_pattern as string (4.4)
 
-### Domain 5 — Context Management (15%) — EXERCISES CREATED, NOT DONE
-- [ ] ex1: Long context — lost-in-the-middle, key findings at top, tool output trimming (5.1)
-- [ ] ex2: Escalation — explicit criteria + few-shot, frustrated user pattern, multi-topic (5.2)
-- [ ] ex3: Context degradation — API statelessness, scratchpad files, case-facts block (5.4, 5.5)
-- [ ] ex4: Error propagation — structured errors, coverage annotations, multi-agent recovery (5.3)
-- [ ] Domain 5 practice questions — 40 from the question bank
+### Domain 5 — Context Management (15%) — EXERCISES COMPLETE
+- [x] ex1: Long context — lost-in-the-middle, key findings at top, tool output trimming (5.1)
+- [x] ex2: Escalation — explicit criteria + few-shot, frustrated user pattern, multi-topic (5.2)
+- [x] ex3: Context degradation — API statelessness, scratchpad files, case-facts block (5.4, 5.5)
+- [x] ex4: Error propagation — structured errors, coverage annotations, multi-agent recovery (5.3)
+- [ ] Domain 5 practice questions — 20 queued in memory (d5_question_bank_queue.md), paused at Q1
 
 ---
 
@@ -68,4 +68,4 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-_Last updated: 2026-05-11 (end of session)_
+_Last updated: 2026-05-12 (end of session)_
