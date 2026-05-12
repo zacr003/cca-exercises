@@ -15,8 +15,6 @@
   header { background: linear-gradient(135deg, #431407 0%, #7c2d12 100%); padding: 28px 32px; border-bottom: 1px solid var(--border); }
   header h1 { font-size: 1.7rem; font-weight: 700; color: #fff; }
   header p { color: #fdba74; margin-top: 4px; font-size: 0.9rem; }
-  .header-meta { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
-  .badge { background: rgba(251,146,60,0.15); border: 1px solid rgba(251,146,60,0.3); color: var(--accent); padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
   .container { max-width: 1000px; margin: 0 auto; padding: 24px 20px 60px; }
   .nav-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px; border-bottom: 1px solid var(--border); }
   .tab-btn { background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); padding: 8px 14px; cursor: pointer; font-size: 0.85rem; font-weight: 600; white-space: nowrap; transition: all 0.15s; margin-bottom: -1px; }
@@ -25,8 +23,8 @@
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
-  .card-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .card-title .num { background: var(--accent); color: #431407; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; flex-shrink: 0; }
+  .card-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .sub-tag { background: rgba(251,146,60,0.15); border: 1px solid rgba(251,146,60,0.3); color: var(--accent); padding: 2px 9px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; }
   .concept-box { background: rgba(251,146,60,0.07); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
   .trap-box { background: rgba(251,191,36,0.07); border-left: 3px solid var(--yellow); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
   .trap-box .trap-title { font-weight: 700; color: var(--yellow); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
@@ -69,37 +67,29 @@
   .quiz-score.show { display: block; }
   .score-num { font-size: 2.5rem; font-weight: 800; color: var(--accent); }
   #quiz-btn { background: var(--accent); color: #431407; border: none; border-radius: 8px; padding: 12px 28px; font-size: 0.95rem; font-weight: 700; cursor: pointer; margin-top: 16px; display: block; }
-  .export-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.82rem; float: right; margin-top: -4px; }
 </style>
 </head>
 <body>
 <header>
   <h1>Domain 2 — MCP Tool Design</h1>
-  <p>CCA-F Exam Prep · 18% of exam · 5 exercises</p>
-  <div class="header-meta">
-    <span class="badge">2.1 Tool Descriptions</span>
-    <span class="badge">2.2 Tool Errors</span>
-    <span class="badge">2.3 Tool Scope</span>
-    <span class="badge">2.4 MCP Config</span>
-    <span class="badge">2.5 Output Design</span>
-  </div>
+  <p>CCA-F Exam Prep · 18% of exam · 5 subdomains</p>
 </header>
 
 <div class="container">
   <div class="nav-tabs">
-    <button class="tab-btn active" onclick="showTab('ex1')">Ex1: Descriptions</button>
-    <button class="tab-btn" onclick="showTab('ex2')">Ex2: Errors</button>
-    <button class="tab-btn" onclick="showTab('ex3')">Ex3: Scope</button>
-    <button class="tab-btn" onclick="showTab('ex4')">Ex4: MCP Config</button>
-    <button class="tab-btn" onclick="showTab('ex5')">Ex5: Output Design</button>
+    <button class="tab-btn active" onclick="showTab('s1')">2.1 Tool Descriptions</button>
+    <button class="tab-btn" onclick="showTab('s2')">2.2 Tool Errors</button>
+    <button class="tab-btn" onclick="showTab('s3')">2.3 Tool Scope</button>
+    <button class="tab-btn" onclick="showTab('s4')">2.4 MCP Config</button>
+    <button class="tab-btn" onclick="showTab('s5')">2.5 Output Design</button>
+    <button class="tab-btn" onclick="showTab('summary')">Summary</button>
     <button class="tab-btn" onclick="showTab('quiz')">Quiz</button>
-    <button class="export-btn" onclick="window.print()">⬇ Print</button>
   </div>
 
-  <!-- EX1: TOOL DESCRIPTIONS -->
-  <div id="ex1" class="tab-panel active">
+  <!-- 2.1 TOOL DESCRIPTIONS -->
+  <div id="s1" class="tab-panel active">
     <div class="card">
-      <div class="card-title"><span class="num">1</span> Tool Descriptions and Selection (2.1)</div>
+      <div class="card-title">Tool Descriptions and Selection <span class="sub-tag">2.1</span></div>
       <div class="concept-box">
         <p>Tool descriptions are the <strong>primary mechanism</strong> Claude uses for tool selection. Overlapping or vague descriptions cause misrouting. When two tools overlap, fix <strong>BOTH</strong> descriptions — not just one.</p>
       </div>
@@ -144,10 +134,10 @@ get_order_by_id:
     </div>
   </div>
 
-  <!-- EX2: TOOL ERRORS -->
-  <div id="ex2" class="tab-panel">
+  <!-- 2.2 TOOL ERRORS -->
+  <div id="s2" class="tab-panel">
     <div class="card">
-      <div class="card-title"><span class="num">2</span> Tool Error Handling (2.2)</div>
+      <div class="card-title">Tool Error Handling <span class="sub-tag">2.2</span></div>
       <div class="concept-box">
         <p>Structured error responses tell the agent HOW to recover. Generic or silent errors leave the agent unable to reason about next steps. "0 results" is <strong>NOT an error</strong> — it is a successful query returning an empty set.</p>
       </div>
@@ -217,10 +207,10 @@ get_order_by_id:
     </div>
   </div>
 
-  <!-- EX3: TOOL SCOPE -->
-  <div id="ex3" class="tab-panel">
+  <!-- 2.3 TOOL SCOPE -->
+  <div id="s3" class="tab-panel">
     <div class="card">
-      <div class="card-title"><span class="num">3</span> Tool Scope and Constraints (2.3)</div>
+      <div class="card-title">Tool Scope and Constraints <span class="sub-tag">2.3</span></div>
       <div class="concept-box">
         <p>Constraints should live <strong>inside the tool definition and implementation</strong> — not in the system prompt. System prompt constraints are probabilistic. Tool-level validation is deterministic.</p>
       </div>
@@ -252,8 +242,8 @@ def load_support_doc_impl(url):
       <table>
         <thead><tr><th>Tool Count</th><th>Effect</th></tr></thead>
         <tbody>
-          <tr><td>2-4 specialized tools</td><td class="td-correct">High reliability — model picks correctly</td></tr>
-          <tr><td>4-6 general-purpose tools</td><td class="td-correct">Good — acceptable complexity</td></tr>
+          <tr><td>2–4 specialized tools</td><td class="td-correct">High reliability — model picks correctly</td></tr>
+          <tr><td>4–6 general-purpose tools</td><td class="td-correct">Good — acceptable complexity</td></tr>
           <tr><td>6+ overlapping tools</td><td class="td-trap">Degraded reliability — misrouting increases</td></tr>
           <tr><td>15+ tools</td><td class="td-trap">Significant misrouting — consolidation required</td></tr>
         </tbody>
@@ -286,10 +276,10 @@ def load_support_doc_impl(url):
     </div>
   </div>
 
-  <!-- EX4: MCP CONFIG -->
-  <div id="ex4" class="tab-panel">
+  <!-- 2.4 MCP CONFIG -->
+  <div id="s4" class="tab-panel">
     <div class="card">
-      <div class="card-title"><span class="num">4</span> MCP Configuration (2.4)</div>
+      <div class="card-title">MCP Configuration <span class="sub-tag">2.4</span></div>
       <div class="concept-box">
         <p>MCP (Model Context Protocol) servers expose tools to Claude. Configuration lives in <code>.mcp.json</code> files. Credentials must use environment variable expansion — never hardcoded strings.</p>
       </div>
@@ -346,6 +336,33 @@ def load_support_doc_impl(url):
         <p>Rate limiting belongs in the MCP server implementation — a token bucket or similar mechanism enforced server-side. This is deterministic regardless of what Claude does.</p>
       </div>
 
+      <h3>Community vs. Custom MCP Servers</h3>
+      <div class="concept-box">
+        <p>Use community MCP servers for standard integrations (Jira, GitHub, Slack) — they already exist and are maintained. Reserve custom MCP server development for proprietary or team-specific systems with no community equivalent.</p>
+      </div>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Community server</span><span class="kv-val">Standard integrations — Jira, GitHub, Slack, Linear</span></div>
+        <div class="kv-row"><span class="kv-key">Custom server</span><span class="kv-val">Proprietary internal systems, bespoke APIs, team-specific tooling</span></div>
+        <div class="kv-row"><span class="kv-key">Wrong</span><span class="kv-val">Force a proprietary system into a community server template</span></div>
+      </div>
+
+      <h3>allowedTools — The mcp__ Prefix</h3>
+      <div class="trap-box">
+        <div class="trap-title">Exam Trap</div>
+        <p><code>"github__*"</code> in allowedTools is WRONG. The correct pattern is <code>"mcp__github__*"</code> — the <code>mcp__</code> prefix is required for all MCP tool permissions.</p>
+      </div>
+
+      <h3>Tool Avoidance = Description Problem</h3>
+      <div class="concept-box">
+        <p>If an agent ignores a custom MCP tool and falls back to built-in primitives (Bash, grep), the root cause is a thin tool description — not a config or scope problem. If it were a config issue, the tool wouldn't load at all. The tool loads but loses the selection competition.</p>
+      </div>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Symptom</span><span class="kv-val">Agent uses Bash/grep instead of your custom MCP tool</span></div>
+        <div class="kv-row"><span class="kv-key">Root cause</span><span class="kv-val">Tool description is too thin — no capabilities, no output shape, no guidance on when to prefer it</span></div>
+        <div class="kv-row"><span class="kv-key">Fix</span><span class="kv-val">Enrich the description with what it does, what it returns, and explicit guidance ("prefer this over manual alternatives when X")</span></div>
+        <div class="kv-row"><span class="kv-key">Wrong fix</span><span class="kv-val">Check the config or scope settings</span></div>
+      </div>
+
       <h3>Exam Trap Table — 2.4</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
@@ -354,10 +371,13 @@ def load_support_doc_impl(url):
           <tr><td class="td-trap">Rate limiting via system prompt instructions</td><td>Token bucket in the MCP server — server-side enforcement is deterministic</td></tr>
           <tr><td class="td-trap">MCP resources are the same as MCP tools</td><td>Tools = callable functions; Resources = readable data sources</td></tr>
           <tr><td class="td-trap">User-scoped MCP servers shared via git pull</td><td><code>~/.claude/mcp.json</code> is machine-local — not shared via version control</td></tr>
+          <tr><td class="td-trap"><code>"github__*"</code> in allowedTools</td><td><code>"mcp__github__*"</code> — the mcp__ prefix is required</td></tr>
+          <tr><td class="td-trap">Build custom MCP server for Jira</td><td>Use community MCP server (already exists and is maintained)</td></tr>
+          <tr><td class="td-trap">Agent ignores custom tool; check config</td><td>Enrich tool description — avoidance is a description problem not config</td></tr>
         </tbody>
       </table>
 
-      <h3>MCP Resources vs. Tools</h3>
+      <h3>MCP Resources vs. Tools (Reference)</h3>
       <table>
         <thead><tr><th></th><th>MCP Tools</th><th>MCP Resources</th></tr></thead>
         <tbody>
@@ -369,10 +389,10 @@ def load_support_doc_impl(url):
     </div>
   </div>
 
-  <!-- EX5: OUTPUT DESIGN -->
-  <div id="ex5" class="tab-panel">
+  <!-- 2.5 OUTPUT DESIGN -->
+  <div id="s5" class="tab-panel">
     <div class="card">
-      <div class="card-title"><span class="num">5</span> Tool Output Design (2.5)</div>
+      <div class="card-title">Tool Output Design <span class="sub-tag">2.5</span></div>
       <div class="concept-box">
         <p>Tool output shape determines context quality. Verbose outputs accumulate across tool calls and degrade agent reasoning. Return only what Claude needs to answer the question — not everything from the backend.</p>
       </div>
@@ -434,6 +454,114 @@ def load_support_doc_impl(url):
           <tr><td class="td-trap">Return all 100K results in single tool response</td><td>Paginate — first page + total + next_page_token</td></tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div id="summary" class="tab-panel">
+    <div class="card">
+      <div class="card-title">Domain 2 — Exam Trap Summary</div>
+      <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">One-line concept + key traps per subdomain. Use this before the quiz.</p>
+
+      <!-- 2.1 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">2.1</span>
+          <span style="font-weight:700; color:#fff;">Tool Descriptions and Selection</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Descriptions are the <strong>primary signal</strong> for tool selection — vague or overlapping descriptions cause misrouting. Fix BOTH tools when two overlap; adding examples or routing layers is over-engineered.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Fix only one of two overlapping tools</td><td>Fix BOTH — one unfixed tool still creates ambiguity</td></tr>
+            <tr><td class="td-trap">Add few-shot examples before fixing descriptions</td><td>Fix descriptions first — examples add overhead without fixing root cause</td></tr>
+            <tr><td class="td-trap">Add routing classifier layer</td><td>Over-engineered — Claude already routes by description</td></tr>
+            <tr><td class="td-trap">tool_choice: "auto" + stronger prompts</td><td>Use tool_choice: "any" or forced selection for guaranteed invocation</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 2.2 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">2.2</span>
+          <span style="font-weight:700; color:#fff;">Tool Error Handling</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Return <code>isError: true</code> with structured metadata for failures. "0 results" is a <strong>success</strong>, not an error. Never silently suppress failures or terminate workflows on a single tool error.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Return {} or [] for a service failure</td><td>isError: true — silent suppression prevents recovery</td></tr>
+            <tr><td class="td-trap">0 results → isError: true</td><td>0 results is success — status: "success", results: []</td></tr>
+            <tr><td class="td-trap">Retry with same params on validation error</td><td>isRetryable: false — must change approach or escalate</td></tr>
+            <tr><td class="td-trap">Echo raw promo code in error description</td><td>Descriptions must be customer-safe — never echo raw input or PII</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 2.3 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">2.3</span>
+          <span style="font-weight:700; color:#fff;">Tool Scope and Constraints</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Constraints belong in the <strong>tool implementation</strong> — not the system prompt. System prompt constraints are probabilistic; tool-level validation is deterministic. Each subagent gets only its role's tools.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Generic tool + system prompt constraint</td><td>Scope validation inside the tool implementation — deterministic</td></tr>
+            <tr><td class="td-trap">6 overlapping tools for fine-grained control</td><td>Consolidate to 3 focused tools with clear descriptions</td></tr>
+            <tr><td class="td-trap">All subagents get all tools</td><td>Each subagent gets only the tools scoped to its role</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 2.4 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">2.4</span>
+          <span style="font-weight:700; color:#fff;">MCP Configuration</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Credentials always use <code>${ENV_VAR}</code> expansion. The <code>mcp__</code> prefix is required in allowedTools. Use community servers for standard integrations. If an agent avoids a custom MCP tool, it's a description problem — not config.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Hardcode API key in .mcp.json</td><td>${ENV_VAR} expansion — config can be committed; secrets cannot</td></tr>
+            <tr><td class="td-trap">"github__*" in allowedTools</td><td>"mcp__github__*" — the mcp__ prefix is required</td></tr>
+            <tr><td class="td-trap">Build custom MCP server for Jira</td><td>Use community MCP server — already exists and maintained</td></tr>
+            <tr><td class="td-trap">Agent ignores custom tool → check config</td><td>Enrich tool description — avoidance is a description problem, not config</td></tr>
+            <tr><td class="td-trap">Rate limiting via system prompt</td><td>Token bucket in MCP server — server-side, deterministic</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 2.5 -->
+      <div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">2.5</span>
+          <span style="font-weight:700; color:#fff;">Tool Output Design</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Return only business-relevant fields — verbose outputs accumulate and degrade context. Paginate large result sets. PostToolUse hooks should return the trimmed version only, never both summary and raw.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Return full backend response, let Claude ignore noise</td><td>Trim at source — only business-relevant fields</td></tr>
+            <tr><td class="td-trap">PostToolUse hook returns summary AND raw output</td><td>Return ONLY the trimmed version — not both</td></tr>
+            <tr><td class="td-trap">Edit on non-unique string</td><td>Edit fails — Read + modify all + Write</td></tr>
+            <tr><td class="td-trap">Return all 100K results in one response</td><td>Paginate — first page + total + next_page_token</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -621,7 +749,7 @@ def load_support_doc_impl(url):
     const got = Object.values(scores).filter(Boolean).length;
     document.getElementById('score-display').textContent = got + '/12';
     const pct = Math.round(got / 12 * 100);
-    const msg = pct >= 90 ? 'Excellent — Domain 2 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the exercise tabs again.';
+    const msg = pct >= 90 ? 'Excellent — Domain 2 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the subdomain tabs again.';
     document.getElementById('score-msg').textContent = pct + '% — ' + msg;
     document.getElementById('quiz-score').classList.add('show');
     document.getElementById('quiz-btn').style.display = 'none';

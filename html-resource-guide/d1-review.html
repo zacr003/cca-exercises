@@ -15,8 +15,6 @@
   header { background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%); padding: 28px 32px; border-bottom: 1px solid var(--border); }
   header h1 { font-size: 1.7rem; font-weight: 700; color: #fff; }
   header p { color: #a5b4fc; margin-top: 4px; font-size: 0.9rem; }
-  .header-meta { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
-  .badge { background: rgba(129,140,248,0.15); border: 1px solid rgba(129,140,248,0.3); color: var(--accent); padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
   .container { max-width: 1000px; margin: 0 auto; padding: 24px 20px 60px; }
   .nav-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px; border-bottom: 1px solid var(--border); }
   .tab-btn { background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); padding: 8px 14px; cursor: pointer; font-size: 0.85rem; font-weight: 600; white-space: nowrap; transition: all 0.15s; margin-bottom: -1px; }
@@ -25,8 +23,8 @@
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
-  .card-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .card-title .num { background: var(--accent); color: #1e1b4b; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; flex-shrink: 0; }
+  .card-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .sub-tag { background: rgba(129,140,248,0.15); border: 1px solid rgba(129,140,248,0.3); color: var(--accent); padding: 2px 9px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; }
   .concept-box { background: rgba(129,140,248,0.07); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
   .trap-box { background: rgba(251,191,36,0.07); border-left: 3px solid var(--yellow); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
   .trap-box .trap-title { font-weight: 700; color: var(--yellow); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
@@ -48,7 +46,7 @@
   @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
   .kv-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
   .kv-row { display: flex; gap: 10px; align-items: baseline; }
-  .kv-key { color: var(--accent); font-weight: 700; font-family: monospace; font-size: 0.9em; min-width: 200px; flex-shrink: 0; }
+  .kv-key { color: var(--accent); font-weight: 700; font-family: monospace; font-size: 0.9em; min-width: 210px; flex-shrink: 0; }
   .kv-val { color: var(--muted); font-size: 0.88em; }
   h3 { color: #a5b4fc; font-size: 0.95rem; font-weight: 700; margin: 16px 0 8px; }
   ul, ol { padding-left: 18px; margin-bottom: 12px; }
@@ -75,33 +73,26 @@
 <body>
 <header>
   <h1>Domain 1 — Agentic Architecture</h1>
-  <p>CCA-F Exam Prep · 27% of exam · 6 exercises</p>
-  <div class="header-meta">
-    <span class="badge">1.1 Agentic Loop</span>
-    <span class="badge">1.2 Parallel Tools</span>
-    <span class="badge">1.3 Coordinator/Subagent</span>
-    <span class="badge">1.4 Hooks</span>
-    <span class="badge">1.5 Tool Sequencing</span>
-    <span class="badge">1.6 Task Decomposition</span>
-  </div>
+  <p>CCA-F Exam Prep · 27% of exam · 7 subdomains</p>
 </header>
 
 <div class="container">
   <div class="nav-tabs">
-    <button class="tab-btn active" onclick="showTab('ex1')">Ex1: Agentic Loop</button>
-    <button class="tab-btn" onclick="showTab('ex2')">Ex2: Coordinator</button>
-    <button class="tab-btn" onclick="showTab('ex3')">Ex3: Hooks</button>
-    <button class="tab-btn" onclick="showTab('ex4')">Ex4: Tool Sequencing</button>
-    <button class="tab-btn" onclick="showTab('ex5')">Ex5: Decomposition</button>
-    <button class="tab-btn" onclick="showTab('session')">Session Mgmt</button>
+    <button class="tab-btn active" onclick="showTab('s1')">1.1 Agentic Loop</button>
+    <button class="tab-btn" onclick="showTab('s2')">1.2 Coordinator / Subagent</button>
+    <button class="tab-btn" onclick="showTab('s3')">1.3 Subagent Context Passing</button>
+    <button class="tab-btn" onclick="showTab('s4')">1.4 Tool Sequencing</button>
+    <button class="tab-btn" onclick="showTab('s5')">1.5 Hooks</button>
+    <button class="tab-btn" onclick="showTab('s6')">1.6 Task Decomposition</button>
+    <button class="tab-btn" onclick="showTab('s7')">1.7 Session Management</button>
+    <button class="tab-btn" onclick="showTab('summary')">Summary</button>
     <button class="tab-btn" onclick="showTab('quiz')">Quiz</button>
-    <button class="export-btn" onclick="window.print()">⬇ Print</button>
   </div>
 
-  <!-- EX1: AGENTIC LOOP -->
-  <div id="ex1" class="tab-panel active">
+  <!-- 1.1 AGENTIC LOOP -->
+  <div id="s1" class="tab-panel active">
     <div class="card">
-      <div class="card-title"><span class="num">1</span> Basic Agentic Loop + Parallel Tools (1.1, 1.2)</div>
+      <div class="card-title">Agentic Loop Control Flow <span class="sub-tag">1.1</span></div>
       <div class="concept-box">
         <p><strong>stop_reason</strong> is the ONLY termination signal. Never parse response text to determine if the loop is done. Never check for phrases like "I have completed."</p>
       </div>
@@ -146,7 +137,7 @@
         # ALL results in ONE message
         messages.append({"role": "user", "content": tool_results})</code></pre>
 
-      <h3>Parallel Tool Calls (Ex1b)</h3>
+      <h3>Parallel Tool Calls</h3>
       <div class="concept-box">
         <p>When the model returns multiple <code>tool_use</code> blocks in a single response, it is requesting <strong>parallel execution</strong>. The pattern is identical — execute all blocks, return all results in one message.</p>
       </div>
@@ -162,7 +153,7 @@
 messages.append({"role": "user", "content": tool_results})  # ONE message</code></pre>
       </div>
 
-      <h3>Exam Trap Table — 1.1/1.2</h3>
+      <h3>Exam Trap Table — 1.1</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
         <tbody>
@@ -170,16 +161,16 @@ messages.append({"role": "user", "content": tool_results})  # ONE message</code>
           <tr><td class="td-trap"><code>stop_reason: "max_tokens"</code> = agent finished</td><td>Truncation — raise max_tokens and retry</td></tr>
           <tr><td class="td-trap">Send one tool_result per message for parallel calls</td><td>All tool_results in ONE user message</td></tr>
           <tr><td class="td-trap">Execute only the first tool_use block per turn</td><td>Execute ALL tool_use blocks in the response</td></tr>
-          <tr><td class="td-trap">tool_result blocks mixed with text blocks arbitrarily</td><td>tool_result blocks must be in the content array of the user message</td></tr>
+          <tr><td class="td-trap">tool_result blocks mixed with text blocks arbitrarily</td><td>tool_result blocks must appear FIRST in the content array</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- EX2: COORDINATOR -->
-  <div id="ex2" class="tab-panel">
+  <!-- 1.2 COORDINATOR / SUBAGENT -->
+  <div id="s2" class="tab-panel">
     <div class="card">
-      <div class="card-title"><span class="num">2</span> Coordinator / Subagent Architecture (1.3)</div>
+      <div class="card-title">Multi-Agent Coordinator / Subagent Architecture <span class="sub-tag">1.2</span></div>
       <div class="concept-box">
         <p>Subagents do <strong>NOT inherit coordinator context</strong>. Every subagent starts fresh. Pass everything it needs explicitly via system prompt + task message. The coordinator's full conversation history is invisible to subagents.</p>
       </div>
@@ -192,113 +183,92 @@ messages.append({"role": "user", "content": tool_results})  # ONE message</code>
         <li><strong style="color:var(--text);">Synthesis pass</strong> — dedicated subagent integrates findings; never concatenate raw outputs</li>
       </ol>
 
-      <h3>Context Passing Rules</h3>
-      <div class="kv-list">
-        <div class="kv-row"><span class="kv-key">What subagents receive</span><span class="kv-val">Only what you explicitly pass via system prompt + task message</span></div>
-        <div class="kv-row"><span class="kv-key">Format to pass</span><span class="kv-val">Structured JSON — NOT conversational prose or raw text</span></div>
-        <div class="kv-row"><span class="kv-key">Coordinator instructions</span><span class="kv-val">Specify GOALS + quality criteria — NOT step-by-step procedures</span></div>
-        <div class="kv-row"><span class="kv-key">Synthesis step</span><span class="kv-val">Separate pass — integrates and resolves tensions; never just concatenates</span></div>
+      <h3>Dependency-Aware Parallel Scheduling</h3>
+      <div class="concept-box">
+        <p>Only serialize at actual dependency boundaries — everything without a dependency runs from the start. Holding independent agents until unrelated dependencies clear is wasted parallelism.</p>
+      </div>
+      <table>
+        <thead><tr><th>Scenario</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>A, B, E, F are all independent</td><td class="td-correct">Launch all four in parallel immediately</td></tr>
+          <tr><td>C depends on A only</td><td class="td-correct">Start C as soon as A completes — don't wait for B</td></tr>
+          <tr><td>D depends on A + B</td><td class="td-correct">Start D only when both A and B complete</td></tr>
+          <tr><td>Hold E and F until D finishes</td><td class="td-trap">Wrong — E and F have no dependency on D, start them immediately</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Coordinator Instruction Style</h3>
+      <div class="grid-2">
+        <div class="bad-box">
+          <div class="bad-title">Wrong — Step-by-Step Procedures</div>
+          <p>"First call get_customer, then call get_orders, then format the result as follows..." — over-specifies implementation, reduces agent flexibility.</p>
+        </div>
+        <div class="good-box">
+          <div class="good-title">Correct — Goals + Quality Criteria</div>
+          <p>"Return a JSON object with the customer's top 3 open orders, including status and amount. Accuracy over speed."</p>
+        </div>
       </div>
 
+      <h3>Exam Trap Table — 1.2</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Subagents automatically share the coordinator's conversation history</td><td>They don't — pass all necessary context explicitly</td></tr>
+          <tr><td class="td-trap">Dispatch subagents sequentially for simplicity</td><td>Dispatch in PARALLEL — multiple Task calls in one response turn</td></tr>
+          <tr><td class="td-trap">Concatenate raw subagent outputs as the final answer</td><td>Run a dedicated synthesis pass to integrate findings</td></tr>
+          <tr><td class="td-trap">Hold independent agents until unrelated dependencies clear</td><td>Start independent agents immediately — only serialize at actual dependency edges</td></tr>
+          <tr><td class="td-trap">Give coordinator step-by-step execution instructions</td><td>Coordinator specifies goals + quality criteria; agents determine how</td></tr>
+          <tr><td class="td-trap">Subagents communicate directly with each other</td><td>All inter-agent communication routes through the coordinator</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 1.3 SUBAGENT CONTEXT PASSING -->
+  <div id="s3" class="tab-panel">
+    <div class="card">
+      <div class="card-title">Subagent Context Passing <span class="sub-tag">1.3</span></div>
+      <div class="concept-box">
+        <p>Context must be explicitly injected into every Task invocation. Subagents have zero access to the coordinator's conversation history, tool results, or system prompt — pass everything needed via the task message, using structured data not prose.</p>
+      </div>
+
+      <h3>What Subagents Receive</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">What to pass</span><span class="kv-val">Structured JSON or CSV — preserves exact values across handoffs</span></div>
+        <div class="kv-row"><span class="kv-key">What NOT to pass</span><span class="kv-val">Conversational prose summaries — paraphrasing loses specificity</span></div>
+        <div class="kv-row"><span class="kv-key">Include</span><span class="kv-val">Source attribution (URLs, doc names, page numbers) in structured format</span></div>
+        <div class="kv-row"><span class="kv-key">Scope</span><span class="kv-val">Each subagent gets only tools relevant to its role — no cross-specialization access</span></div>
+      </div>
+
+      <h3>Why Structure Beats Prose</h3>
       <div class="bad-box">
-        <div class="bad-title">Wrong — Assuming Shared Context</div>
-        <p>Sending a subagent task like "Analyze the pros of what we just discussed" — the subagent has no "what we just discussed." Pass the full context explicitly.</p>
+        <div class="bad-title">Wrong — Prose Reference</div>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>task = "Analyze what we discussed about the order processing pipeline"
+# Subagent has no "what we discussed" — returns generic output</code></pre>
       </div>
       <div class="good-box">
         <div class="good-title">Correct — Explicit Context Injection</div>
-        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>system = "You are a pros analyst. Return JSON: {topic, pros, confidence}"
-task = f"Analyze the pros of: {user_request}"
-# Full context in the task message — subagent needs nothing else</code></pre>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>task = f"Analyze: {json.dumps(order_pipeline_context)}"
+# Full context explicitly injected — subagent has everything it needs</code></pre>
       </div>
 
       <h3>Exam Trap Table — 1.3</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
         <tbody>
-          <tr><td class="td-trap">Subagents automatically share the coordinator's conversation history</td><td>They don't — pass all necessary context explicitly</td></tr>
-          <tr><td class="td-trap">Dispatch subagents sequentially for efficiency</td><td>Dispatch in PARALLEL — multiple Task calls in one response turn</td></tr>
-          <tr><td class="td-trap">Concatenate raw subagent outputs as the final answer</td><td>Run a dedicated synthesis pass to integrate findings</td></tr>
-          <tr><td class="td-trap">Pass prose summaries between agents</td><td>Pass structured JSON — exact values survive, not paraphrased descriptions</td></tr>
-          <tr><td class="td-trap">Give coordinator step-by-step execution instructions</td><td>Coordinator specifies goals + quality criteria; agents determine how</td></tr>
+          <tr><td class="td-trap">Subagent references "the coordinator's earlier findings"</td><td>Subagents have no access to coordinator context — pass it explicitly</td></tr>
+          <tr><td class="td-trap">Pass prose summary to subagent for efficiency</td><td>Pass structured JSON — exact values survive handoffs, paraphrasing doesn't</td></tr>
+          <tr><td class="td-trap">All subagents share a common tool pool</td><td>Scoped per role — web subagent gets search tools only, report subagent gets write tools only</td></tr>
+          <tr><td class="td-trap">Subagent receives coordinator's system prompt automatically</td><td>Nothing is inherited — inject system prompt explicitly per subagent</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- EX3: HOOKS -->
-  <div id="ex3" class="tab-panel">
+  <!-- 1.4 TOOL SEQUENCING -->
+  <div id="s4" class="tab-panel">
     <div class="card">
-      <div class="card-title"><span class="num">3</span> Hooks: PreToolUse + PostToolUse (1.4)</div>
-      <div class="concept-box">
-        <p>Hooks give you <strong>deterministic guarantees</strong>. System prompt instructions give you probabilistic compliance. For business rules that MUST always hold, use hooks.</p>
-      </div>
-
-      <h3>Hook Types</h3>
-      <table>
-        <thead><tr><th>Hook</th><th>When it fires</th><th>What it can do</th></tr></thead>
-        <tbody>
-          <tr><td><code>PreToolUse</code></td><td>Before a tool executes</td><td>Allow (exit 0), deny (exit 1), ask user (exit 2), or modify input via <code>updatedInput</code></td></tr>
-          <tr><td><code>PostToolUse</code></td><td>After a tool executes</td><td>Transform the result BEFORE the model processes it</td></tr>
-        </tbody>
-      </table>
-
-      <h3>Hook Exit Codes</h3>
-      <div class="kv-list">
-        <div class="kv-row"><span class="kv-key">exit 0</span><span class="kv-val">Allow — proceed normally</span></div>
-        <div class="kv-row"><span class="kv-key">exit 1</span><span class="kv-val">Deny — block the tool call</span></div>
-        <div class="kv-row"><span class="kv-key">exit 2</span><span class="kv-val">Ask user — pause and prompt for approval</span></div>
-      </div>
-
-      <h3>PreToolUse: Production Path Gate</h3>
-      <pre><code># hook_pre_production_gate.py
-import json, sys
-tool_input = json.load(sys.stdin)
-file_path = tool_input.get("file_path", "")
-
-if "/production/" in file_path:
-    print(json.dumps({"decision": "ask",
-                      "reason": f"Write to production path: {file_path}. Approve?"}))
-    sys.exit(2)   # pause, ask user
-
-sys.exit(0)       # allow</code></pre>
-
-      <h3>PostToolUse: PII Trimming</h3>
-      <pre><code># hook_post_pii_trim.py — strips emails from tool results BEFORE model sees them
-import json, re, sys
-tool_result = json.load(sys.stdin)
-result_str = json.dumps(tool_result)
-cleaned = re.sub(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}',
-                 '[REDACTED]', result_str)
-print(cleaned)
-sys.exit(0)</code></pre>
-      <div class="trap-box">
-        <div class="trap-title">PII Hook Limitation</div>
-        <p>PostToolUse PII trimming only strips the <strong>current tool result</strong>. PII already in conversation history from earlier turns is NOT affected. For full hygiene, sanitize at the source (in the tool itself).</p>
-      </div>
-
-      <h3>PreToolUse: Programmatic Prerequisite Gate</h3>
-      <div class="concept-box">
-        <p>Track whether <code>get_customer</code> has run and returned verified. A PostToolUse hook on <code>get_customer</code> writes <code>{"verified": true}</code> to a temp file. A PreToolUse hook on <code>process_refund</code> reads it and denies if not verified.</p>
-        <p style="margin-top:6px;"><strong>Key point:</strong> This is deterministic. Even if the model ignores the system prompt instruction, the gate always fires.</p>
-      </div>
-
-      <h3>Exam Trap Table — 1.4</h3>
-      <table>
-        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
-        <tbody>
-          <tr><td class="td-trap">"Add a system prompt rule: never write to /production/"</td><td>PreToolUse hook with exit 2 (ask user) — deterministic enforcement</td></tr>
-          <tr><td class="td-trap">PostToolUse PII hook keeps full conversation history clean</td><td>Only current result is cleaned — sanitize at tool source for history</td></tr>
-          <tr><td class="td-trap">"Add a verification reminder in system prompt"</td><td>Programmatic gate (PreToolUse) blocking downstream tool — deterministic</td></tr>
-          <tr><td class="td-trap">Hooks are optional quality improvements</td><td>For business rules that MUST hold (identity gates, production writes), hooks are the required approach</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- EX4: TOOL SEQUENCING -->
-  <div id="ex4" class="tab-panel">
-    <div class="card">
-      <div class="card-title"><span class="num">4</span> Tool Sequencing and Programmatic Prerequisites (1.5)</div>
+      <div class="card-title">Tool Sequencing and Programmatic Prerequisites <span class="sub-tag">1.4</span></div>
       <div class="concept-box">
         <p>Prompt instructions have a non-zero failure rate for hard compliance. For operations that MUST run in sequence (verify identity → then process refund), enforce the prerequisite <strong>inside the tool itself</strong> — not only in the system prompt.</p>
       </div>
@@ -338,7 +308,7 @@ sys.exit(0)</code></pre>
         <p>Description: "Process a refund for a verified customer. Requires prior successful verify_customer call — will fail with error if unverified."</p>
       </div>
 
-      <h3>Exam Trap Table — 1.5</h3>
+      <h3>Exam Trap Table — 1.4</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
         <tbody>
@@ -351,10 +321,115 @@ sys.exit(0)</code></pre>
     </div>
   </div>
 
-  <!-- EX5: TASK DECOMPOSITION -->
-  <div id="ex5" class="tab-panel">
+  <!-- 1.5 HOOKS -->
+  <div id="s5" class="tab-panel">
     <div class="card">
-      <div class="card-title"><span class="num">5</span> Task Decomposition Strategies (1.6)</div>
+      <div class="card-title">Hooks: PreToolUse + PostToolUse <span class="sub-tag">1.5</span></div>
+      <div class="concept-box">
+        <p>Hooks give you <strong>deterministic guarantees</strong>. System prompt instructions give you probabilistic compliance. For business rules that MUST always hold, use hooks. <em>Prompts are suggestions. Hooks are laws.</em></p>
+      </div>
+
+      <h3>Hook Types</h3>
+      <table>
+        <thead><tr><th>Hook</th><th>When it fires</th><th>What it can do</th></tr></thead>
+        <tbody>
+          <tr><td><code>PreToolUse</code></td><td>Before a tool executes</td><td>Allow (exit 0), block (exit 2), warn (exit 1), or modify input via <code>updatedInput</code></td></tr>
+          <tr><td><code>PostToolUse</code></td><td>After a tool executes</td><td>Inject additional context alongside the result before the model processes it</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Hook Exit Codes — The Exam Tests This</h3>
+      <table>
+        <thead><tr><th>Exit code</th><th>Behavior</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td><code>exit 0</code></td><td>Allow — tool runs normally</td><td>Standard allow</td></tr>
+          <tr><td><code>exit 2</code></td><td><strong>Blocking</strong> — tool cannot execute; hook output shown to user</td><td>This is the "ask user" / hard-block code</td></tr>
+          <tr><td><code>exit 1</code> (or other non-zero)</td><td><strong>Non-blocking warning</strong> — tool runs anyway, warning displayed</td><td>Does NOT block execution</td></tr>
+        </tbody>
+      </table>
+      <div class="trap-box">
+        <div class="trap-title">Exit Code Trap</div>
+        <p>Exit 1 does NOT block the tool — it just shows a warning and lets the tool run. Exit 2 is the blocking code. Most developers assume exit 1 = block. Wrong.</p>
+      </div>
+
+      <h3>PreToolUse: Production Path Gate</h3>
+      <pre><code># hook_pre_production_gate.py
+import json, sys
+hook_data = json.load(sys.stdin)
+tool_input = hook_data.get("tool_input", {})   # UNWRAP — not top level
+file_path = tool_input.get("file_path", "")
+
+if "/production/" in file_path.replace("\\", "/"):
+    print(json.dumps({
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "ask",
+            "permissionDecisionReason": f"Write to production path: {file_path}. Approve?"
+        }
+    }))
+    sys.exit(2)   # blocking — pause, ask user
+
+sys.exit(0)       # allow</code></pre>
+
+      <h3>Hook stdin — The Wrapping Trap</h3>
+      <pre><code># WRONG — file_path is not at the top level
+hook_data = json.load(sys.stdin)
+file_path = hook_data.get("file_path", "")   # always returns ""
+
+# CORRECT — Claude Code wraps params one level deep under "tool_input"
+hook_data = json.load(sys.stdin)
+tool_input = hook_data.get("tool_input", {})
+file_path = tool_input.get("file_path", "")
+
+# Full stdin shape:
+# {
+#   "hook_event_name": "PreToolUse",
+#   "tool_name": "Write",
+#   "tool_input": { "file_path": "...", "content": "..." },
+#   "session_id": "...",
+#   "tool_use_id": "..."
+# }</code></pre>
+
+      <h3>PostToolUse: PII Trimming Limitation</h3>
+      <pre><code># hook_post_pii_trim.py — injects PII warning context alongside tool result
+import json, sys
+print(json.dumps({
+    "hookSpecificOutput": {
+        "hookEventName": "PostToolUse",
+        "additionalContext": "PII WARNING: treat any emails in result as [REDACTED]"
+    }
+}))
+sys.exit(0)</code></pre>
+      <div class="trap-box">
+        <div class="trap-title">PostToolUse PII Limitation</div>
+        <p>PostToolUse cannot replace the raw tool result — it only adds <code>additionalContext</code> alongside it. PII already in conversation history from earlier turns is NOT affected. For full PII prevention, sanitize at the source (in the tool itself).</p>
+      </div>
+
+      <h3>Redirect-to-Alternative Pattern</h3>
+      <div class="concept-box">
+        <p>When a PreToolUse hook blocks a policy-violating call, the denial message should also <strong>direct the agent to the correct alternative</strong>.</p>
+        <p style="margin-top:8px;">Example: block <code>process_refund</code> above $500 AND return "Refund exceeds $500 limit — call <code>escalate_to_human</code> instead." This enforces policy AND correct workflow in one step rather than leaving the agent stuck.</p>
+      </div>
+
+      <h3>Exam Trap Table — 1.5</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">"Add a system prompt rule: never write to /production/"</td><td>PreToolUse hook with exit 2 — deterministic enforcement</td></tr>
+          <tr><td class="td-trap">exit 1 in a PreToolUse hook blocks the tool</td><td>exit 1 = non-blocking warning; exit 2 = blocking. Most devs get this backwards.</td></tr>
+          <tr><td class="td-trap">Hook reads file_path directly from stdin JSON top level</td><td>Claude Code wraps params under "tool_input" — unwrap first</td></tr>
+          <tr><td class="td-trap">PostToolUse PII hook keeps full conversation history clean</td><td>Only current result is annotated — sanitize at tool source for true hygiene</td></tr>
+          <tr><td class="td-trap">Hook denial message only blocks — doesn't guide</td><td>Redirect-to-alternative: block AND tell agent what to call instead</td></tr>
+          <tr><td class="td-trap">Hooks are optional quality improvements</td><td>For business rules that MUST hold (identity gates, production writes), hooks are the required approach</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 1.6 TASK DECOMPOSITION -->
+  <div id="s6" class="tab-panel">
+    <div class="card">
+      <div class="card-title">Task Decomposition Strategies <span class="sub-tag">1.6</span></div>
       <div class="concept-box">
         <p>Two decomposition strategies — choose based on whether the scope is known upfront or discovered as you go.</p>
       </div>
@@ -405,10 +480,10 @@ sys.exit(0)</code></pre>
     </div>
   </div>
 
-  <!-- ===== SESSION MANAGEMENT ===== -->
-  <div id="session" class="tab-panel">
+  <!-- 1.7 SESSION MANAGEMENT -->
+  <div id="s7" class="tab-panel">
     <div class="card">
-      <div class="card-title"><span class="num">6</span> Session Management and Parallelism (1.7)</div>
+      <div class="card-title">Session Management and Parallelism <span class="sub-tag">1.7</span></div>
       <div class="concept-box">
         <p>Long-running investigations need structured state management. Two patterns: <strong>fork_session</strong> for divergent exploration, <strong>--resume</strong> for continuing named sessions. For pipelines that may be interrupted: <strong>crash recovery manifests</strong>.</p>
       </div>
@@ -451,56 +526,162 @@ sys.exit(0)</code></pre>
         <p>Programmatically loadable JSON at a fixed path. Coordinator reads it, determines what's done vs. remaining, injects only relevant state into new prompts.</p>
       </div>
 
-      <h3>Hooks — Nuances the Exam Tests</h3>
-      <table>
-        <thead><tr><th>Exit code</th><th>Behavior</th><th>Note</th></tr></thead>
-        <tbody>
-          <tr><td><code>exit 0</code></td><td>Allow — tool runs normally</td><td>Standard allow</td></tr>
-          <tr><td><code>exit 2</code></td><td><strong>Blocking</strong> — tool cannot execute; hook output shown to user</td><td>This is the "ask user" / hard-deny code</td></tr>
-          <tr><td><code>exit 1</code> (or other non-zero)</td><td><strong>Non-blocking warning</strong> — tool runs anyway, warning displayed</td><td>Does NOT block execution</td></tr>
-        </tbody>
-      </table>
-      <div class="trap-box">
-        <div class="trap-title">Exit Code Trap</div>
-        <p>Exit 1 does NOT block the tool — it just shows a warning and lets the tool run. Exit 2 is the blocking code. Most developers assume exit 1 = block. Wrong.</p>
-      </div>
-
-      <h3>Hook stdin — The Wrapping Trap</h3>
-      <pre><code># WRONG — file_path is not at the top level
-hook_data = json.load(sys.stdin)
-file_path = hook_data.get("file_path", "")   # always returns ""
-
-# CORRECT — Claude Code wraps params one level deep under "tool_input"
-hook_data = json.load(sys.stdin)
-tool_input = hook_data.get("tool_input", {})
-file_path = tool_input.get("file_path", "")
-
-# Full stdin shape:
-# {
-#   "hook_event_name": "PreToolUse",
-#   "tool_name": "Write",
-#   "tool_input": { "file_path": "...", "content": "..." },
-#   "session_id": "...",
-#   "tool_use_id": "..."
-# }</code></pre>
-
-      <h3>Redirect-to-Alternative Pattern</h3>
-      <div class="concept-box">
-        <p>When a PreToolUse hook blocks a policy-violating call, the denial message should also <strong>direct the agent to the correct alternative</strong>.</p>
-        <p style="margin-top:8px;">Example: block <code>process_refund</code> above $500 AND return "Refund exceeds $500 limit — call <code>escalate_to_human</code> instead." This enforces policy AND correct workflow in one step rather than leaving the agent stuck.</p>
-      </div>
-
       <h3>Exam Trap Table — 1.7</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
         <tbody>
-          <tr><td class="td-trap">exit 1 in a PreToolUse hook blocks the tool</td><td>exit 1 = non-blocking warning; exit 2 = blocking. Most devs get this backwards.</td></tr>
-          <tr><td class="td-trap">Hook reads file_path directly from stdin JSON top level</td><td>Claude Code wraps params under "tool_input" — unwrap first</td></tr>
           <tr><td class="td-trap">Coordinator can spawn subagents without any config</td><td>Task tool must be in coordinator's allowedTools</td></tr>
           <tr><td class="td-trap">Resume a session when files have changed significantly</td><td>Fresh start + injected summary of what changed — stale tool results mislead the model</td></tr>
-          <tr><td class="td-trap">Hook denial message only blocks — doesn't guide</td><td>Redirect-to-alternative: block AND tell agent what to call instead</td></tr>
+          <tr><td class="td-trap">Freeform prose scratchpad is reliable for crash recovery</td><td>Machine-readable JSON manifest at a fixed path — coordinator determines done vs. remaining</td></tr>
+          <tr><td class="td-trap">fork_session for continuing a named investigation</td><td>fork_session = divergent exploration from same baseline; --resume = continue a named session</td></tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div id="summary" class="tab-panel">
+    <div class="card">
+      <div class="card-title">Domain 1 — Exam Trap Summary</div>
+      <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">One-line concept + key traps per subdomain. Use this before the quiz.</p>
+
+      <!-- 1.1 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">1.1</span>
+          <span style="font-weight:700; color:#fff;">Agentic Loop Control Flow</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p><strong>stop_reason</strong> is the only termination signal. <code>"max_tokens"</code> = truncation, not completion. All tool_results in ONE user message.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Check text content to detect loop completion</td><td>Only check <code>stop_reason == "end_turn"</code></td></tr>
+            <tr><td class="td-trap"><code>stop_reason: "max_tokens"</code> = agent finished</td><td>Truncation — raise max_tokens and retry</td></tr>
+            <tr><td class="td-trap">Send one tool_result per message for parallel calls</td><td>All tool_results in ONE user message</td></tr>
+            <tr><td class="td-trap">tool_result blocks after text blocks</td><td>tool_result blocks must appear FIRST in the content array</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 1.2 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">1.2</span>
+          <span style="font-weight:700; color:#fff;">Multi-Agent Coordinator / Subagent Architecture</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Dispatch in parallel (multiple Task calls in one response). Never concatenate raw outputs — run a synthesis pass. Only serialize at actual dependency edges.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Sequential Task calls across separate turns</td><td>Multiple Task calls in ONE coordinator response turn</td></tr>
+            <tr><td class="td-trap">Concatenate raw subagent outputs as final answer</td><td>Dedicated synthesis pass to integrate and resolve tensions</td></tr>
+            <tr><td class="td-trap">Hold independent agents until unrelated deps clear</td><td>Start independent agents immediately — only serialize actual dependency edges</td></tr>
+            <tr><td class="td-trap">Subagents communicate directly with each other</td><td>All communication routes through the coordinator</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 1.3 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">1.3</span>
+          <span style="font-weight:700; color:#fff;">Subagent Context Passing</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Subagents inherit nothing — inject everything explicitly. Pass structured JSON, not prose. Scope tools per role.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Subagent references "the coordinator's earlier findings"</td><td>No access to coordinator context — pass it explicitly</td></tr>
+            <tr><td class="td-trap">Pass prose summary for efficiency</td><td>Pass structured JSON — exact values survive; prose paraphrasing doesn't</td></tr>
+            <tr><td class="td-trap">All subagents share a common tool pool</td><td>Scope tools per role — web agent gets search, report agent gets write</td></tr>
+            <tr><td class="td-trap">Subagent inherits coordinator's system prompt</td><td>Nothing is inherited — inject system prompt explicitly per subagent</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 1.4 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">1.4</span>
+          <span style="font-weight:700; color:#fff;">Tool Sequencing and Programmatic Prerequisites</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Prompts are probabilistic. Tool-level gates are deterministic. For hard compliance (verify before refund), enforce inside the tool — not just in the system prompt.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Prompt-only enforcement for critical sequences</td><td>Programmatic gate inside the tool — fires regardless of model behavior</td></tr>
+            <tr><td class="td-trap">Add routing classifier to manage tool selection</td><td>Write precise tool descriptions — model selects based on intent</td></tr>
+            <tr><td class="td-trap">Read-only ops require the same identity gate as financial ops</td><td>Only financial operations need verification — distinguish in tool descriptions</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 1.5 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">1.5</span>
+          <span style="font-weight:700; color:#fff;">Hooks: PreToolUse + PostToolUse</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Hooks are laws; prompts are suggestions. exit 2 = blocking. exit 1 = non-blocking warning. Params are under <code>tool_input</code>, not at top level.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">exit 1 blocks the tool</td><td>exit 1 = non-blocking warning; exit 2 = blocking. Most devs get this backwards.</td></tr>
+            <tr><td class="td-trap">Read file_path directly from stdin top level</td><td>Unwrap <code>tool_input</code> first — Claude Code wraps params one level deep</td></tr>
+            <tr><td class="td-trap">PostToolUse PII hook cleans full conversation history</td><td>Only annotates current result — sanitize at tool source for full hygiene</td></tr>
+            <tr><td class="td-trap">Hook denial only blocks — no guidance given</td><td>Redirect-to-alternative: block AND direct agent to correct tool</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 1.6 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">1.6</span>
+          <span style="font-weight:700; color:#fff;">Task Decomposition Strategies</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Known steps → prompt chaining (fixed sequential pipeline). Unknown scope → adaptive decomposition. Large reviews: per-file local pass + separate cross-file pass.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Single-pass review on all files</td><td>Per-file local pass first, then cross-file integration pass</td></tr>
+            <tr><td class="td-trap">Adaptive decomposition for predictable pipelines</td><td>Known steps → prompt chaining; adaptive adds unnecessary complexity</td></tr>
+            <tr><td class="td-trap">Prompt chaining for open-ended investigations</td><td>Adaptive — subtasks can't be written before triage discovers what's there</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 1.7 -->
+      <div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">1.7</span>
+          <span style="font-weight:700; color:#fff;">Session Management and Parallelism</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Resume when prior context is still valid. Fresh start when files changed. Crash recovery = machine-readable JSON manifest at a fixed path — not prose scratchpad.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Task tool spawns subagents by default</td><td>Task must be in coordinator's allowedTools</td></tr>
+            <tr><td class="td-trap">Resume when files have changed significantly</td><td>Fresh start + injected summary — stale tool results mislead the model</td></tr>
+            <tr><td class="td-trap">Prose scratchpad for crash recovery</td><td>Machine-readable JSON manifest — coordinator determines done vs. remaining</td></tr>
+            <tr><td class="td-trap">fork_session for continuing a named investigation</td><td>fork_session = divergent exploration; --resume = continue named session</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -566,7 +747,7 @@ file_path = tool_input.get("file_path", "")
         <div class="opt" onclick="answer(this,'q5',false)">A. Yes — PostToolUse hooks retroactively clean conversation history.</div>
         <div class="opt" onclick="answer(this,'q5',false)">B. Only if the hook was active in turn 3 when the email first appeared.</div>
         <div class="opt" onclick="answer(this,'q5',false)">C. Yes — hooks process all tool results in the session at once.</div>
-        <div class="opt" onclick="answer(this,'q5',true)">D. No — PostToolUse only cleans the current result. History from earlier turns is not affected.</div>
+        <div class="opt" onclick="answer(this,'q5',true)">D. No — PostToolUse only annotates the current result. History from earlier turns is not affected.</div>
       </div>
       <div class="explanation" id="exp-q5">PostToolUse hooks only affect the current tool result being returned. They don't retroactively clean history. For full PII hygiene, sanitize at the source — in the tool implementation itself.</div>
     </div>
@@ -624,11 +805,11 @@ file_path = tool_input.get("file_path", "")
       <div class="q-text">A PreToolUse hook should block a file write and prompt the user for approval. Which exit code achieves this?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q10',false)">A. exit 0 — allow</div>
-        <div class="opt" onclick="answer(this,'q10',false)">B. exit 1 — deny</div>
-        <div class="opt" onclick="answer(this,'q10',true)">C. exit 2 — ask user</div>
+        <div class="opt" onclick="answer(this,'q10',false)">B. exit 1 — non-blocking warning</div>
+        <div class="opt" onclick="answer(this,'q10',true)">C. exit 2 — blocking / ask user</div>
         <div class="opt" onclick="answer(this,'q10',false)">D. exit 3 — log and allow</div>
       </div>
-      <div class="explanation" id="exp-q10">exit 0 = allow, exit 1 = deny (block entirely), exit 2 = ask user (pause execution and prompt for approval). There is no exit 3.</div>
+      <div class="explanation" id="exp-q10">exit 0 = allow, exit 1 = non-blocking warning (tool still runs), exit 2 = blocking (tool cannot execute, user is prompted). There is no exit 3. Most developers assume exit 1 blocks — it does not.</div>
     </div>
 
     <div class="quiz-q" id="q11">
@@ -688,7 +869,7 @@ file_path = tool_input.get("file_path", "")
     const got = Object.values(scores).filter(Boolean).length;
     document.getElementById('score-display').textContent = got + '/12';
     const pct = Math.round(got / 12 * 100);
-    const msg = pct >= 90 ? 'Excellent — Domain 1 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the exercise tabs again.';
+    const msg = pct >= 90 ? 'Excellent — Domain 1 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the subdomain tabs again.';
     document.getElementById('score-msg').textContent = pct + '% — ' + msg;
     document.getElementById('quiz-score').classList.add('show');
     document.getElementById('quiz-btn').style.display = 'none';

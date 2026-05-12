@@ -15,18 +15,16 @@
   header { background: linear-gradient(135deg, #4a1942 0%, #6b1e3d 100%); padding: 28px 32px; border-bottom: 1px solid var(--border); }
   header h1 { font-size: 1.7rem; font-weight: 700; color: #fff; }
   header p { color: #e8a0bf; margin-top: 4px; font-size: 0.9rem; }
-  .header-meta { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
-  .badge { background: rgba(244,114,182,0.15); border: 1px solid rgba(244,114,182,0.3); color: var(--accent); padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
   .container { max-width: 1000px; margin: 0 auto; padding: 24px 20px 60px; }
-  .nav-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px; border-bottom: 1px solid var(--border); padding-bottom: 0; }
+  .nav-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px; border-bottom: 1px solid var(--border); }
   .tab-btn { background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); padding: 8px 14px; cursor: pointer; font-size: 0.85rem; font-weight: 600; white-space: nowrap; transition: all 0.15s; margin-bottom: -1px; }
   .tab-btn:hover { color: var(--text); }
   .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
-  .card-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .card-title .num { background: var(--accent); color: #fff; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0; }
+  .card-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .sub-tag { background: rgba(244,114,182,0.15); border: 1px solid rgba(244,114,182,0.3); color: var(--accent); padding: 2px 9px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; }
   .concept-box { background: rgba(244,114,182,0.07); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
   .trap-box { background: rgba(251,191,36,0.07); border-left: 3px solid var(--yellow); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
   .trap-box .trap-title { font-weight: 700; color: var(--yellow); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
@@ -48,15 +46,15 @@
   @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
   .kv-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
   .kv-row { display: flex; gap: 10px; align-items: baseline; }
-  .kv-key { color: var(--accent); font-weight: 700; font-family: monospace; font-size: 0.9em; min-width: 200px; flex-shrink: 0; }
+  .kv-key { color: var(--accent); font-weight: 700; font-family: monospace; font-size: 0.9em; min-width: 210px; flex-shrink: 0; }
   .kv-val { color: var(--muted); font-size: 0.88em; }
   h3 { color: #f9a8d4; font-size: 0.95rem; font-weight: 700; margin: 16px 0 8px; }
   ul { padding-left: 18px; margin-bottom: 12px; }
   li { margin-bottom: 4px; color: var(--muted); }
   li strong { color: var(--text); }
   .quiz-q { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 16px; }
-  .quiz-q .q-text { font-weight: 600; color: var(--text); margin-bottom: 14px; font-size: 0.95rem; }
-  .quiz-q .q-num { color: var(--muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+  .q-text { font-weight: 600; color: var(--text); margin-bottom: 14px; font-size: 0.95rem; }
+  .q-num { color: var(--muted); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
   .options { display: flex; flex-direction: column; gap: 8px; }
   .opt { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; cursor: pointer; transition: all 0.15s; color: var(--muted); font-size: 0.88rem; text-align: left; }
   .opt:hover { border-color: var(--accent); color: var(--text); }
@@ -75,36 +73,27 @@
 <body>
 <header>
   <h1>Domain 4 — Prompt Engineering</h1>
-  <p>CCA-F Exam Prep · 20% of exam · 5 exercises</p>
-  <div class="header-meta">
-    <span class="badge">4.1/4.2 Few-Shot</span>
-    <span class="badge">4.3 Structured Output</span>
-    <span class="badge">4.4 tool_choice</span>
-    <span class="badge">4.5 Batch API</span>
-    <span class="badge">4.3/4.6 Retry Feedback</span>
-    <span class="badge">4.6 Multi-Instance Review</span>
-  </div>
+  <p>CCA-F Exam Prep · 20% of exam · 6 subdomains</p>
 </header>
 
 <div class="container">
   <div class="nav-tabs">
-    <button class="tab-btn active" onclick="showTab('ex1')">Ex1: Few-Shot</button>
-    <button class="tab-btn" onclick="showTab('ex2')">Ex2: Structured Output</button>
-    <button class="tab-btn" onclick="showTab('ex3')">Ex3: tool_choice</button>
-    <button class="tab-btn" onclick="showTab('ex4')">Ex4: Batch API</button>
-    <button class="tab-btn" onclick="showTab('ex5')">Ex5: Retry Feedback</button>
-    <button class="tab-btn" onclick="showTab('ex6')">Ex6: Multi-Instance Review</button>
-    <button class="tab-btn" onclick="showTab('cache')">Prompt Cache</button>
+    <button class="tab-btn active" onclick="showTab('s1')">4.1 Explicit Criteria</button>
+    <button class="tab-btn" onclick="showTab('s2')">4.2 Few-Shot Examples</button>
+    <button class="tab-btn" onclick="showTab('s3')">4.3 Structured Output</button>
+    <button class="tab-btn" onclick="showTab('s4')">4.4 tool_choice</button>
+    <button class="tab-btn" onclick="showTab('s5')">4.5 Batch API</button>
+    <button class="tab-btn" onclick="showTab('s6')">4.6 Multi-Instance Review</button>
+    <button class="tab-btn" onclick="showTab('summary')">Summary</button>
     <button class="tab-btn" onclick="showTab('quiz')">Quiz</button>
-    <button class="export-btn" onclick="window.print()">⬇ Print</button>
   </div>
 
-  <!-- EX1: FEW-SHOT -->
-  <div id="ex1" class="tab-panel active">
+  <!-- 4.1 EXPLICIT CRITERIA AND CONSISTENT CLASSIFICATION -->
+  <div id="s1" class="tab-panel active">
     <div class="card">
-      <div class="card-title"><span class="num">1</span> Few-Shot Prompting (4.1, 4.2)</div>
+      <div class="card-title">Explicit Criteria and Consistent Classification <span class="sub-tag">4.1</span></div>
       <div class="concept-box">
-        <p>When detailed instructions alone produce <strong>inconsistent results</strong>, the fix is <strong>concrete contrastive examples</strong> — not stronger instructions. Examples teach the model what the boundary IS, not just what "typical" looks like.</p>
+        <p>Replace vague instructions with explicit criteria. When a classification category has a high false-positive rate, the fix is to <strong>temporarily disable that category</strong> and rewrite its criteria — not to lower overall strictness.</p>
       </div>
 
       <h3>Three Approaches (in order of effectiveness)</h3>
@@ -116,6 +105,34 @@
           <tr><td><strong>Explicit criteria + contrastive examples</strong></td><td>—</td><td class="td-correct">Consistent and accurate</td></tr>
         </tbody>
       </table>
+
+      <h3>High False Positive Rate in One Category</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Correct fix</span><span class="kv-val">Temporarily DISABLE that category while improving its criteria and examples</span></div>
+        <div class="kv-row"><span class="kv-key">Wrong: uniform strictness reduction</span><span class="kv-val">Penalizes accurate categories to fix one broken one</span></div>
+        <div class="kv-row"><span class="kv-key">Wrong: switch to more capable model</span><span class="kv-val">Doesn't fix the prompt quality issue — just moves the problem to a more expensive model</span></div>
+      </div>
+
+      <h3>Exam Trap Table — 4.1</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">"Be more conservative" fixes false positives</td><td>Vague — define explicit criteria per category</td></tr>
+          <tr><td class="td-trap">Uniform strictness reduction for one noisy category</td><td>Disable that category while fixing its criteria — don't penalize accurate ones</td></tr>
+          <tr><td class="td-trap">Switch to a more capable model</td><td>Prompt quality is the root cause; model choice doesn't fix it</td></tr>
+          <tr><td class="td-trap">Self-reported confidence is a reliable escalation proxy</td><td>It's unreliable — use explicit criteria</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 4.2 FEW-SHOT EXAMPLES -->
+  <div id="s2" class="tab-panel">
+    <div class="card">
+      <div class="card-title">Few-Shot Examples <span class="sub-tag">4.2</span></div>
+      <div class="concept-box">
+        <p>When detailed instructions produce inconsistent results, the fix is <strong>concrete contrastive examples</strong> — not stronger instructions. 2–4 targeted contrastive examples outperform 15 unambiguous ones.</p>
+      </div>
 
       <h3>What Makes Examples Contrastive</h3>
       <div class="good-box">
@@ -133,31 +150,28 @@ Example 2: user_id = request.args.get('id'); db.execute(f"... {user_id}")  → C
         <p style="margin-top:6px;">Grouping all CRITICALs together, then all HIGHs, doesn't teach discrimination between similar-looking cases from different categories.</p>
       </div>
 
-      <h3>High False Positive Rate in One Category</h3>
-      <div class="kv-list">
-        <div class="kv-row"><span class="kv-key">Correct fix</span><span class="kv-val">Temporarily DISABLE that category while improving its criteria and examples</span></div>
-        <div class="kv-row"><span class="kv-key">Wrong: uniform strictness reduction</span><span class="kv-val">Penalizes accurate categories to fix one broken one</span></div>
-        <div class="kv-row"><span class="kv-key">Wrong: switch to more capable model</span><span class="kv-val">Doesn't fix the prompt quality issue — just moves the problem to a more expensive model</span></div>
+      <h3>Example Count</h3>
+      <div class="concept-box">
+        <p>Target <strong>2–4 examples per boundary</strong>, not 10–15. Contrastive means two similar-looking cases with different classifications + explanation of WHY they differ. Grouped examples (all CRITICALs then all HIGHs) don't teach the model how to discriminate.</p>
       </div>
 
-      <h3>Exam Trap Table — 4.1/4.2</h3>
+      <h3>Exam Trap Table — 4.2</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
         <tbody>
-          <tr><td class="td-trap">"Be more conservative" fixes false positives</td><td>Vague — model has no concrete definition of "conservative"</td></tr>
-          <tr><td class="td-trap">10-15 unambiguous examples improve accuracy</td><td>Targets easy cases; doesn't help the edge cases causing errors</td></tr>
-          <tr><td class="td-trap">Grouped examples (all CRITICALs, then all HIGHs)</td><td>Doesn't teach discrimination — use adjacent contrastive pairs</td></tr>
-          <tr><td class="td-trap">More capable model fixes classification inconsistency</td><td>Prompt quality is the problem; fix the prompt, not the model</td></tr>
-          <tr><td class="td-trap">2-4 examples are too few</td><td>2-4 targeted contrastive examples outperform 15 unambiguous ones</td></tr>
+          <tr><td class="td-trap">More detailed instructions when current instructions fail</td><td>Switch to concrete examples — instructions hit a ceiling</td></tr>
+          <tr><td class="td-trap">10–15 unambiguous examples</td><td>2–4 targeted contrastive examples that target the failure mode</td></tr>
+          <tr><td class="td-trap">Grouped examples (all CRITICALs, then all HIGHs)</td><td>Adjacent contrastive pairs that show the boundary</td></tr>
+          <tr><td class="td-trap">2–4 examples are too few</td><td>2–4 targeted outperform 15 unambiguous ones</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- EX2: STRUCTURED OUTPUT -->
-  <div id="ex2" class="tab-panel">
+  <!-- 4.3 STRUCTURED OUTPUT -->
+  <div id="s3" class="tab-panel">
     <div class="card">
-      <div class="card-title"><span class="num">2</span> Structured Output and JSON Schemas (4.3)</div>
+      <div class="card-title">Structured Output and JSON Schemas <span class="sub-tag">4.3</span></div>
       <div class="concept-box">
         <p><strong>tool_use + JSON schema</strong> guarantees <em>syntax</em> compliance — no JSON errors, required fields present, enums enforced. It does <strong>not</strong> guarantee semantic correctness. Cross-field validation must happen in your application code.</p>
       </div>
@@ -221,15 +235,62 @@ if currency == "other" and not currency_detail:
           <tr><td class="td-trap">Required fields with "N/A" string for absent data</td><td>Use nullable: <code>"type": ["string", "null"]</code></td></tr>
           <tr><td class="td-trap"><code>stop_reason: "max_tokens"</code> guarantees schema compliance</td><td>It does NOT — truncated response may be incomplete JSON</td></tr>
           <tr><td class="td-trap">Schema validates that totals add up correctly</td><td>That's semantic validation — must be done in application code</td></tr>
+          <tr><td class="td-trap">Blind retry (same prompt) fixes extraction errors</td><td>No new signal — include doc + failed extraction + specific errors</td></tr>
+          <tr><td class="td-trap">Retry fixes absent data</td><td>Absent data causes fabrication — accept null, route to human review</td></tr>
+          <tr><td class="td-trap">Ask Claude to explain mistakes then parse</td><td>Use machine-readable validation errors in retry prompt</td></tr>
         </tbody>
       </table>
+
+      <h3>Retry-with-Error-Feedback</h3>
+      <div class="bad-box">
+        <div class="bad-title">Blind Retry (Wrong)</div>
+        <p>Re-send the original prompt unchanged. The model has no new information — same mistake is likely or a different random mistake occurs. Does not converge.</p>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Retry-with-Feedback (Correct)</div>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>ORIGINAL DOCUMENT:
+[the source text]
+
+PREVIOUS (INCORRECT) EXTRACTION:
+{"revenue_q1": 1200000, "total_h1": 2100000, "conflict_detected": false}
+
+VALIDATION ERRORS TO FIX:
+- total_h1 mismatch: Q1 + Q2 = 2,050,000 but total_h1 is 2,100,000
+- conflict_detected should be True but is False
+
+Please provide a corrected extraction that resolves these errors.</code></pre>
+      </div>
+
+      <h3>Retry Limits</h3>
+      <table>
+        <thead><tr><th>Situation</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Retryable:</strong> Info EXISTS in source, was extracted wrong</td><td>Retry with error feedback — model can fix it</td></tr>
+          <tr><td><strong>Non-retryable:</strong> Info does NOT exist in source at all</td><td>Accept null/unclear — retrying will cause fabrication</td></tr>
+        </tbody>
+      </table>
+      <div class="trap-box">
+        <div class="trap-title">Fabrication Risk</div>
+        <p>If you retry when the data is simply absent, the model may start <strong>fabricating a schema-valid value</strong> to "help" — now you have wrong data that looks correct. Nullable fields in your schema let the model honestly return null instead.</p>
+      </div>
+
+      <h3>detected_pattern Field</h3>
+      <div class="concept-box">
+        <p>Add a <code>detected_pattern</code> field to your extraction schema. When the model encounters difficulty, it describes what made extraction hard:</p>
+        <ul style="margin-top:8px;">
+          <li>"totals stated without itemized breakdown"</li>
+          <li>"ambiguous currency (both USD and EUR mentioned)"</li>
+          <li>"Q4 figures missing, only YTD available"</li>
+        </ul>
+        <p style="margin-top:8px;">Analyze these across dismissed/false-positive findings to find <strong>systematic prompt weaknesses</strong> → targeted fix instead of guesswork.</p>
+      </div>
     </div>
   </div>
 
-  <!-- EX3: TOOL_CHOICE -->
-  <div id="ex3" class="tab-panel">
+  <!-- 4.4 TOOL_CHOICE -->
+  <div id="s4" class="tab-panel">
     <div class="card">
-      <div class="card-title"><span class="num">3</span> tool_choice Configuration (4.4)</div>
+      <div class="card-title">tool_choice Configuration <span class="sub-tag">4.4</span></div>
       <div class="concept-box">
         <p>Three settings, three behaviors. Getting these confused is one of the most common exam traps in Domain 4.</p>
       </div>
@@ -283,10 +344,10 @@ Turn 2+: tool_choice = "auto"
     </div>
   </div>
 
-  <!-- EX4: BATCH API -->
-  <div id="ex4" class="tab-panel">
+  <!-- 4.5 BATCH API -->
+  <div id="s5" class="tab-panel">
     <div class="card">
-      <div class="card-title"><span class="num">4</span> Message Batches API (4.5)</div>
+      <div class="card-title">Message Batches API <span class="sub-tag">4.5</span></div>
       <div class="concept-box">
         <p>The Batch API is for <strong>latency-tolerant, non-blocking work</strong>. It saves 50% on cost but provides no guaranteed latency SLA — up to 24 hours. Never use it for workflows where something is waiting on the result.</p>
       </div>
@@ -367,165 +428,8 @@ Turn 2+: tool_choice = "auto"
           <tr><td class="td-trap">Batch supports multi-turn tool calling</td><td>NOT supported — each batch request is single-turn only</td></tr>
         </tbody>
       </table>
-    </div>
-  </div>
 
-  <!-- EX5: RETRY FEEDBACK -->
-  <div id="ex5" class="tab-panel">
-    <div class="card">
-      <div class="card-title"><span class="num">5</span> Retry-with-Error-Feedback (4.3 / 4.6)</div>
-      <div class="concept-box">
-        <p>When schema-valid extraction fails semantic validation, the retry prompt must include <strong>three things</strong>: the original document, the failed extraction, and the specific validation errors. Without all three, the model gets no new signal.</p>
-      </div>
-
-      <h3>What to Include in the Retry Prompt</h3>
-      <div class="bad-box">
-        <div class="bad-title">Blind Retry (Wrong)</div>
-        <p>Re-send the original prompt unchanged. The model has no new information — same mistake is likely or a different random mistake occurs. Does not converge.</p>
-      </div>
-      <div class="good-box">
-        <div class="good-title">Retry-with-Feedback (Correct)</div>
-        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>ORIGINAL DOCUMENT:
-[the source text]
-
-PREVIOUS (INCORRECT) EXTRACTION:
-{"revenue_q1": 1200000, "total_h1": 2100000, "conflict_detected": false}
-
-VALIDATION ERRORS TO FIX:
-- total_h1 mismatch: Q1 + Q2 = 2,050,000 but total_h1 is 2,100,000
-- conflict_detected should be True but is False
-
-Please provide a corrected extraction that resolves these errors.</code></pre>
-      </div>
-
-      <h3>Retry Limits</h3>
-      <table>
-        <thead><tr><th>Situation</th><th>Action</th></tr></thead>
-        <tbody>
-          <tr><td><strong>Retryable:</strong> Info EXISTS in source, was extracted wrong</td><td>Retry with error feedback — model can fix it</td></tr>
-          <tr><td><strong>Non-retryable:</strong> Info does NOT exist in source at all</td><td>Accept null/unclear — retrying will cause fabrication</td></tr>
-        </tbody>
-      </table>
-      <div class="trap-box">
-        <div class="trap-title">Fabrication Risk</div>
-        <p>If you retry when the data is simply absent, the model may start <strong>fabricating a schema-valid value</strong> to "help" — now you have wrong data that looks correct. Nullable fields in your schema let the model honestly return null instead.</p>
-      </div>
-
-      <h3>detected_pattern Field</h3>
-      <div class="concept-box">
-        <p>Add a <code>detected_pattern</code> field to your extraction schema. When the model encounters difficulty, it describes what made extraction hard:</p>
-        <ul style="margin-top:8px;">
-          <li>"totals stated without itemized breakdown"</li>
-          <li>"ambiguous currency (both USD and EUR mentioned)"</li>
-          <li>"Q4 figures missing, only YTD available"</li>
-        </ul>
-        <p style="margin-top:8px;">Analyze these across dismissed/false-positive findings to find <strong>systematic prompt weaknesses</strong> → targeted fix instead of guesswork.</p>
-      </div>
-
-      <h3>Self-Review Bias (4.6)</h3>
-      <div class="kv-list">
-        <div class="kv-row"><span class="kv-key">Problem</span><span class="kv-val">Same session reviews its own output → retains generation reasoning → defends its own decisions</span></div>
-        <div class="kv-row"><span class="kv-key">Fix</span><span class="kv-val">Independent fresh instance (separate invocation, no context from generation)</span></div>
-        <div class="kv-row"><span class="kv-key">Doesn't fix it</span><span class="kv-val">Extended thinking in the same session — still shares the same generation context</span></div>
-      </div>
-
-      <h3>Exam Trap Table — 4.3/4.6</h3>
-      <table>
-        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
-        <tbody>
-          <tr><td class="td-trap">Blind retry (same prompt) fixes extraction errors</td><td>No new information = no improvement. Include doc + failed extraction + specific errors.</td></tr>
-          <tr><td class="td-trap">Loosen schema to fix semantic errors</td><td>Semantic errors propagate silently — add application-layer validation instead</td></tr>
-          <tr><td class="td-trap">Retry fixes absent data</td><td>If data isn't in the source, retry causes fabrication. Accept null and route to human review.</td></tr>
-          <tr><td class="td-trap">Ask Claude to explain its mistakes in natural language, then parse</td><td>Include specific machine-readable validation errors in the retry prompt</td></tr>
-          <tr><td class="td-trap">Extended thinking in same session overcomes self-review bias</td><td>Still shares generation context — use an independent fresh invocation</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- EX6: MULTI-INSTANCE REVIEW -->
-  <div id="ex6" class="tab-panel">
-    <div class="card">
-      <div class="card-title"><span class="num">6</span> Multi-Instance Review and Self-Review Bias (4.6)</div>
-      <div class="concept-box">
-        <p>A model instance that generated code retains the reasoning that produced it. When asked to review its own output, it defends its own decisions — this is <strong>self-review bias</strong>. The fix is an <strong>independent review instance</strong>: a fresh context window with no access to the generation history.</p>
-      </div>
-
-      <h3>The Core Problem</h3>
-      <div class="grid-2">
-        <div class="bad-box">
-          <div class="bad-title">Same-Session Review (Wrong)</div>
-          <ul>
-            <li>Generator and reviewer share context</li>
-            <li>Reviewer inherits the reasoning that produced the bug</li>
-            <li>Reviewer defends the decision that introduced the problem</li>
-            <li>Extended thinking does NOT help — still same session</li>
-          </ul>
-        </div>
-        <div class="good-box">
-          <div class="good-title">Independent Instance (Correct)</div>
-          <ul>
-            <li>Fresh context window — no generation history</li>
-            <li>No inherited reasoning bias</li>
-            <li>Same model and model family is fine — independence is about context, not hardware</li>
-            <li>More effective than review instructions or extended thinking</li>
-          </ul>
-        </div>
-      </div>
-
-      <h3>What "Independent" Actually Means</h3>
-      <div class="kv-list">
-        <div class="kv-row"><span class="kv-key">Independent instance =</span><span class="kv-val">A fresh API invocation with a clean context window — no prior messages from the generation turn</span></div>
-        <div class="kv-row"><span class="kv-key">Does NOT require</span><span class="kv-val">A different physical server, a different model version, or a different model family</span></div>
-        <div class="kv-row"><span class="kv-key">What to pass</span><span class="kv-val">The output being reviewed + the review criteria — NOT the generation prompt or generation reasoning</span></div>
-        <div class="kv-row"><span class="kv-key">Passing the generation prompt to the reviewer</span><span class="kv-val">Reintroduces the same bias — reviewer now has the generator's framing</span></div>
-      </div>
-
-      <h3>Handling Re-Run Duplicate Comments</h3>
-      <div class="concept-box">
-        <p>When running independent review passes repeatedly (e.g., after each iteration of a fix), reviewers will re-flag issues that were already addressed in a prior pass. Fix: <strong>include the prior review findings in the new reviewer's context</strong> so it knows what was already flagged.</p>
-      </div>
-      <div class="good-box">
-        <div class="good-title">Re-Run Pattern</div>
-        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>PRIOR REVIEW FINDINGS (already addressed — do not re-flag):
-- Line 42: SQL query used string interpolation → fixed, now uses parameterized query
-- Line 78: Missing null check → fixed
-
-CURRENT CODE TO REVIEW:
-[updated code]
-
-Identify new issues only.</code></pre>
-      </div>
-
-      <h3>Split Review Pattern</h3>
-      <div class="kv-list">
-        <div class="kv-row"><span class="kv-key">Per-file local passes</span><span class="kv-val">Each file reviewed in isolation — catches syntax, logic errors, within-file issues</span></div>
-        <div class="kv-row"><span class="kv-key">Cross-file integration pass</span><span class="kv-val">Separate pass that sees multiple files together — catches API contract mismatches, shared state bugs, interface consistency</span></div>
-        <div class="kv-row"><span class="kv-key">Per-line review</span><span class="kv-val">Fragments cross-line and cross-file context — does NOT substitute for the integration pass</span></div>
-      </div>
-      <div class="trap-box">
-        <div class="trap-title">Per-Line Review Trap</div>
-        <p>Per-line review cannot catch integration issues — it lacks the cross-file context needed to see API contract mismatches or module boundary bugs. Always run a dedicated cross-file integration pass separately.</p>
-      </div>
-
-      <h3>Exam Trap Table — 4.6</h3>
-      <table>
-        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
-        <tbody>
-          <tr><td class="td-trap">Extended thinking in the same session fixes self-review bias</td><td>Same session, same generation context, same bias. Use an independent fresh invocation.</td></tr>
-          <tr><td class="td-trap">Independent review requires a different model family</td><td>Independence = fresh context window. Same model, different invocation = independent.</td></tr>
-          <tr><td class="td-trap">Pass the generation prompt to the reviewer for context</td><td>This reintroduces the generator's framing and bias. Pass only the output + review criteria.</td></tr>
-          <tr><td class="td-trap">Per-line review is equivalent to a cross-file integration pass</td><td>Per-line fragments cross-file context. Integration issues require a dedicated multi-file pass.</td></tr>
-          <tr><td class="td-trap">Stronger review instructions overcome self-review bias</td><td>Prompts are suggestions — they don't override the context the model already has. Fresh instance does.</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- PROMPT CACHE -->
-  <div id="cache" class="tab-panel">
-    <div class="card">
-      <div class="card-title"><span class="num">C</span> Prompt Caching Cost Model (4.5 extension)</div>
+      <h3>Prompt Caching (4.5 Extension)</h3>
       <div class="concept-box">
         <p>Prompt caching and the Batch API are <strong>different mechanisms with different savings rates</strong>. This is one of the most-tested cost confusions on the exam.</p>
       </div>
@@ -589,6 +493,223 @@ Identify new issues only.</code></pre>
     </div>
   </div>
 
+  <!-- 4.6 MULTI-INSTANCE REVIEW -->
+  <div id="s6" class="tab-panel">
+    <div class="card">
+      <div class="card-title">Multi-Instance Review and Self-Review Bias <span class="sub-tag">4.6</span></div>
+      <div class="concept-box">
+        <p>A model instance that generated code retains the reasoning that produced it. When asked to review its own output, it defends its own decisions — this is <strong>self-review bias</strong>. The fix is an <strong>independent review instance</strong>: a fresh context window with no access to the generation history.</p>
+      </div>
+
+      <h3>The Core Problem</h3>
+      <div class="grid-2">
+        <div class="bad-box">
+          <div class="bad-title">Same-Session Review (Wrong)</div>
+          <ul>
+            <li>Generator and reviewer share context</li>
+            <li>Reviewer inherits the reasoning that produced the bug</li>
+            <li>Reviewer defends the decision that introduced the problem</li>
+            <li>Extended thinking does NOT help — still same session</li>
+          </ul>
+        </div>
+        <div class="good-box">
+          <div class="good-title">Independent Instance (Correct)</div>
+          <ul>
+            <li>Fresh context window — no generation history</li>
+            <li>No inherited reasoning bias</li>
+            <li>Same model and model family is fine — independence is about context, not hardware</li>
+            <li>More effective than review instructions or extended thinking</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3>What "Independent" Actually Means</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Independent instance =</span><span class="kv-val">A fresh API invocation with a clean context window — no prior messages from the generation turn</span></div>
+        <div class="kv-row"><span class="kv-key">Does NOT require</span><span class="kv-val">A different physical server, a different model version, or a different model family</span></div>
+        <div class="kv-row"><span class="kv-key">What to pass</span><span class="kv-val">The output being reviewed + the review criteria — NOT the generation prompt or generation reasoning</span></div>
+        <div class="kv-row"><span class="kv-key">Passing the generation prompt to the reviewer</span><span class="kv-val">Reintroduces the same bias — reviewer now has the generator's framing</span></div>
+      </div>
+
+      <h3>Self-Review Bias</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Problem</span><span class="kv-val">Same session reviews its own output → retains generation reasoning → defends its own decisions</span></div>
+        <div class="kv-row"><span class="kv-key">Fix</span><span class="kv-val">Independent fresh instance (separate invocation, no context from generation)</span></div>
+        <div class="kv-row"><span class="kv-key">Doesn't fix it</span><span class="kv-val">Extended thinking in the same session — still shares the same generation context</span></div>
+      </div>
+
+      <h3>Handling Re-Run Duplicate Comments</h3>
+      <div class="concept-box">
+        <p>When running independent review passes repeatedly (e.g., after each iteration of a fix), reviewers will re-flag issues that were already addressed in a prior pass. Fix: <strong>include the prior review findings in the new reviewer's context</strong> so it knows what was already flagged.</p>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Re-Run Pattern</div>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>PRIOR REVIEW FINDINGS (already addressed — do not re-flag):
+- Line 42: SQL query used string interpolation → fixed, now uses parameterized query
+- Line 78: Missing null check → fixed
+
+CURRENT CODE TO REVIEW:
+[updated code]
+
+Identify new issues only.</code></pre>
+      </div>
+
+      <h3>Split Review Pattern</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Per-file local passes</span><span class="kv-val">Each file reviewed in isolation — catches syntax, logic errors, within-file issues</span></div>
+        <div class="kv-row"><span class="kv-key">Cross-file integration pass</span><span class="kv-val">Separate pass that sees multiple files together — catches API contract mismatches, shared state bugs, interface consistency</span></div>
+        <div class="kv-row"><span class="kv-key">Per-line review</span><span class="kv-val">Fragments cross-line and cross-file context — does NOT substitute for the integration pass</span></div>
+      </div>
+      <div class="trap-box">
+        <div class="trap-title">Per-Line Review Trap</div>
+        <p>Per-line review cannot catch integration issues — it lacks the cross-file context needed to see API contract mismatches or module boundary bugs. Always run a dedicated cross-file integration pass separately.</p>
+      </div>
+
+      <h3>Exam Trap Table — 4.6</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Extended thinking in the same session fixes self-review bias</td><td>Same session, same generation context, same bias. Use an independent fresh invocation.</td></tr>
+          <tr><td class="td-trap">Independent review requires a different model family</td><td>Independence = fresh context window. Same model, different invocation = independent.</td></tr>
+          <tr><td class="td-trap">Pass the generation prompt to the reviewer for context</td><td>This reintroduces the generator's framing and bias. Pass only the output + review criteria.</td></tr>
+          <tr><td class="td-trap">Per-line review is equivalent to a cross-file integration pass</td><td>Per-line fragments cross-file context. Integration issues require a dedicated multi-file pass.</td></tr>
+          <tr><td class="td-trap">Stronger review instructions overcome self-review bias</td><td>Prompts are suggestions — they don't override the context the model already has. Fresh instance does.</td></tr>
+          <tr><td class="td-trap">Ask Claude to explain its mistakes in natural language, then parse</td><td>Include specific machine-readable validation errors in the retry prompt</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div id="summary" class="tab-panel">
+    <div class="card">
+      <div class="card-title">Domain 4 — Exam Trap Summary</div>
+      <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">One-line concept + key traps per subdomain. Use this before the quiz.</p>
+
+      <!-- 4.1 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">4.1</span>
+          <span style="font-weight:700; color:#fff;">Explicit Criteria and Consistent Classification</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Replace vague instructions with <strong>explicit criteria</strong>. High false-positive rate in one category → disable that category and fix it; don't reduce uniform strictness.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">"Be more conservative" fixes false positives</td><td>Vague — define explicit criteria per category</td></tr>
+            <tr><td class="td-trap">Reduce strictness uniformly for one noisy category</td><td>Disable that category while fixing its criteria</td></tr>
+            <tr><td class="td-trap">Switch to a more capable model</td><td>Prompt quality is the root cause — fix the prompt</td></tr>
+            <tr><td class="td-trap">Self-reported confidence is a reliable escalation proxy</td><td>Unreliable — use explicit criteria</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 4.2 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">4.2</span>
+          <span style="font-weight:700; color:#fff;">Few-Shot Examples</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>When instructions fail, switch to <strong>contrastive examples</strong>. 2–4 targeted examples outperform 15 unambiguous ones. Adjacent pairs — not grouped by category.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Write stronger instructions when current ones fail</td><td>Switch to concrete contrastive examples</td></tr>
+            <tr><td class="td-trap">10–15 unambiguous examples improve accuracy</td><td>2–4 targeted contrastive examples per boundary</td></tr>
+            <tr><td class="td-trap">Grouped examples (all CRITICALs, then all HIGHs)</td><td>Adjacent contrastive pairs that show the boundary</td></tr>
+            <tr><td class="td-trap">2–4 examples are too few</td><td>2–4 targeted outperform 15 unambiguous ones</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 4.3 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">4.3</span>
+          <span style="font-weight:700; color:#fff;">Structured Output and JSON Schemas</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Schema guarantees <strong>syntax only</strong>. Semantic validation lives in application code. Retry with original doc + failed extraction + specific errors — never retry blindly or when data is absent.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap"><code>strict: true</code> eliminates semantic errors</td><td>Syntax only — semantic errors need application-layer checks</td></tr>
+            <tr><td class="td-trap">Required fields with "N/A" for absent data</td><td>Use nullable: <code>"type": ["string", "null"]</code></td></tr>
+            <tr><td class="td-trap"><code>stop_reason: "max_tokens"</code> guarantees schema compliance</td><td>Only <code>stop_reason: "tool_use"</code> / "end_turn" guarantees completion</td></tr>
+            <tr><td class="td-trap">Blind retry fixes extraction errors</td><td>Include doc + failed extraction + specific errors in retry prompt</td></tr>
+            <tr><td class="td-trap">Retry when data is absent</td><td>Accept null — retrying absent data causes fabrication</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 4.4 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">4.4</span>
+          <span style="font-weight:700; color:#fff;">tool_choice Configuration</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p><code>"any"</code> forces SOME tool — model picks which. Forced selection names the specific tool. Pattern: force specific tool Turn 1, switch to <code>"auto"</code> for Turn 2+.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">"any" forces a specific tool</td><td>"any" forces A tool — model picks WHICH. Use forced for a specific tool.</td></tr>
+            <tr><td class="td-trap">"auto" + stronger prompts guarantees a tool call</td><td>"auto" still allows text — use "any" or forced</td></tr>
+            <tr><td class="td-trap">Forced selection for all turns</td><td>Too rigid — model can't adapt. Use auto after turn 1.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 4.5 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">4.5</span>
+          <span style="font-weight:700; color:#fff;">Batch API and Prompt Caching</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Batch = 50% savings, up to 24h latency, non-blocking only. Cache reads = 90% savings, cache writes cost MORE. Results out of order — use <code>custom_id</code>.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Batch API saves 90%</td><td>Batch saves 50%. Prompt cache reads save 90%. Different mechanisms.</td></tr>
+            <tr><td class="td-trap">Use Batch for blocking CI checks</td><td>Blocking workflows need real-time API</td></tr>
+            <tr><td class="td-trap">Results come back in submission order</td><td>OUT of order — correlate via custom_id</td></tr>
+            <tr><td class="td-trap">Cache writes are cheaper than normal tokens</td><td>Cache writes cost MORE — net savings only if you read enough times</td></tr>
+            <tr><td class="td-trap">Cache a unique document used only once</td><td>You pay write premium with no return — cache repeated content only</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 4.6 -->
+      <div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">4.6</span>
+          <span style="font-weight:700; color:#fff;">Multi-Instance Review and Self-Review Bias</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Same session = same generation bias. Fix: <strong>independent fresh invocation</strong> — no generation context. Pass only output + review criteria, not the generation prompt.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Extended thinking fixes self-review bias</td><td>Same session, same bias. Use a fresh independent invocation.</td></tr>
+            <tr><td class="td-trap">Independent review requires a different model family</td><td>Independence = fresh context window. Same model is fine.</td></tr>
+            <tr><td class="td-trap">Pass the generation prompt to the reviewer</td><td>Reintroduces generator's framing. Pass only output + review criteria.</td></tr>
+            <tr><td class="td-trap">Per-line review = cross-file integration pass</td><td>Per-line fragments cross-file context. Integration pass is separate.</td></tr>
+            <tr><td class="td-trap">Stronger review instructions overcome self-review bias</td><td>Prompts don't override existing context. Fresh instance does.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
   <!-- QUIZ -->
   <div id="quiz" class="tab-panel">
     <div class="card" style="margin-bottom:24px;">
@@ -597,7 +718,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q1">
-      <div class="q-num">Question 1 of 12</div>
+      <div class="q-num">Question 1 of 14</div>
       <div class="q-text">A classification system has high false positive rates in one category. What is the correct fix?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q1',false)">A. Switch to a more capable model.</div>
@@ -609,7 +730,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q2">
-      <div class="q-num">Question 2 of 12</div>
+      <div class="q-num">Question 2 of 14</div>
       <div class="q-text">What does <code>tool_choice: "any"</code> guarantee?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q2',false)">A. The model calls the first tool in the tools array.</div>
@@ -621,7 +742,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q3">
-      <div class="q-num">Question 3 of 12</div>
+      <div class="q-num">Question 3 of 14</div>
       <div class="q-text">A JSON schema requires <code>invoice_number</code> as a string. The invoice document has no invoice number. What happens?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q3',false)">A. The model returns an error because a required field is missing.</div>
@@ -633,7 +754,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q4">
-      <div class="q-num">Question 4 of 12</div>
+      <div class="q-num">Question 4 of 14</div>
       <div class="q-text">The Batch API response for a 5-request batch comes back with results for requests 5, 2, 4, 1, 3. How should you match results to requests?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q4',false)">A. Sort results by timestamp to restore original order.</div>
@@ -645,7 +766,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q5">
-      <div class="q-num">Question 5 of 12</div>
+      <div class="q-num">Question 5 of 14</div>
       <div class="q-text">A structured extraction passes JSON schema validation but the stated total ($200) doesn't match the sum of line items ($147.48). What catches this error?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q5',false)">A. The JSON schema — it enforces semantic correctness.</div>
@@ -657,7 +778,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q6">
-      <div class="q-num">Question 6 of 12</div>
+      <div class="q-num">Question 6 of 14</div>
       <div class="q-text">How much does the Batch API save compared to the real-time API?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q6',false)">A. 90% — same as prompt caching.</div>
@@ -669,7 +790,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q7">
-      <div class="q-num">Question 7 of 12</div>
+      <div class="q-num">Question 7 of 14</div>
       <div class="q-text">A multi-turn workflow extracts metadata in Turn 1 and then does follow-up analysis. What is the recommended <code>tool_choice</code> configuration?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q7',false)">A. <code>"any"</code> for all turns — guarantees tool use throughout.</div>
@@ -681,7 +802,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q8">
-      <div class="q-num">Question 8 of 12</div>
+      <div class="q-num">Question 8 of 14</div>
       <div class="q-text">An extraction returns null for a phone number field. When you retry with error feedback, the model fabricates a phone number. What went wrong?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q8',false)">A. The retry prompt didn't include the original document.</div>
@@ -693,7 +814,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q9">
-      <div class="q-num">Question 9 of 12</div>
+      <div class="q-num">Question 9 of 14</div>
       <div class="q-text">You have 3 document extraction tools (invoice, receipt, contract). The document type is unknown. What <code>tool_choice</code> lets the model pick the right schema?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q9',false)">A. <code>{"type": "tool", "name": "invoice"}</code> — default to most common type.</div>
@@ -705,7 +826,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q10">
-      <div class="q-num">Question 10 of 12</div>
+      <div class="q-num">Question 10 of 14</div>
       <div class="q-text">A batch of 1,000 extraction requests completes with 50 failures. What is the correct recovery?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q10',false)">A. Resubmit the entire original batch of 1,000 requests.</div>
@@ -717,7 +838,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q11">
-      <div class="q-num">Question 11 of 12</div>
+      <div class="q-num">Question 11 of 14</div>
       <div class="q-text">What is the purpose of the <code>detected_pattern</code> field in an extraction schema?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q11',false)">A. It stores the model's confidence score for the extraction.</div>
@@ -729,7 +850,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q12">
-      <div class="q-num">Question 12 of 12</div>
+      <div class="q-num">Question 12 of 14</div>
       <div class="q-text">A CI pipeline needs Claude to review code and post results to a PR comment. Should you use the Batch API?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q12',false)">A. Yes — it saves 50% and the PR comment doesn't need to be immediate.</div>
@@ -797,7 +918,7 @@ Identify new issues only.</code></pre>
     const got = Object.values(scores).filter(Boolean).length;
     document.getElementById('score-display').textContent = got + '/14';
     const pct = Math.round(got / 14 * 100);
-    const msg = pct >= 90 ? 'Excellent — Domain 4 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the exercise tabs again.';
+    const msg = pct >= 90 ? 'Excellent — Domain 4 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the subdomain tabs again.';
     document.getElementById('score-msg').textContent = pct + '% — ' + msg;
     document.getElementById('quiz-score').classList.add('show');
     document.getElementById('quiz-btn').style.display = 'none';

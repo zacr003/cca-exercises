@@ -15,8 +15,6 @@
   header { background: linear-gradient(135deg, #064e3b 0%, #065f46 100%); padding: 28px 32px; border-bottom: 1px solid var(--border); }
   header h1 { font-size: 1.7rem; font-weight: 700; color: #fff; }
   header p { color: #6ee7b7; margin-top: 4px; font-size: 0.9rem; }
-  .header-meta { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
-  .badge { background: rgba(52,211,153,0.15); border: 1px solid rgba(52,211,153,0.3); color: var(--accent); padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 600; }
   .container { max-width: 1000px; margin: 0 auto; padding: 24px 20px 60px; }
   .nav-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px; border-bottom: 1px solid var(--border); }
   .tab-btn { background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); padding: 8px 14px; cursor: pointer; font-size: 0.85rem; font-weight: 600; white-space: nowrap; transition: all 0.15s; margin-bottom: -1px; }
@@ -25,8 +23,8 @@
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px 24px; margin-bottom: 20px; }
-  .card-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .card-title .num { background: var(--accent); color: #064e3b; border-radius: 50%; width: 22px; height: 22px; display: inline-flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; flex-shrink: 0; }
+  .card-title { font-size: 1.05rem; font-weight: 700; color: #fff; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .sub-tag { background: rgba(52,211,153,0.15); border: 1px solid rgba(52,211,153,0.3); color: var(--accent); padding: 2px 9px; border-radius: 12px; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; }
   .concept-box { background: rgba(52,211,153,0.07); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
   .trap-box { background: rgba(251,191,36,0.07); border-left: 3px solid var(--yellow); border-radius: 0 8px 8px 0; padding: 14px 18px; margin-bottom: 16px; }
   .trap-box .trap-title { font-weight: 700; color: var(--yellow); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
@@ -75,29 +73,26 @@
 <body>
 <header>
   <h1>Domain 5 — Context Management</h1>
-  <p>CCA-F Exam Prep · 15% of exam · 4 exercises</p>
-  <div class="header-meta">
-    <span class="badge">5.1 Long Context</span>
-    <span class="badge">5.2 Escalation</span>
-    <span class="badge">5.3 Error Propagation</span>
-    <span class="badge">5.4/5.5 Context Degradation</span>
-  </div>
+  <p>CCA-F Exam Prep · 15% of exam · 7 subdomains</p>
 </header>
 
 <div class="container">
   <div class="nav-tabs">
-    <button class="tab-btn active" onclick="showTab('ex1')">Ex1: Long Context</button>
-    <button class="tab-btn" onclick="showTab('ex2')">Ex2: Escalation</button>
-    <button class="tab-btn" onclick="showTab('ex3')">Ex3: Degradation</button>
-    <button class="tab-btn" onclick="showTab('ex4')">Ex4: Error Propagation</button>
+    <button class="tab-btn active" onclick="showTab('s1')">5.1 Long Context</button>
+    <button class="tab-btn" onclick="showTab('s2')">5.2 Escalation</button>
+    <button class="tab-btn" onclick="showTab('s3')">5.3 Error Propagation</button>
+    <button class="tab-btn" onclick="showTab('s4')">5.4 Context Degradation</button>
+    <button class="tab-btn" onclick="showTab('s5')">5.5 Session &amp; Window Mgmt</button>
+    <button class="tab-btn" onclick="showTab('s6')">5.6 Conflicting Sources</button>
+    <button class="tab-btn" onclick="showTab('s7')">5.7 Accuracy &amp; Review</button>
+    <button class="tab-btn" onclick="showTab('summary')">Summary</button>
     <button class="tab-btn" onclick="showTab('quiz')">Quiz</button>
-    <button class="export-btn" onclick="window.print()">⬇ Print</button>
   </div>
 
-  <!-- EX1: LONG CONTEXT -->
-  <div id="ex1" class="tab-panel active">
+  <!-- 5.1 LONG CONTEXT AND ATTENTION MANAGEMENT -->
+  <div id="s1" class="tab-panel active">
     <div class="card">
-      <div class="card-title"><span class="num">1</span> Long Context and Attention Management (5.1)</div>
+      <div class="card-title">Long Context and Attention Management <span class="sub-tag">5.1</span></div>
       <div class="concept-box">
         <p>Models reliably process content at the <strong>beginning</strong> and <strong>end</strong> of long inputs. Content in the <strong>middle</strong> may be missed — the "lost in the middle" effect. Key findings must go at the top.</p>
       </div>
@@ -155,10 +150,10 @@
     </div>
   </div>
 
-  <!-- EX2: ESCALATION -->
-  <div id="ex2" class="tab-panel">
+  <!-- 5.2 ESCALATION AND HUMAN-IN-THE-LOOP -->
+  <div id="s2" class="tab-panel">
     <div class="card">
-      <div class="card-title"><span class="num">2</span> Escalation and Human-in-the-Loop (5.2)</div>
+      <div class="card-title">Escalation and Human-in-the-Loop <span class="sub-tag">5.2</span></div>
       <div class="concept-box">
         <p>The exam tests this heavily with scenario questions. The key: escalation triggers are about <strong>capability gaps and explicit requests</strong> — not customer emotion, not complexity.</p>
       </div>
@@ -224,97 +219,10 @@
     </div>
   </div>
 
-  <!-- EX3: CONTEXT DEGRADATION -->
-  <div id="ex3" class="tab-panel">
+  <!-- 5.3 STRUCTURED ERROR PROPAGATION -->
+  <div id="s3" class="tab-panel">
     <div class="card">
-      <div class="card-title"><span class="num">3</span> Context Degradation and Memory Patterns (5.4, 5.5)</div>
-      <div class="concept-box">
-        <p>The Claude API is <strong>stateless</strong> — no session_id, no automatic history. Every request must include the full messages array. In long sessions, specific details pushed into the middle of a large context are forgotten — the model falls back to generic descriptions.</p>
-      </div>
-
-      <h3>API Statelessness (5.5)</h3>
-      <div class="kv-list">
-        <div class="kv-row"><span class="kv-key">Fact</span><span class="kv-val">Claude API has NO session memory — every request is independent</span></div>
-        <div class="kv-row"><span class="kv-key">Requirement</span><span class="kv-val">Every request must include the FULL messages array with all prior turns</span></div>
-        <div class="kv-row"><span class="kv-key">50+ turn sessions</span><span class="kv-val">Every request re-sends all history → linear cost growth</span></div>
-        <div class="kv-row"><span class="kv-key">Exam trap</span><span class="kv-val">"The Claude API retains state between calls" — FALSE. No session_id parameter exists.</span></div>
-      </div>
-
-      <h3>Context Degradation (5.4)</h3>
-      <table>
-        <thead><tr><th></th><th>Details</th></tr></thead>
-        <tbody>
-          <tr><td><strong>Symptom</strong></td><td>Agent says "typical patterns" or "standard approach" instead of the specific class/function it found earlier in the session</td></tr>
-          <tr><td><strong>Cause</strong></td><td>Specific findings pushed into the middle of long context; lost-in-the-middle effect</td></tr>
-          <tr><td><strong>Fix</strong></td><td>Scratchpad files — agent writes discoveries to file, reads back at phase boundaries</td></tr>
-          <tr><td><strong>/compact behavior</strong></td><td>Summarizes older turns, keeps recent turns verbatim — project CLAUDE.md is <strong>re-read from disk</strong> after compacting. Use when context is filling but session is still valid.</td></tr>
-          <tr><td><strong>/clear vs /compact</strong></td><td>/clear = full wipe (use when prior tool results are stale). /compact = summarize and continue (use when context is large but still valid).</td></tr>
-          <tr><td><strong>Wrong fix</strong></td><td>Add more instructions to an overloaded context (wrong tool for the problem)</td></tr>
-          <tr><td><strong>Wrong fix</strong></td><td>Lower max_tokens — max_tokens controls OUTPUT length, NOT session size</td></tr>
-        </tbody>
-      </table>
-
-      <h3>Scratchpad File Pattern</h3>
-      <pre><code># Step 1: Agent discovers something → writes to scratchpad
-with open("scratchpad.json", "w") as f:
-    json.dump({"http_class": "LegacyHttpRequestWrapper",
-               "db_pool": "LegacyDbPool.getInstance()"}, f)
-
-# Step 2: At phase boundary → inject scratchpad at TOP of next question
-content = (
-    "=== KEY FINDINGS (from scratchpad) ===\n"
-    f"{json.dumps(scratchpad, indent=2)}\n"
-    "=== END SCRATCHPAD ===\n\n"
-    "Question: Which class for HTTP requests?"
-)</code></pre>
-
-      <h3>Hybrid Context Management for Long Sessions</h3>
-      <div class="concept-box">
-        <p>For 50+ turn sessions, use all three together:</p>
-        <ol style="margin-top:8px; padding-left:18px; color:var(--muted);">
-          <li style="margin-bottom:6px;"><strong style="color:var(--text);">Summarize older messages</strong> — condense early turns</li>
-          <li style="margin-bottom:6px;"><strong style="color:var(--text);">Keep recent turns verbatim</strong> — last few turns need exact detail</li>
-          <li><strong style="color:var(--text);">Persistent case-facts block</strong> — outside summarized history; maintained by YOUR code</li>
-        </ol>
-      </div>
-
-      <h3>Case-Facts Block (5.5)</h3>
-      <div class="good-box">
-        <div class="good-title">What It Is and Why It Works</div>
-        <p>A block of transactional facts (amounts, dates, order IDs, promo codes) maintained <strong>deterministically by your application code</strong> — not by Claude's summarization. It's included verbatim in every request, no matter how many times the conversation is summarized.</p>
-      </div>
-      <pre><code>=== CASE FACTS (always reference these) ===
-Customer ID: CUST-12345
-Order ID: ORD-7890
-Refund Amount Requested: $127.50
-Promo Code: SUMMER25 (20% applied 2026-03-10)
-Previous Resolution Attempts: replacement shipped twice, both incorrect
-===</code></pre>
-      <div class="kv-list" style="margin-top:8px;">
-        <div class="kv-row"><span class="kv-key">Wrong: raise summarization threshold</span><span class="kv-val">Just delays the problem — numbers still get lost eventually</span></div>
-        <div class="kv-row"><span class="kv-key">Wrong: instruct Claude to preserve numbers</span><span class="kv-val">Probabilistic — still degrades over time</span></div>
-        <div class="kv-row"><span class="kv-key">Wrong: semantic DB retrieval</span><span class="kv-val">Miss-detection risk on exact values (e.g., $127.50 vs. "about $130")</span></div>
-      </div>
-
-      <h3>Exam Trap Table — 5.4/5.5</h3>
-      <table>
-        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
-        <tbody>
-          <tr><td class="td-trap">Lower max_tokens to reduce context size</td><td>max_tokens = output length, not session size. Use scratchpad + /compact.</td></tr>
-          <tr><td class="td-trap">Add more instructions when context is overloaded</td><td>More instructions into an overloaded context makes it worse</td></tr>
-          <tr><td class="td-trap">Raise summarization threshold to preserve numbers</td><td>Just delays the problem — numbers still get lost. Use case-facts block.</td></tr>
-          <tr><td class="td-trap">Instruct Claude to "always preserve exact amounts"</td><td>Probabilistic — degrades. Case-facts block is deterministic.</td></tr>
-          <tr><td class="td-trap">Auto memory is in .claude/memory/ (project-level)</td><td>Auto memory is in ~/.claude/projects/&lt;project&gt;/memory/ (user-level, NOT version-controlled). First 200 lines or 25KB loaded at session start.</td></tr>
-          <tr><td class="td-trap">/compact and /clear do the same thing</td><td>/compact summarizes + continues (CLAUDE.md re-read after). /clear wipes everything. Use /compact for long sessions; /clear when prior tool results are stale.</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- EX4: ERROR PROPAGATION -->
-  <div id="ex4" class="tab-panel">
-    <div class="card">
-      <div class="card-title"><span class="num">4</span> Structured Error Propagation (5.3)</div>
+      <div class="card-title">Structured Error Propagation <span class="sub-tag">5.3</span></div>
       <div class="concept-box">
         <p>When a subagent fails, it must return <strong>structured error context</strong> — not silence the failure or terminate the whole workflow. The coordinator uses this to make intelligent recovery decisions.</p>
       </div>
@@ -400,6 +308,403 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
           <li>Retry with identical parameters on non-transient errors — will fail again</li>
           <li>Discard partial results from timed-out subagents — return what you have + structured error</li>
         </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5.4 CONTEXT DEGRADATION AND MEMORY PATTERNS -->
+  <div id="s4" class="tab-panel">
+    <div class="card">
+      <div class="card-title">Context Degradation and Memory Patterns <span class="sub-tag">5.4</span></div>
+      <div class="concept-box">
+        <p>When specific findings are pushed into the middle of a long context window, the model falls back to generic responses instead of referencing them — this is context degradation, not hallucination. The fix is deterministic persistence <strong>outside</strong> the context window via scratchpad files.</p>
+      </div>
+
+      <h3>Context Degradation</h3>
+      <table>
+        <thead><tr><th></th><th>Details</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Symptom</strong></td><td>Agent says "typical patterns" or "standard approach" instead of the specific class/function it found earlier in the session</td></tr>
+          <tr><td><strong>Cause</strong></td><td>Specific findings pushed into the middle of long context; lost-in-the-middle effect</td></tr>
+          <tr><td><strong>Fix</strong></td><td>Scratchpad files — agent writes discoveries to file, reads back at phase boundaries</td></tr>
+          <tr><td><strong>/compact behavior</strong></td><td>Summarizes older turns, keeps recent turns verbatim — project CLAUDE.md is <strong>re-read from disk</strong> after compacting. Use when context is filling but session is still valid.</td></tr>
+          <tr><td><strong>/clear vs /compact</strong></td><td>/clear = full wipe (use when prior tool results are stale). /compact = summarize and continue (use when context is large but still valid).</td></tr>
+          <tr><td><strong>Wrong fix</strong></td><td>Add more instructions to an overloaded context — makes it worse, not better</td></tr>
+          <tr><td><strong>Wrong fix</strong></td><td>Lower max_tokens — max_tokens controls OUTPUT length, NOT session size</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Scratchpad File Pattern</h3>
+      <pre><code># Step 1: Agent discovers something → writes to scratchpad
+with open("scratchpad.json", "w") as f:
+    json.dump({"http_class": "LegacyHttpRequestWrapper",
+               "db_pool": "LegacyDbPool.getInstance()"}, f)
+
+# Step 2: At phase boundary → inject scratchpad at TOP of next question
+content = (
+    "=== KEY FINDINGS (from scratchpad) ===\n"
+    f"{json.dumps(scratchpad, indent=2)}\n"
+    "=== END SCRATCHPAD ===\n\n"
+    "Question: Which class for HTTP requests?"
+)</code></pre>
+
+      <h3>Exam Trap Table — 5.4</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Lower max_tokens to reduce context size</td><td>max_tokens = output length, not session size. Use scratchpad + /compact.</td></tr>
+          <tr><td class="td-trap">Add more instructions when context is overloaded</td><td>More instructions into an overloaded context makes degradation worse</td></tr>
+          <tr><td class="td-trap">/compact and /clear do the same thing</td><td>/compact summarizes + continues (CLAUDE.md re-read after). /clear wipes everything. Use /compact for long sessions; /clear when prior tool results are stale.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 5.5 SESSION AND WINDOW MANAGEMENT -->
+  <div id="s5" class="tab-panel">
+    <div class="card">
+      <div class="card-title">Session and Window Management <span class="sub-tag">5.5</span></div>
+      <div class="concept-box">
+        <p>The Claude API is <strong>stateless</strong> — no session_id, no automatic history. Every request must include the full messages array. In long sessions, transactional specifics (amounts, codes, IDs) are at risk of being lost through summarization — only deterministic, code-managed persistence keeps them safe.</p>
+      </div>
+
+      <h3>API Statelessness</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Fact</span><span class="kv-val">Claude API has NO session memory — every request is independent</span></div>
+        <div class="kv-row"><span class="kv-key">Requirement</span><span class="kv-val">Every request must include the FULL messages array with all prior turns</span></div>
+        <div class="kv-row"><span class="kv-key">50+ turn sessions</span><span class="kv-val">Every request re-sends all history → linear cost growth</span></div>
+        <div class="kv-row"><span class="kv-key">Exam trap</span><span class="kv-val">"The Claude API retains state between calls" — FALSE. No session_id parameter exists.</span></div>
+      </div>
+
+      <h3>Hybrid Context Management for Long Sessions</h3>
+      <div class="concept-box">
+        <p>For 50+ turn sessions, use all three together:</p>
+        <ol style="margin-top:8px; padding-left:18px; color:var(--muted);">
+          <li style="margin-bottom:6px;"><strong style="color:var(--text);">Summarize older messages</strong> — condense early turns</li>
+          <li style="margin-bottom:6px;"><strong style="color:var(--text);">Keep recent turns verbatim</strong> — last few turns need exact detail</li>
+          <li><strong style="color:var(--text);">Persistent case-facts block</strong> — outside summarized history; maintained by YOUR code</li>
+        </ol>
+      </div>
+
+      <h3>Case-Facts Block</h3>
+      <div class="good-box">
+        <div class="good-title">What It Is and Why It Works</div>
+        <p>A block of transactional facts (amounts, dates, order IDs, promo codes) maintained <strong>deterministically by your application code</strong> — not by Claude's summarization. It's included verbatim in every request, no matter how many times the conversation is summarized.</p>
+      </div>
+      <pre><code>=== CASE FACTS (always reference these) ===
+Customer ID: CUST-12345
+Order ID: ORD-7890
+Refund Amount Requested: $127.50
+Promo Code: SUMMER25 (20% applied 2026-03-10)
+Previous Resolution Attempts: replacement shipped twice, both incorrect
+===</code></pre>
+      <div class="kv-list" style="margin-top:8px;">
+        <div class="kv-row"><span class="kv-key">Wrong: raise summarization threshold</span><span class="kv-val">Just delays the problem — numbers still get lost eventually</span></div>
+        <div class="kv-row"><span class="kv-key">Wrong: instruct Claude to preserve numbers</span><span class="kv-val">Probabilistic — still degrades over time</span></div>
+        <div class="kv-row"><span class="kv-key">Wrong: semantic DB retrieval</span><span class="kv-val">Miss-detection risk on exact values (e.g., $127.50 vs. "about $130")</span></div>
+      </div>
+
+      <h3>Auto Memory Location</h3>
+      <div class="trap-box">
+        <div class="trap-title">Exam Trap — Auto Memory Path</div>
+        <p><strong>Wrong:</strong> Auto memory is in <code>.claude/memory/</code> (project-level, version-controlled).<br>
+        <strong>Correct:</strong> Auto memory is in <code>~/.claude/projects/&lt;project&gt;/memory/</code> — user-level, NOT version-controlled. First 200 lines or 25KB loaded at session start.</p>
+      </div>
+
+      <h3>Exam Trap Table — 5.5</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Raise summarization threshold to preserve numbers</td><td>Just delays the problem — numbers still get lost. Use case-facts block.</td></tr>
+          <tr><td class="td-trap">Instruct Claude to "always preserve exact amounts"</td><td>Probabilistic — degrades over time. Case-facts block is deterministic.</td></tr>
+          <tr><td class="td-trap">Auto memory is in .claude/memory/ (project-level)</td><td>Auto memory is in ~/.claude/projects/&lt;project&gt;/memory/ (user-level, NOT version-controlled). First 200 lines or 25KB loaded at session start.</td></tr>
+          <tr><td class="td-trap">Semantic DB retrieval preserves exact transactional values</td><td>Miss-detection risk on exact values ($127.50 vs. "about $130"). Case-facts block is always included verbatim.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 5.6 CONFLICTING SOURCE DATA AND SYNTHESIS QUALITY -->
+  <div id="s6" class="tab-panel">
+    <div class="card">
+      <div class="card-title">Conflicting Source Data and Synthesis Quality <span class="sub-tag">5.6</span></div>
+      <div class="concept-box">
+        <p>When subagents return conflicting values from different sources, the correct response is to <strong>include both values with source attribution</strong> and let the coordinator decide how to reconcile — not to auto-select one via heuristic or halt the workflow.</p>
+      </div>
+
+      <h3>Handling Conflicting Values</h3>
+      <table>
+        <thead><tr><th>Action</th><th>Correct?</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Include both values, annotated with source attribution</td><td class="td-correct">Yes — always</td><td>Preserves information; lets coordinator reconcile</td></tr>
+          <tr><td>Auto-select one value via credibility heuristic (more recent, higher authority)</td><td class="td-trap">No</td><td>Heuristics discard valid data; coordinator loses visibility</td></tr>
+          <tr><td>Halt analysis and escalate immediately when conflict is found</td><td class="td-trap">No</td><td>Complete the analysis first; flag the conflict, don't abort</td></tr>
+          <tr><td>Include both values without flagging the discrepancy</td><td class="td-trap">No</td><td>Coordinator can't act on a conflict it doesn't know about</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Source Attribution Loss During Summarization</h3>
+      <div class="concept-box">
+        <p>When findings are compressed into prose summaries, the connection between claims and their sources disappears. A 2020 statistic and a 2024 statistic become indistinguishable — or look contradictory rather than temporal.</p>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Correct Fix — Structured Claim-Source Mappings</div>
+        <p>Require subagents to output <strong>structured claim-source mappings</strong> (not prose summaries) that the synthesis agent is explicitly instructed to preserve. Include publication/data collection dates in every structured output.</p>
+      </div>
+      <div class="bad-box">
+        <div class="bad-title">Anti-Pattern — Prose Summary</div>
+        <p>Subagent returns: "Market share is approximately 34%." Source and date are gone. If another subagent returns 28%, the coordinator cannot tell whether these are from different years, different methodologies, or a genuine conflict.</p>
+      </div>
+
+      <h3>Structured Claim-Source Mapping Example</h3>
+      <pre><code>{
+  "claim": "Market share: 34%",
+  "source": "Industry Report Q4 2024",
+  "date_collected": "2024-12-01",
+  "confidence": "high"
+},
+{
+  "claim": "Market share: 28%",
+  "source": "Competitor Analysis Q2 2020",
+  "date_collected": "2020-06-15",
+  "confidence": "medium",
+  "note": "Temporal discrepancy — older data, not a contradiction"
+}</code></pre>
+
+      <h3>Render Content by Type</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Financial data</span><span class="kv-val">Tables — preserves exact values and comparability</span></div>
+        <div class="kv-row"><span class="kv-key">News / narrative</span><span class="kv-val">Prose — natural format for sequential events</span></div>
+        <div class="kv-row"><span class="kv-key">Technical findings</span><span class="kv-val">Structured lists — preserves specificity</span></div>
+        <div class="kv-row"><span class="kv-key">Wrong: uniform prose</span><span class="kv-val">Converting everything to prose loses precision on financial/technical content</span></div>
+      </div>
+
+      <h3>Distinguishing Established vs. Contested Findings</h3>
+      <div class="concept-box">
+        <p>Structure synthesis output to <strong>distinguish well-established findings from contested ones</strong>, preserving the original source characterizations. Do not flatten contested data into a single authoritative-sounding claim.</p>
+      </div>
+
+      <h3>Exam Trap Table — 5.6</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">Auto-select the more recent or higher-authority value</td><td>Include both with source attribution; let the coordinator reconcile</td></tr>
+          <tr><td class="td-trap">Halt analysis and escalate immediately on conflict</td><td>Complete the analysis first, annotate the conflict, then pass to coordinator</td></tr>
+          <tr><td class="td-trap">Include conflicting values without flagging them</td><td>Explicit annotation required — coordinator can't act on unknown conflicts</td></tr>
+          <tr><td class="td-trap">Omit publication/collection dates from subagent outputs</td><td>Dates are required — a 2020 vs. 2024 difference is temporal, not contradictory</td></tr>
+          <tr><td class="td-trap">Convert all synthesis output to uniform prose</td><td>Render by type: tables for financials, prose for news, structured lists for technical</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 5.7 ACCURACY MEASUREMENT AND HUMAN REVIEW CALIBRATION -->
+  <div id="s7" class="tab-panel">
+    <div class="card">
+      <div class="card-title">Accuracy Measurement and Human Review Calibration <span class="sub-tag">5.7</span></div>
+      <div class="concept-box">
+        <p>Aggregate accuracy metrics (e.g., 97% overall) can mask poor performance on specific document types or fields. <strong>Never reduce human review based on aggregate metrics alone</strong> — validate by document type AND by field before changing review thresholds.</p>
+      </div>
+
+      <h3>Why Aggregate Accuracy Is Not Enough</h3>
+      <table>
+        <thead><tr><th>Metric</th><th>What It Tells You</th><th>What It Hides</th></tr></thead>
+        <tbody>
+          <tr><td>97% aggregate accuracy</td><td>Overall system performs well on average</td><td class="td-trap">May mask 60% accuracy on handwritten forms or rare document types</td></tr>
+          <tr><td>Field-level accuracy</td><td>Which specific fields are underperforming</td><td class="td-correct">Nothing — this is the correct granularity</td></tr>
+          <tr><td>Document-type accuracy</td><td>Which document categories cause failures</td><td class="td-correct">Nothing — required before reducing review</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Stratified Random Sampling</h3>
+      <div class="good-box">
+        <div class="good-title">Correct Sampling Approach</div>
+        <p>Sample from <strong>high-confidence extractions across all document types and fields</strong> — not just a random sample of the overall output. High-confidence extractions are where the system is most likely to have novel failure patterns that aggregate metrics won't surface.</p>
+      </div>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Purpose</span><span class="kv-val">Measure actual error rates per segment; detect novel failure patterns</span></div>
+        <div class="kv-row"><span class="kv-key">Stratify by</span><span class="kv-val">Document type (forms, contracts, invoices) AND field (amounts, dates, signatures)</span></div>
+        <div class="kv-row"><span class="kv-key">Wrong: random sample only</span><span class="kv-val">Rare document types are underrepresented — failures go undetected</span></div>
+      </div>
+
+      <h3>Field-Level Confidence Scores</h3>
+      <div class="concept-box">
+        <p>Calibrate confidence scores using <strong>labeled validation sets</strong> — not self-reported model confidence. Route review attention to genuinely uncertain extractions based on calibrated field-level scores, not a uniform confidence threshold across all fields.</p>
+      </div>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Calibrated field scores</span><span class="kv-val">Trained on labeled examples — reflects actual error probability per field type</span></div>
+        <div class="kv-row"><span class="kv-key">Uniform threshold (wrong)</span><span class="kv-val">Same cutoff for all fields ignores that some fields are inherently harder to extract</span></div>
+        <div class="kv-row"><span class="kv-key">Self-reported confidence (wrong)</span><span class="kv-val">Model confidence is poorly calibrated — use labeled validation sets instead</span></div>
+      </div>
+
+      <h3>Before Reducing Human Review — Checklist</h3>
+      <div class="good-box">
+        <div class="good-title">Required Before Reducing Review</div>
+        <ul>
+          <li>Validate accuracy <strong>by document type</strong> — not just in aggregate</li>
+          <li>Validate accuracy <strong>by field</strong> — not just in aggregate</li>
+          <li>Analyze which document types or fields are underperforming</li>
+          <li>Use stratified sampling across all segments — not uniform random</li>
+          <li>Calibrate field-level confidence scores against labeled validation sets</li>
+        </ul>
+      </div>
+
+      <h3>Exam Trap Table — 5.7</h3>
+      <table>
+        <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
+        <tbody>
+          <tr><td class="td-trap">97% aggregate accuracy → safe to reduce human review</td><td>Aggregate masks segment failures. Validate by document type AND by field first.</td></tr>
+          <tr><td class="td-trap">Reduce review based on aggregate metrics without stratified analysis</td><td>Stratified random sampling across document types and fields is required</td></tr>
+          <tr><td class="td-trap">Apply uniform confidence threshold across all fields</td><td>Use field-level calibrated scores — different fields have different error distributions</td></tr>
+          <tr><td class="td-trap">Use model's self-reported confidence as the calibration source</td><td>Calibrate using labeled validation sets — self-reported confidence is unreliable</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div id="summary" class="tab-panel">
+    <div class="card">
+      <div class="card-title">Domain 5 — Exam Trap Summary</div>
+      <p style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;">One-line concept + key traps per subdomain. Use this before the quiz.</p>
+
+      <!-- 5.1 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">5.1</span>
+          <span style="font-weight:700; color:#fff;">Long Context and Attention Management</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Models process the <strong>beginning and end</strong> reliably — middle content may be missed. Put key findings at the top; trim verbose tool output at source.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Pre-aggregate to 20K tokens</td><td>Trim at source — summarization loses specific values</td></tr>
+            <tr><td class="td-trap">Rotate subagent order to fix position bias</td><td>Always place key findings at the beginning</td></tr>
+            <tr><td class="td-trap">80% context = tool results → increase max_tokens</td><td>Trimming problem, not window size — trim upstream</td></tr>
+            <tr><td class="td-trap">Stream results to avoid lost-in-middle</td><td>Position bias applies within each streamed chunk too</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 5.2 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">5.2</span>
+          <span style="font-weight:700; color:#fff;">Escalation and Human-in-the-Loop</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Escalate on: explicit human request (immediately), policy gap, or no progress. <strong>Not</strong> on: emotion, complexity, or multi-topic messages.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Customer frustrated → escalate immediately</td><td>Acknowledge + offer resolution; escalate only if they reiterate</td></tr>
+            <tr><td class="td-trap">Multi-topic message → escalate (too complex)</td><td>Handle each topic with the appropriate tool</td></tr>
+            <tr><td class="td-trap">Sentiment classifier fixes miscalibrated escalation</td><td>Explicit criteria + few-shot examples in system prompt</td></tr>
+            <tr><td class="td-trap">Multiple matches → pick most recent account</td><td>Ask for an additional identifier (email, phone, order number)</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 5.3 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">5.3</span>
+          <span style="font-weight:700; color:#fff;">Structured Error Propagation</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Failed subagents return structured error context — never silence failures or terminate the workflow. Empty result ≠ access failure.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap"><code>{"results": []}</code> for a permission error</td><td><code>isError: true, errorCategory: "permission", isRetryable: false</code></td></tr>
+            <tr><td class="td-trap">Terminate entire workflow on one subagent failure</td><td>Return partial results + structured error; coordinator recovers</td></tr>
+            <tr><td class="td-trap">Retry with same params on a corrupted file</td><td>Non-transient → <code>isRetryable: false</code>; propagate to coordinator</td></tr>
+            <tr><td class="td-trap">Synthesis output with no coverage indicators</td><td>Annotate each topic as well-supported or gap — enables targeted re-delegation</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 5.4 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">5.4</span>
+          <span style="font-weight:700; color:#fff;">Context Degradation in Extended Sessions</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Specific findings get pushed into the middle of long context → model falls back to generic responses. Fix: scratchpad files injected at phase boundaries.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Lower max_tokens to reduce context size</td><td>max_tokens = output length, not session size. Use scratchpad + /compact.</td></tr>
+            <tr><td class="td-trap">Add more instructions to an overloaded context</td><td>More instructions into overloaded context makes degradation worse</td></tr>
+            <tr><td class="td-trap">/compact and /clear do the same thing</td><td>/compact summarizes + continues (CLAUDE.md re-read). /clear wipes everything.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 5.5 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">5.5</span>
+          <span style="font-weight:700; color:#fff;">Session and Window Management</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Claude API is stateless — no session_id, full messages array required every request. Transactional facts survive summarization only via a deterministic case-facts block.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Claude API retains state between calls</td><td>Stateless — resend full messages array every request</td></tr>
+            <tr><td class="td-trap">Raise summarization threshold to preserve numbers</td><td>Just delays loss — use case-facts block (deterministic)</td></tr>
+            <tr><td class="td-trap">Instruct Claude to always preserve exact amounts</td><td>Probabilistic — degrades. Case-facts block is maintained by your code.</td></tr>
+            <tr><td class="td-trap">Auto memory is in .claude/memory/ (project-level)</td><td>~/.claude/projects/&lt;project&gt;/memory/ — user-level, not version-controlled</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 5.6 -->
+      <div style="margin-bottom:24px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">5.6</span>
+          <span style="font-weight:700; color:#fff;">Conflicting Source Data and Synthesis Quality</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Include both conflicting values with source attribution and dates — let the coordinator reconcile. Require structured claim-source mappings, not prose summaries.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">Auto-select the more recent or higher-authority value</td><td>Include both with source attribution; coordinator reconciles</td></tr>
+            <tr><td class="td-trap">Halt analysis immediately when conflict is found</td><td>Complete the analysis, annotate the conflict, then pass to coordinator</td></tr>
+            <tr><td class="td-trap">Omit publication dates from subagent outputs</td><td>Dates required — 2020 vs. 2024 is temporal, not contradictory</td></tr>
+            <tr><td class="td-trap">Convert all output to uniform prose</td><td>Render by type: tables for financials, prose for news, lists for technical</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 5.7 -->
+      <div>
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span class="sub-tag">5.7</span>
+          <span style="font-weight:700; color:#fff;">Accuracy Measurement and Human Review Calibration</span>
+        </div>
+        <div class="concept-box" style="margin-bottom:10px;">
+          <p>Aggregate accuracy masks segment failures. Validate by document type AND by field before reducing human review. Calibrate confidence scores using labeled validation sets.</p>
+        </div>
+        <table>
+          <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
+          <tbody>
+            <tr><td class="td-trap">97% aggregate accuracy → safe to reduce human review</td><td>Validate by document type AND by field — aggregate masks outliers</td></tr>
+            <tr><td class="td-trap">Uniform random sampling to measure accuracy</td><td>Stratified random sampling across all document types and fields</td></tr>
+            <tr><td class="td-trap">Apply uniform confidence threshold across all fields</td><td>Field-level calibrated scores — different fields have different error rates</td></tr>
+            <tr><td class="td-trap">Use model's self-reported confidence for calibration</td><td>Calibrate against labeled validation sets — self-reported is unreliable</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -588,7 +893,7 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
     const got = Object.values(scores).filter(Boolean).length;
     document.getElementById('score-display').textContent = got + '/12';
     const pct = Math.round(got / 12 * 100);
-    const msg = pct >= 90 ? 'Excellent — Domain 5 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the exercise tabs again.';
+    const msg = pct >= 90 ? 'Excellent — Domain 5 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the subdomain tabs again.';
     document.getElementById('score-msg').textContent = pct + '% — ' + msg;
     document.getElementById('quiz-score').classList.add('show');
     document.getElementById('quiz-btn').style.display = 'none';
