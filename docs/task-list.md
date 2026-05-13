@@ -15,7 +15,8 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] ex5: Task decomposition — breaking work across agentic steps
 - [x] ex6: Session management (markdown reference)
 - [x] Hooks: hook_pre_production_gate, hook_pre_refund_gate, hook_post_pii_trim
-- [ ] Domain 1 practice questions — 60–80 from the question bank
+- [x] Domain 1 HTML quiz — 12/12 (100%) — D1 mastered
+- [ ] Domain 1 practice questions — 60–80 from the question bank (HTML quiz done; formal bank drill still pending)
 
 ### Domain 2 — MCP Tool Design (18%) — EXERCISES COMPLETE
 - [x] ex1: Tool descriptions — overlapping tools, disambiguation
@@ -41,7 +42,7 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] ex3: tool_choice — auto vs any vs forced, the first-turn-then-auto pattern (4.4)
 - [x] ex4: Batch API — submit, poll, correlate via custom_id, failure recovery (4.5)
 - [x] ex5: Retry-with-feedback — error feedback loop, retry limits, detected_pattern field (4.3/4.6)
-- [ ] Domain 4 practice questions — 20/50 done (80%); resume at Q21 next session; weak spots: system prompt keyword bias (4.1), parallel decomp (4.6), batch polling backoff (4.5), detected_pattern as string (4.4)
+- [x] Domain 4 practice questions — Q21–Q50 complete (90%); 4.5/4.6 drill done (60%); weak spots: batch interval math with retries (4.5), batch multi-turn limitation (4.5), structured disagreement vs majority vote (4.6)
 
 ### Domain 5 — Context Management (15%) — EXERCISES COMPLETE
 - [x] ex1: Long context — lost-in-the-middle, key findings at top, tool output trimming (5.1)
@@ -68,4 +69,4 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-_Last updated: 2026-05-13 (end of session)_
+_Last updated: 2026-05-13 (session 2)_

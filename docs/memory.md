@@ -22,10 +22,10 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 
 | Domain | Weight | Status | Folder |
 |--------|--------|--------|--------|
-| 1 — Agentic Architecture | 27% | Complete | `domain-1/` |
+| 1 — Agentic Architecture | 27% | Complete — D1 HTML quiz 12/12 (100%) | `domain-1/` |
 | 2 — MCP Tool Design | 18% | Exercises complete | `domain-2/` |
 | 3 — Claude Code Workflows | 20% | Complete — all exercises done; practice Qs not started | `domain-3/` |
-| 4 — Prompt Engineering | 20% | Exercises complete; practice Qs in progress (20/50, 80%) | `domain-4/` |
+| 4 — Prompt Engineering | 20% | Exercises complete; Q21–Q50 done (90%); 4.5/4.6 drill done (60%) | `domain-4/` |
 | 5 — Context Management | 15% | Exercises complete; 20 bank Qs queued (paused at Q1) | `domain-5/` |
 
 ### Exercise Count
@@ -44,6 +44,8 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 |------|------|-------|----|----|----|----|-----|
 | Exam 1 (Udemy) | 2026-05-10 | **76% (46/60)** | 75% | 82% | 83% | 67% | 78% |
 | D4 question bank drill | 2026-05-11 | **80% (16/20)** | — | — | — | 80% | — |
+| D4 Q21–Q50 drill | 2026-05-13 | **90% (27/30)** | — | — | — | 90% | — |
+| D4 4.5/4.6 drill | 2026-05-13 | **60% (6/10)** | — | — | — | 60% | — |
 | Exam 2 (Udemy) | 2026-05-18 | — | — | — | — | — | — |
 | Exam 3 (Udemy) | 2026-05-19–21 | — | — | — | — | — | — |
 
@@ -79,6 +81,11 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 
 _Updated by `/sync` at end of each session._
 
+- 2026-05-13: D1 HTML quiz 12/12 (100%) — D1 fully mastered
+- 2026-05-13: D4 Q21–Q50 drill complete — 27/30 (90%); misses: enum+detail field pattern (Q32), retry-with-feedback vs blind retry (Q46)
+- 2026-05-13: D4 4.5/4.6 focused drill — 6/10 (60%); misses: batch interval math with retries, batch multi-turn limitation, structured disagreement vs majority vote; Q4 flagged as unreliable question bank content
+- 2026-05-13: Clarified plan mode ≠ extended thinking — plan mode is Claude Code /plan (read-only); extended thinking is API feature thinking:{type:"enabled",budget_tokens:N}
+- 2026-05-13: Clarified command vs skill — commands in .claude/commands/ (no frontmatter); skills in .claude/skills/ (optional frontmatter: context:fork, allowed-tools, argument-hint); /sync is a command, not a skill
 - 2026-05-13: D3 all 5 exercises complete — ex2 (skills/commands, 90%), ex3 (path-scoped rules, 90%), ex4 (plan mode, 80%), ex5 (CI/headless, 70%); all concept walkthroughs + drills done
 - 2026-05-13: D3 weak spots — plan mode cannot gate mid-execution (PreToolUse hook is the answer); prior findings in context for re-review runs; inline confidence for triage efficiency
 - 2026-05-13: ex5_ci_headless.py fixed — UTF-8 reconfigure added; domain-3/outputs/ex5_output.txt created

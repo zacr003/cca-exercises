@@ -102,6 +102,36 @@ This applies to every subdomain across all domains. For reference-only exercises
 
 ---
 
+## Commands vs Skills (CCA-F Exam Critical)
+
+- **Commands** = markdown files in `.claude/commands/` — no frontmatter, no isolation, injected into current session on invocation
+- **Skills** = markdown files in `.claude/skills/` — optional frontmatter: `context: fork`, `allowed-tools`, `argument-hint`; `context: fork` runs in isolated sub-agent
+- Both are invoked with `/name` syntax — they feel identical from the outside
+- `/sync` is a **command**, not a skill (lives in `~/.claude/commands/sync.md`)
+- Only three valid SKILL.md frontmatter fields: `context: fork`, `allowed-tools`, `argument-hint` — `model:` and `override:` do not exist
+
+---
+
+## Plan Mode vs Extended Thinking (CCA-F Exam Critical)
+
+- **Plan mode** = Claude Code feature activated by `/plan` or `Shift+Tab` — read-only, no file changes, used for pre-execution review
+- **Extended thinking** = Anthropic API feature — `thinking: {type: "enabled", budget_tokens: N}` — deeper internal reasoning before responding
+- These are completely separate features at different layers — conflating them costs exam points
+- Module 2 (Sparq) calls `/plan` "extended thinking mode" — **use CCA-F language ("plan mode") in exam context**
+
+---
+
+## Batch API — Key Formulas (4.5)
+
+- **Max submission interval** = SLA − batch processing window (24h)
+  - Example: 30h SLA → max interval = 30 − 24 = 6 hours
+- **With retries**: interval + (24h × number of passes) ≤ SLA; retry batch submits immediately after first batch completes
+  - Example: 60h SLA, 2 passes → interval + 48 ≤ 60 → max interval = 12 hours
+- **Batch API cannot do multi-turn tool calling** — two-step workflows (extract then validate) require two sequential batches
+- **Batch = latency-tolerant, non-blocking workloads** — never use for blocking CI checks or synchronous workflows
+
+---
+
 ## Question Bank Drill — Loading Method
 
 - Read the question bank JSON **directly** using the Read tool — do not spawn an agent to load it. Spawning an agent adds significant latency. The file is at `~/Desktop/Ramsey-Brain/raw/cca_f_question_bank_v2.0.0.json`. Read it once per session and keep the relevant questions in context.
