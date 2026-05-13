@@ -10,7 +10,7 @@ _Map of all exercise files, configs, and dependencies. Updated by `/sync`._
 cca-exercises/
 ├── .claude/
 │   ├── settings.json          ← Claude Code hooks (PreToolUse / PostToolUse)
-│   ├── settings.local.json    ← Local overrides (not committed)
+│   ├── settings.local.json    ← Local overrides (gitignored — not committed)
 │   └── commands/
 │       └── sync.md            ← /sync slash command
 ├── docs/                      ← Session persistence (this system)
@@ -60,11 +60,12 @@ cca-exercises/
 
 | File | Description | Status |
 |------|-------------|--------|
-| `ex1_claude_md.md` | CLAUDE.md hierarchy — 3 scopes, @import, conflict resolution | In progress |
-| `ex2_skills_commands.md` | Skills and slash commands — context:fork, allowed-tools, argument-hint | Not started |
-| `ex3_path_scoped_rules.md` | Path-scoped rules — YAML paths frontmatter, glob patterns | Not started |
-| `ex4_plan_mode.md` | Plan mode — decision framework, iterative refinement, Explore subagent | Not started |
-| `ex5_ci_headless.py` | CI/headless mode — -p flag, --output-format json, --bare | Not started |
+| `ex1_claude_md.md` | CLAUDE.md hierarchy — 3 scopes, @import, conflict resolution | Complete |
+| `ex2_skills_commands.md` | Skills and slash commands — context:fork, allowed-tools, argument-hint | Complete |
+| `ex3_path_scoped_rules.md` | Path-scoped rules — YAML paths frontmatter, glob patterns | Complete |
+| `ex4_plan_mode.md` | Plan mode — decision framework, iterative refinement, Explore subagent | Complete |
+| `ex5_ci_headless.py` | CI/headless mode — -p flag, --output-format json, --bare | Complete |
+| `outputs/ex5_output.txt` | ex5 script run output | Complete |
 
 ### Domain 4 — Prompt Engineering (`domain-4/`)
 
@@ -125,4 +126,4 @@ Used explicitly in `.claude/settings.json` hook commands.
 
 ---
 
-_Last updated: 2026-05-12_
+_Last updated: 2026-05-13_

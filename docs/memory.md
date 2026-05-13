@@ -16,7 +16,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 
 ---
 
-## Current State (as of 2026-05-12)
+## Current State (as of 2026-05-13)
 
 ### Domain Progress
 
@@ -24,7 +24,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 |--------|--------|--------|--------|
 | 1 — Agentic Architecture | 27% | Complete | `domain-1/` |
 | 2 — MCP Tool Design | 18% | Exercises complete | `domain-2/` |
-| 3 — Claude Code Workflows | 20% | In progress — ex1 done, ex2–ex5 remaining | `domain-3/` |
+| 3 — Claude Code Workflows | 20% | Complete — all exercises done; practice Qs not started | `domain-3/` |
 | 4 — Prompt Engineering | 20% | Exercises complete; practice Qs in progress (20/50, 80%) | `domain-4/` |
 | 5 — Context Management | 15% | Exercises complete; 20 bank Qs queued (paused at Q1) | `domain-5/` |
 
@@ -34,7 +34,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 |--------|-------|-------|
 | Domain 1 | 7 exercises + 3 hooks | ex1–ex6, hook_pre x2, hook_post x1 |
 | Domain 2 | 5 exercises + 1 hook + 1 config | ex1–ex5, hook_post, sample.mcp.json |
-| Domain 3 | 5 exercises | ex1–ex4 markdown walkthroughs, ex5 Python (CI/headless) |
+| Domain 3 | 5 exercises + 1 outputs dir | ex1–ex4 markdown walkthroughs, ex5 Python (CI/headless); all complete |
 | Domain 4 | 5 exercises | ex1–ex5 Python — all run; ex3 bug fixed (tool_choice object format) |
 | Domain 5 | 4 exercises | ex1–ex4 Python — all run 2026-05-12 |
 
@@ -79,6 +79,10 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 
 _Updated by `/sync` at end of each session._
 
+- 2026-05-13: D3 all 5 exercises complete — ex2 (skills/commands, 90%), ex3 (path-scoped rules, 90%), ex4 (plan mode, 80%), ex5 (CI/headless, 70%); all concept walkthroughs + drills done
+- 2026-05-13: D3 weak spots — plan mode cannot gate mid-execution (PreToolUse hook is the answer); prior findings in context for re-review runs; inline confidence for triage efficiency
+- 2026-05-13: ex5_ci_headless.py fixed — UTF-8 reconfigure added; domain-3/outputs/ex5_output.txt created
+- 2026-05-13: .claude/settings.local.json added to .gitignore and untracked from git
 - 2026-05-07: Domain 1 exercises complete — ex1 (agentic loop), ex1b (parallel tools), ex2 (coordinator/subagents), ex3 (hooks), ex4 (tool sequencing), ex5 (task decomposition), ex6 (session management)
 - 2026-05-07: Domain 1 hooks built — hook_pre_production_gate, hook_pre_refund_gate, hook_post_pii_trim
 - 2026-05-07: Domain 2 exercises scaffolded — ex1–ex5 + hook + sample.mcp.json created

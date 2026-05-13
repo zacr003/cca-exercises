@@ -27,13 +27,13 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] Config: sample.mcp.json with `${ENV_VAR}` credential pattern
 - [ ] Domain 2 practice questions — 60 drilled this session across all 5 subdomains (weak spots: 2.1 split generic tools, 2.2 business vs permission, 2.4 MCP resources)
 
-### Domain 3 — Claude Code Workflows (20%) — IN PROGRESS
+### Domain 3 — Claude Code Workflows (20%) — COMPLETE
 - [x] ex1: CLAUDE.md hierarchy — concept walkthrough done (Parts A/B/C); `/memory` bug fixed; 92% on HTML quiz
-- [ ] ex2: Skills and slash commands — context:fork, allowed-tools, argument-hint, project vs user scope
-- [ ] ex3: Path-scoped rules — YAML paths frontmatter, glob patterns, vs directory CLAUDE.md
-- [ ] ex4: Plan mode — decision framework, iterative refinement, Explore subagent
-- [ ] ex5: CI/CD headless mode — -p flag, --output-format json, --bare, independent review instance
-- [ ] Domain 3 practice questions — 50 from the question bank
+- [x] ex2: Skills and slash commands — 90% drill (9/10); miss: context:fork framing variation
+- [x] ex3: Path-scoped rules — 90% drill (9/10); miss: monorepo directory boundary vs glob distinction
+- [x] ex4: Plan mode — 80% drill (8/10); misses: plan mode cannot gate mid-execution (PreToolUse hook), auto-memory location
+- [x] ex5: CI/CD headless mode — 70% drill (7/10); misses: prior findings in context (Q3), inline confidence for triage (Q4)
+- [ ] Domain 3 practice questions — 50 from the question bank (not started)
 
 ### Domain 4 — Prompt Engineering (20%) — EXERCISES COMPLETE
 - [x] ex1: Few-shot prompting — vague vs explicit criteria vs contrastive examples (4.1, 4.2)
@@ -68,4 +68,4 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-_Last updated: 2026-05-12 (end of session)_
+_Last updated: 2026-05-13 (end of session)_

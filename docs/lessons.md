@@ -42,6 +42,7 @@ _Rules and gotchas specific to this project. Updated by `/sync`._
 - `hook_debug.log` is excluded via `.gitignore` — it grows large and is not useful in history.
 - `__pycache__/` and `*.pyc` are excluded.
 - `.env` files are excluded — never commit API keys.
+- `.claude/settings.local.json` is excluded — added 2026-05-13. Local overrides only; was accidentally tracked before.
 
 ---
 
@@ -92,6 +93,18 @@ This applies to every subdomain across all domains. For reference-only exercises
 - The `production/` folder contains `customer_data.txt` with sample PII used by the `hook_post_pii_trim` exercise. This is fake/sample data only — never put real PII here.
 - `extract_domain1.sh` is a utility script for extracting domain-1 exercise content; not part of the exercise sequence.
 - D4 question bank drill: prefer batches of 10–20 questions, not 50 at once. User preference established 2026-05-11.
+
+---
+
+## Question Bank Drill — Interruption Handling
+
+- When the user asks a question mid-drill (e.g., "what domain is this from?"), answer it and then **re-show the full question** before continuing. Do not just say "still waiting on your answer" — the user may not have the question visible anymore.
+
+---
+
+## Question Bank Drill — Loading Method
+
+- Read the question bank JSON **directly** using the Read tool — do not spawn an agent to load it. Spawning an agent adds significant latency. The file is at `~/Desktop/Ramsey-Brain/raw/cca_f_question_bank_v2.0.0.json`. Read it once per session and keep the relevant questions in context.
 
 ---
 
