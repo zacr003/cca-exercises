@@ -29,6 +29,8 @@ import subprocess
 import json
 import sys
 
+sys.stdout.reconfigure(encoding='utf-8')
+
 # =====================================================================
 # PART A: THE -p FLAG — Non-Interactive Mode
 # =====================================================================

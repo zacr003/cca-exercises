@@ -1,0 +1,115 @@
+
+============================================================
+PART A: Headless Mode (-p flag)
+============================================================
+Running: claude -p 'What is 2 + 2? Answer in one word.'
+(This is non-interactive — no human input required)
+
+NOTE: 'claude' CLI not found in PATH.
+Install Claude Code CLI and re-run this exercise.
+
+The concept: claude -p 'prompt' runs non-interactively.
+Without -p, Claude Code waits for input and the pipeline hangs.
+
+============================================================
+PART B: JSON Output (--output-format json)
+============================================================
+Running: claude -p --output-format json 'List 3 Python best practices. JSON array only.'
+
+NOTE: 'claude' CLI not found. Conceptual demo only.
+
+The concept:
+  claude -p --output-format json 'prompt'
+  → wraps response in structured JSON envelope
+  → CI pipeline can reliably parse the result field
+  → compare: plain text output requires fragile string parsing
+
+============================================================
+PART C: --bare Flag (Stripped Execution)
+============================================================
+
+Without --bare (default):
+  claude -p "Review this code"
+  → Loads CLAUDE.md files
+  → Discovers and runs hooks (PreToolUse, PostToolUse)
+  → Loads skills from .claude/skills/
+  → Connects MCP servers from .mcp.json
+  → Applies all local configuration
+
+With --bare:
+  claude --bare -p "Review this code"
+  → Skips CLAUDE.md files
+  → Skips hooks
+  → Skips skills and plugins
+  → Skips MCP server connections
+  → Sets CLAUDE_CODE_SIMPLE environment variable
+  → Clean, reproducible execution
+
+When to use --bare:
+  - CI pipelines where local developer config should NOT bleed in
+  - Performance-sensitive headless runs
+  - Testing the model without any configuration layer
+
+EXAM TRAP:
+  "Docker containers isolate Claude Code from local config"
+  → WRONG. Docker still auto-discovers config inside the container.
+  → Use --bare explicitly for stripped execution.
+  → --bare is not just "quiet mode" — it actively skips skills, hooks, MCP, CLAUDE.md.
+
+
+============================================================
+PART D: Independent Review Instance
+============================================================
+
+WRONG pattern (same session):
+  Step 1: claude -p "Generate tests for this function"  → generates tests
+  Step 2: (same session, same context) "Now review the tests you just wrote"
+  → The model knows WHY it made each decision — it defends its own choices
+  → Self-review bias: the reviewer and generator share the same reasoning context
+
+CORRECT pattern (independent instance):
+  Step 1: claude -p "Generate tests for this function"  → saves output to file
+  Step 2: claude -p "Review these tests for correctness" < tests.py  (fresh invocation)
+  → The reviewer has NO context from the generation step
+  → An independent instance catches subtle issues the generator rationalized away
+
+This is tested on the exam as "multi-instance review architectures" (Domain 4.6).
+The principle applies equally in CI/CD contexts (Domain 3.6).
+
+CLAUDE.md for CI:
+  CI-invoked Claude Code reads the SAME project .claude/CLAUDE.md as interactive use.
+  This means: document your testing standards, fixtures, and review criteria in CLAUDE.md.
+  Your CI review will automatically follow the same quality bar as your interactive work.
+  No need to duplicate instructions in CI scripts — CLAUDE.md is shared.
+
+
+============================================================
+EXAM DISTINCTION SUMMARY -- 3.6
+============================================================
+
+Flags and what they do:
+  -p / --print       Non-interactive mode — REQUIRED for CI pipelines
+  --output-format json  Machine-parseable output — use when pipeline parses output
+  --bare             Skips ALL auto-discovery: hooks, skills, MCP, CLAUDE.md
+  --append-system-prompt  Appends text to the system prompt for that invocation only (ephemeral)
+
+Settings precedence (highest → lowest):
+  1. .claude/settings.local.json    (local overrides, usually gitignored)
+  2. .claude/settings.json          (project settings, version-controlled)
+  3. ~/.claude/settings.json        (user settings)
+
+Flags that do NOT exist (exam distractors):
+  CLAUDE_HEADLESS=true   → does not exist; use -p
+  --batch                → does not exist; use -p
+  --no-config            → does not exist; use --bare
+  --skip-config          → does not exist; use --bare
+  --security-only        → does not exist
+  --auto-test            → does not exist
+
+Key distinctions:
+  -p flag         = non-interactive execution
+  --bare          = stripped execution (skips everything, including -p's CLAUDE.md loading)
+  Docker          = does NOT isolate config; still auto-discovers
+  Independent instance = separate invocation for review; solves self-review bias
+  CLAUDE.md for CI = CI reads the same CLAUDE.md; document standards there
+
