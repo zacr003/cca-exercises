@@ -5,3 +5,4 @@ __pycache__/
 hook_debug.log
 *.out
 .DS_Store
+.claude/settings.local.json
