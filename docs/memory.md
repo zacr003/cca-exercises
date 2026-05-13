@@ -25,7 +25,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | 1 — Agentic Architecture | 27% | Complete — D1 HTML quiz 12/12 (100%) | `domain-1/` |
 | 2 — MCP Tool Design | 18% | Exercises complete | `domain-2/` |
 | 3 — Claude Code Workflows | 20% | Complete — all exercises done; practice Qs not started | `domain-3/` |
-| 4 — Prompt Engineering | 20% | Exercises complete; Q21–Q50 done (90%); 4.5/4.6 drill done (60%) | `domain-4/` |
+| 4 — Prompt Engineering | 20% | Exercises complete; Q21–Q50 done (90%); 4.5/4.6 drill done (60%); HTML quiz 11/14 (79%) | `domain-4/` |
 | 5 — Context Management | 15% | Exercises complete; 20 bank Qs queued (paused at Q1) | `domain-5/` |
 
 ### Exercise Count
@@ -46,6 +46,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | D4 question bank drill | 2026-05-11 | **80% (16/20)** | — | — | — | 80% | — |
 | D4 Q21–Q50 drill | 2026-05-13 | **90% (27/30)** | — | — | — | 90% | — |
 | D4 4.5/4.6 drill | 2026-05-13 | **60% (6/10)** | — | — | — | 60% | — |
+| D4 HTML quiz | 2026-05-13 | **79% (11/14)** | — | — | — | 79% | — |
 | Exam 2 (Udemy) | 2026-05-18 | — | — | — | — | — | — |
 | Exam 3 (Udemy) | 2026-05-19–21 | — | — | — | — | — | — |
 
@@ -81,6 +82,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 
 _Updated by `/sync` at end of each session._
 
+- 2026-05-13: D4 HTML quiz 11/14 (79%); misses: any vs auto tool_choice, conflict_detected overconfidence, batch recovery resubmit only failed custom_ids
 - 2026-05-13: D1 HTML quiz 12/12 (100%) — D1 fully mastered
 - 2026-05-13: D4 Q21–Q50 drill complete — 27/30 (90%); misses: enum+detail field pattern (Q32), retry-with-feedback vs blind retry (Q46)
 - 2026-05-13: D4 4.5/4.6 focused drill — 6/10 (60%); misses: batch interval math with retries, batch multi-turn limitation, structured disagreement vs majority vote; Q4 flagged as unreliable question bank content

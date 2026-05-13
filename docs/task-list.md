@@ -42,7 +42,7 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] ex3: tool_choice — auto vs any vs forced, the first-turn-then-auto pattern (4.4)
 - [x] ex4: Batch API — submit, poll, correlate via custom_id, failure recovery (4.5)
 - [x] ex5: Retry-with-feedback — error feedback loop, retry limits, detected_pattern field (4.3/4.6)
-- [x] Domain 4 practice questions — Q21–Q50 complete (90%); 4.5/4.6 drill done (60%); weak spots: batch interval math with retries (4.5), batch multi-turn limitation (4.5), structured disagreement vs majority vote (4.6)
+- [x] Domain 4 practice questions — Q21–Q50 complete (90%); 4.5/4.6 drill done (60%); HTML quiz 11/14 (79%); weak spots: any vs auto tool_choice, conflict_detected overconfidence, batch recovery custom_id, batch interval math with retries
 
 ### Domain 5 — Context Management (15%) — EXERCISES COMPLETE
 - [x] ex1: Long context — lost-in-the-middle, key findings at top, tool output trimming (5.1)
@@ -69,4 +69,4 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-_Last updated: 2026-05-13 (session 2)_
+_Last updated: 2026-05-13 (session 3)_

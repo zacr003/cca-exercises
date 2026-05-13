@@ -76,6 +76,23 @@ This applies to every subdomain across all domains. For reference-only exercises
 - Wrong: `"auto"`, `"any"`, `"none"`
 - Discovered 2026-05-11 when ex3_tool_choice.py failed on first run. Fixed in that file.
 
+### tool_choice Exam Trap — `any` vs `auto`
+
+- **`auto`** — model may call a tool OR return plain text; tool call is optional
+- **`{"type": "any"}`** — model **must** call a tool, picks which one from available tools
+- Use `any` when: document type unknown, multiple valid tools, extraction is required
+- Use `auto` when: tool call is optional and text response is acceptable
+- Forced selection `{"type": "tool", "name": "X"}` requires knowing the right tool in advance
+
+---
+
+## Structured Output — Semantic Validation Trap
+
+- JSON schema validates **syntax only** (field names, types, required fields)
+- Cross-field consistency (e.g., total = sum of line items) must be checked in **application-layer code**
+- `conflict_detected` field relies on the model setting it correctly — always add your own semantic validation
+- Rule: **schema = syntax; your code = semantics**
+
 ---
 
 ## Question Bank Location
