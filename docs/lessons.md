@@ -162,3 +162,13 @@ This applies to every subdomain across all domains. For reference-only exercises
 - Questions are presented one at a time. User answers; Claude scores and explains immediately before moving to the next.
 - 20-question batches are the standard for a domain drill session.
 - Queue state (unanswered questions + correct answers) is saved to memory file `d5_question_bank_queue.md` when a session is interrupted mid-drill.
+
+---
+
+## D5 Exam Traps — Surfaced 2026-05-14
+
+- **cache_control after compaction**: Compaction replaces conversation history with a new summary block. That block is new content — no cache hit. Fix: explicitly add a `cache_control` breakpoint to the compaction block so future requests hit the cache. Without it, every post-compaction request is a cache miss.
+- **Hybrid summarization (5.4)**: Correct pattern is summarize older messages + keep recent ones verbatim. Summarizing *every turn* (including recent ones) is lossy and unnecessary. Vector search retrieves but doesn't retain — not the same as summarization.
+- **JSON manifest for crash recovery (5.4)**: When a subagent crashes, the fix is a periodic JSON manifest (goal + processed files + key entities) the coordinator injects on resume. Re-establishing a connection (API keys, session tokens) does not restore *state*.
+- **PDF automation in tiered review (5.5)**: If a source meets the accuracy target, fully automate it. Stratified sampling on a source that already clears the threshold is unnecessary overhead — it's a monitoring pattern, not an initial design choice.
+- **CCA-F study resources**: Topics not in exercises → `docs.anthropic.com` (prompt caching, long context best practices). Question bank explanations (if present in JSON) are the fastest targeted review per miss.

@@ -49,7 +49,7 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] ex2: Escalation — explicit criteria + few-shot, frustrated user pattern, multi-topic (5.2)
 - [x] ex3: Context degradation — API statelessness, scratchpad files, case-facts block (5.4, 5.5)
 - [x] ex4: Error propagation — structured errors, coverage annotations, multi-agent recovery (5.3)
-- [x] Domain 5 practice questions — 20 done (2026-05-14, 14/20 = 70%; weak spot: deterministic-beats-probabilistic theme)
+- [x] Domain 5 practice questions — 20 done (2026-05-14, 16/20 = 80%; misses: cache_control after compaction, hybrid summarization, JSON manifest crash recovery, PDF full automation vs sampling)
 
 ---
 
@@ -69,4 +69,4 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-_Last updated: 2026-05-13 (session 3)_
+_Last updated: 2026-05-14_

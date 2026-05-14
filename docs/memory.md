@@ -26,7 +26,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | 2 — MCP Tool Design | 18% | Exercises complete | `domain-2/` |
 | 3 — Claude Code Workflows | 20% | Complete — all exercises done; practice Qs not started | `domain-3/` |
 | 4 — Prompt Engineering | 20% | Exercises complete; Q21–Q50 done (90%); 4.5/4.6 drill done (60%); HTML quiz 11/14 (79%) | `domain-4/` |
-| 5 — Context Management | 15% | Exercises complete; Q&A done — 14/20 (70%); weak spot: deterministic-beats-probabilistic | `domain-5/` |
+| 5 — Context Management | 15% | Exercises complete; bank drill done — 16/20 (80%); weak spots: cache_control after compaction, hybrid summarization, JSON manifest crash recovery | `domain-5/` |
 
 ### Exercise Count
 
@@ -46,7 +46,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | D4 question bank drill | 2026-05-11 | **80% (16/20)** | — | — | — | 80% | — |
 | D4 Q21–Q50 drill | 2026-05-13 | **90% (27/30)** | — | — | — | 90% | — |
 | D4 4.5/4.6 drill | 2026-05-13 | **60% (6/10)** | — | — | — | 60% | — |
-| D5 question bank drill | 2026-05-14 | **70% (14/20)** | — | — | — | — | 70% |
+| D5 question bank drill | 2026-05-14 | **80% (16/20)** | — | — | — | — | 80% |
 | D4 HTML quiz | 2026-05-13 | **79% (11/14)** | — | — | — | 79% | — |
 | Exam 2 (Udemy) | 2026-05-18 | — | — | — | — | — | — |
 | Exam 3 (Udemy) | 2026-05-19–21 | — | — | — | — | — | — |
@@ -113,6 +113,5 @@ _Updated by `/sync` at end of each session._
 - 2026-05-12: D5 exercise Q&A scores — ex1: 2/3, ex2: 2/3, ex3: 3/3, ex4: 3/3; weak spots: empty result vs. error distinction (5.3), handoff summary content (5.2)
 - 2026-05-12: D5 bank question drill — 20 random questions pulled and saved to memory; paused at Q1 (none answered yet); in-chat drill format (no Python script)
 - 2026-05-12: In-chat question bank drill pattern established — Claude reads JSON directly, filters by domain_id, presents one question at a time; no Python script required
-- 2026-05-14: Systematic gap-fill of all 5 domain guides from question bank (41 net-new concepts); D2/D3 had largest gaps; Pattern 1 expanded to full deterministic-beats-probabilistic spectrum
-- 2026-05-14: D5 Q&A — 14/20 (70%); weak spot: deterministic architecture vs probabilistic prompting (Q14, Q15, Q18, Q19, Q20); D5.4 updated with Explore subagent as proactive context strategy
-- 2026-05-14: Standardized drill target to 20 Qs/domain (was 60–80/60/50); goal: all 5 domains done before Exam 2 Sunday; D1 and D3 bank drills still needed
+- 2026-05-14: D5 question bank drill complete — 16/20 (80%); misses: Q5 (cache_control breakpoint after compaction), Q6 (PDF full automation vs stratified sampling), Q9 (hybrid summarization), Q19 (JSON manifest for crash recovery vs reconnection)
+- 2026-05-14: D5 weak spots to review before Exam 2 — prompt caching mechanics (cache_control after compaction), hybrid summarization pattern, JSON manifest crash recovery; resource: docs.anthropic.com prompt caching section
