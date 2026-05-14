@@ -109,7 +109,7 @@ This applies to every subdomain across all domains. For reference-only exercises
 
 - The `production/` folder contains `customer_data.txt` with sample PII used by the `hook_post_pii_trim` exercise. This is fake/sample data only — never put real PII here.
 - `extract_domain1.sh` is a utility script for extracting domain-1 exercise content; not part of the exercise sequence.
-- D4 question bank drill: prefer batches of 10–20 questions, not 50 at once. User preference established 2026-05-11.
+- Question bank drills: **20 questions per domain** is the standard batch size. Updated 2026-05-14 (previously 60 for D2, 50 for D3, 60–80 for D1 — all reduced to 20).
 
 ---
 

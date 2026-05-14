@@ -16,7 +16,7 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] ex6: Session management (markdown reference)
 - [x] Hooks: hook_pre_production_gate, hook_pre_refund_gate, hook_post_pii_trim
 - [x] Domain 1 HTML quiz — 12/12 (100%) — D1 mastered
-- [ ] Domain 1 practice questions — 60–80 from the question bank (HTML quiz done; formal bank drill still pending)
+- [ ] Domain 1 practice questions — 20 from the question bank (HTML quiz done; bank drill pending)
 
 ### Domain 2 — MCP Tool Design (18%) — EXERCISES COMPLETE
 - [x] ex1: Tool descriptions — overlapping tools, disambiguation
@@ -26,7 +26,7 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] ex5: Output design — structured output formatting
 - [ ] Hook: hook_post_output_trim — review only (exists, not explicitly run)
 - [x] Config: sample.mcp.json with `${ENV_VAR}` credential pattern
-- [ ] Domain 2 practice questions — 60 drilled this session across all 5 subdomains (weak spots: 2.1 split generic tools, 2.2 business vs permission, 2.4 MCP resources)
+- [x] Domain 2 practice questions — done (2026-05-08, all 5 subdomains; weak spots: 2.1 split generic tools, 2.2 business vs permission, 2.4 MCP resources)
 
 ### Domain 3 — Claude Code Workflows (20%) — COMPLETE
 - [x] ex1: CLAUDE.md hierarchy — concept walkthrough done (Parts A/B/C); `/memory` bug fixed; 92% on HTML quiz
@@ -34,7 +34,7 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] ex3: Path-scoped rules — 90% drill (9/10); miss: monorepo directory boundary vs glob distinction
 - [x] ex4: Plan mode — 80% drill (8/10); misses: plan mode cannot gate mid-execution (PreToolUse hook), auto-memory location
 - [x] ex5: CI/CD headless mode — 70% drill (7/10); misses: prior findings in context (Q3), inline confidence for triage (Q4)
-- [ ] Domain 3 practice questions — 50 from the question bank (not started)
+- [ ] Domain 3 practice questions — 20 from the question bank (not started)
 
 ### Domain 4 — Prompt Engineering (20%) — EXERCISES COMPLETE
 - [x] ex1: Few-shot prompting — vague vs explicit criteria vs contrastive examples (4.1, 4.2)
@@ -49,7 +49,7 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] ex2: Escalation — explicit criteria + few-shot, frustrated user pattern, multi-topic (5.2)
 - [x] ex3: Context degradation — API statelessness, scratchpad files, case-facts block (5.4, 5.5)
 - [x] ex4: Error propagation — structured errors, coverage annotations, multi-agent recovery (5.3)
-- [ ] Domain 5 practice questions — 20 queued in memory (d5_question_bank_queue.md), paused at Q1
+- [x] Domain 5 practice questions — 20 done (2026-05-14, 14/20 = 70%; weak spot: deterministic-beats-probabilistic theme)
 
 ---
 
