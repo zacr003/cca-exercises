@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCA-F Scenarios Reference</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --surface: #f8f9fa;
+    --border: #e5e7eb;
+    --text: #111827;
+    --muted: #6b7280;
+    --accent: #1d4ed8;
+    --accent-light: #eff6ff;
+    --trap-bg: #fff7ed;
+    --trap-border: #f97316;
+    --trap-text: #7c2d12;
+    --insight-bg: #f0fdf4;
+    --insight-border: #22c55e;
+    --insight-text: #14532d;
+    --domain-bg: #f5f3ff;
+    --domain-border: #8b5cf6;
+    --d1: #dc2626; --d2: #d97706; --d3: #16a34a; --d4: #1d4ed8; --d5: #7c3aed;
+    --nav-w: 220px;
+    --max-w: 900px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    font-size: 15px;
+  }
+
+  /* ── Layout ── */
+  .shell { display: flex; min-height: 100vh; }
+
+  nav {
+    width: var(--nav-w);
+    flex-shrink: 0;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 24px 16px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  nav h2 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 12px; }
+
+  nav a {
+    display: block;
+    padding: 6px 10px;
+    border-radius: 6px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 13px;
+    margin-bottom: 2px;
+    transition: background .12s;
+  }
+  nav a:hover { background: var(--border); }
+  nav a.active { background: var(--accent-light); color: var(--accent); font-weight: 600; }
+
+  nav .nav-label {
+    font-size: 11px;
+    color: var(--muted);
+    padding: 4px 10px;
+    margin-top: 12px;
+  }
+
+  main {
+    flex: 1;
+    max-width: var(--max-w);
+    padding: 40px 48px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  .page-header { margin-bottom: 36px; border-bottom: 2px solid var(--border); padding-bottom: 24px; }
+  .page-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 8px; }
+  .page-header p { color: var(--muted); font-size: 14px; }
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    border: 1px solid;
+  }
+  .badge-neutral { background: var(--surface); border-color: var(--border); color: var(--muted); }
+
+  /* ── Scenario sections ── */
+  .scenario { margin-bottom: 60px; scroll-margin-top: 24px; }
+  .scenario-header {
+    display: flex; align-items: flex-start; gap: 14px;
+    margin-bottom: 8px;
+  }
+  .scenario-num {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 2px;
+  }
+  .scenario h2 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+  .scenario-desc { color: var(--muted); font-size: 14px; margin-bottom: 20px; padding-left: 46px; }
+
+  /* ── Domains table ── */
+  .domains-label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
+  .domains-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 13.5px; }
+  .domains-table th { background: var(--surface); padding: 8px 12px; text-align: left; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); border: 1px solid var(--border); }
+  .domains-table td { padding: 8px 12px; border: 1px solid var(--border); vertical-align: top; }
+  .domains-table tr:hover td { background: var(--surface); }
+
+  .domain-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .d1 { background: var(--d1); }
+  .d2 { background: var(--d2); }
+  .d3 { background: var(--d3); }
+  .d4 { background: var(--d4); }
+  .d5 { background: var(--d5); }
+
+  /* ── Key concepts ── */
+  .section-label { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 10px; margin-top: 24px; }
+  .concepts-list { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-bottom: 24px; }
+  .concepts-list li {
+    padding: 8px 12px;
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    font-size: 14px;
+  }
+  .concepts-list li strong { color: var(--accent); }
+
+  /* ── Traps ── */
+  .trap {
+    background: var(--trap-bg);
+    border: 1px solid var(--trap-border);
+    border-left: 4px solid var(--trap-border);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: var(--trap-text);
+  }
+  .trap-header {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 700; margin-bottom: 4px; font-size: 13px;
+  }
+  .trap-icon { font-size: 15px; }
+
+  /* ── Insight ── */
+  .insight {
+    background: var(--insight-bg);
+    border: 1px solid var(--insight-border);
+    border-left: 4px solid var(--insight-border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-top: 16px;
+    font-size: 14px;
+    color: var(--insight-text);
+  }
+  .insight-header {
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 700; margin-bottom: 6px; font-size: 13px;
+    text-transform: uppercase; letter-spacing: .05em;
+  }
+
+  /* ── Uncertain flag ── */
+  .uncertain {
+    display: inline-block;
+    background: #fef9c3;
+    color: #854d0e;
+    border: 1px solid #fde047;
+    border-radius: 4px;
+    padding: 0 5px;
+    font-size: 11px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-left: 4px;
+  }
+
+  /* ── Summary table ── */
+  .summary-section { margin-top: 60px; padding-top: 32px; border-top: 2px solid var(--border); }
+  .summary-section h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+  .summary-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .summary-table th { background: var(--text); color: #fff; padding: 10px 14px; text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+  .summary-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .summary-table tr:hover td { background: var(--surface); }
+  .anti-pattern { color: #dc2626; font-style: italic; font-size: 13px; }
+
+  /* ── Back to top ── */
+  .back-top { display: inline-block; margin-top: 40px; color: var(--muted); font-size: 13px; text-decoration: none; }
+  .back-top:hover { color: var(--accent); }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    nav { display: none; }
+    main { padding: 24px 20px; }
+    .scenario-desc { padding-left: 0; }
+    .domains-table { font-size: 12.5px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+<!-- Sidebar navigation -->
+<nav>
+  <h2>CCA-F Scenarios</h2>
+  <a href="#s1">1 · Customer Support</a>
+  <a href="#s2">2 · Code Generation</a>
+  <a href="#s3">3 · Multi-Agent Research</a>
+  <a href="#s4">4 · Developer Productivity</a>
+  <a href="#s5">5 · CI/CD Integration</a>
+  <a href="#s6">6 · Structured Extraction</a>
+  <div class="nav-label">Reference</div>
+  <a href="#summary">Quick Reference Table</a>
+</nav>
+
+<main>
+
+<!-- Page header -->
+<div class="page-header">
+  <h1>CCA-F Scenarios Reference</h1>
+  <p>All 6 possible exam scenarios · 4 are randomly selected per attempt · 60 questions · 120 minutes</p>
+  <div class="badge-row">
+    <span class="badge badge-neutral">D1 · Agentic Architecture 27%</span>
+    <span class="badge badge-neutral">D2 · MCP Tool Design 18%</span>
+    <span class="badge badge-neutral">D3 · Claude Code Workflows 20%</span>
+    <span class="badge badge-neutral">D4 · Prompt Engineering 20%</span>
+    <span class="badge badge-neutral">D5 · Context Management 15%</span>
+  </div>
+</div>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SCENARIO 1 -->
+<!-- ─────────────────────────────────────────── -->
+<section class="scenario" id="s1">
+  <div class="scenario-header">
+    <div class="scenario-num">1</div>
+    <h2>Customer Support Resolution Agent</h2>
+  </div>
+  <p class="scenario-desc">A production Claude agent handles inbound support tickets, routes them by case type, resolves autonomously where possible, and escalates to human agents when criteria are met.</p>
+
+  <div class="domains-label">Primary Domains Tested</div>
+  <table class="domains-table">
+    <thead><tr><th>Domain</th><th>Subdomains</th><th>Why This Scenario Tests It</th></tr></thead>
+    <tbody>
+      <tr><td><span class="domain-pill d2">D2</span> MCP Tool Design</td><td>2.1, 2.3</td><td>Overlapping tools (<code>get_customer</code> vs <code>lookup_order</code>) with minimal descriptions cause misrouting</td></tr>
+      <tr><td><span class="domain-pill d4">D4</span> Prompt Engineering</td><td>4.1, 4.2</td><td>Escalation miscalibration → explicit criteria + few-shot contrastive examples fix it</td></tr>
+      <tr><td><span class="domain-pill d5">D5</span> Context Management</td><td>5.2, 5.3, 5.5</td><td>Long session fact preservation; escalation triggers; human review workflows</td></tr>
+      <tr><td><span class="domain-pill d1">D1</span> Agentic Architecture</td><td>1.4, 1.5</td><td>Compliance gates for financial/identity operations via <code>PreToolUse</code> hooks</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-label">Key Concepts &amp; Architectural Decisions</div>
+  <ul class="concepts-list">
+    <li>Tool descriptions are the <strong>primary routing mechanism</strong> — fix both overlapping tools, not just the one being misrouted</li>
+    <li>Escalation miscalibration = ambiguous decision boundary → fix with <strong>explicit criteria + few-shot contrastive examples</strong> (resolve vs. escalate side by side)</li>
+    <li>LLM self-reported confidence is poorly calibrated — <strong>never gate escalation on model confidence scores</strong></li>
+    <li>Sentiment detects frustration, not case complexity — <strong>do not use sentiment as an escalation trigger</strong></li>
+    <li>For financial/identity operations: <strong><code>PreToolUse</code> hook</strong> enforces identity verification before downstream tools execute (prompt instructions have non-zero failure rate)</li>
+    <li>Transactional facts (order numbers, amounts, dates) → <strong>persistent case-facts block</strong> outside summarized history, not a revised summarization prompt</li>
+  </ul>
+
+  <div class="section-label">Exam Traps</div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 1 — More instructions instead of examples</div>
+    When escalation rates are miscalibrated, choosing "add more detailed instructions" instead of "add few-shot examples with contrastive cases" is wrong. Instructions fail at ambiguous boundaries. Examples show the model what the distinction looks like in real cases.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 2 — Routing classifier before fixing descriptions (Q2)</div>
+    Building an ML routing layer to pre-select tools over-engineers the problem and bypasses LLM natural language understanding. The correct first step is always enriching both tool descriptions with input formats, example queries, edge cases, and use-vs-similar-tool boundaries.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 3 — Sentiment as escalation trigger (Q3)</div>
+    A frustrated customer with a simple problem does not need escalation. A calm customer with a complex billing dispute does. Sentiment ≠ case complexity — they are independent signals.
+  </div>
+
+  <div class="insight">
+    <div class="insight-header">✓ Clarifying Insight</div>
+    This scenario almost always contains one tool-selection question and one escalation question. For tool selection: root cause = thin descriptions → fix both tools. For escalation: root cause = ambiguous criteria → add few-shot examples with contrastive cases. Neither is solved by ML classifiers, confidence scores, or sentiment analysis.
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SCENARIO 2 -->
+<!-- ─────────────────────────────────────────── -->
+<section class="scenario" id="s2">
+  <div class="scenario-header">
+    <div class="scenario-num">2</div>
+    <h2>Code Generation with Claude Code</h2>
+  </div>
+  <p class="scenario-desc">Developers use Claude Code interactively to write, review, and refactor code — including large-scale multi-file architectural changes and custom review skills.</p>
+
+  <div class="domains-label">Primary Domains Tested</div>
+  <table class="domains-table">
+    <thead><tr><th>Domain</th><th>Subdomains</th><th>Why This Scenario Tests It</th></tr></thead>
+    <tbody>
+      <tr><td><span class="domain-pill d3">D3</span> Claude Code Workflows</td><td>3.2, 3.4, 3.5</td><td><code>context: fork</code> for verbose skills; plan mode for architectural changes; CLAUDE.md rules</td></tr>
+      <tr><td><span class="domain-pill d1">D1</span> Agentic Architecture</td><td>1.3, 1.7</td><td>Context isolation for verbose subagent output; independent review instances</td></tr>
+      <tr><td><span class="domain-pill d4">D4</span> Prompt Engineering</td><td>4.1</td><td>Structured prompts for code review output consistency</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-label">Key Concepts &amp; Architectural Decisions</div>
+  <ul class="concepts-list">
+    <li><strong><code>context: fork</code></strong> in SKILL.md frontmatter: runs skill in isolated subagent — verbose intermediate output stays in the fork; only final summary returns to main session (Q4)</li>
+    <li><strong>Plan mode first</strong> for multi-file architectural changes — explore codebase and understand dependencies before any implementation (Q5)</li>
+    <li><strong>Independent review = separate Claude instance</strong> — same-session review is biased by the model's prior reasoning; it is less likely to challenge decisions it just made</li>
+    <li>CLAUDE.md rules and <code>.claude/rules/</code> glob patterns enforce coding conventions automatically without developer invocation</li>
+  </ul>
+
+  <div class="section-label">Exam Traps</div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 1 — <code>model: haiku</code> to reduce verbosity (Q4)</div>
+    Not a valid SKILL.md frontmatter field. The correct mechanism to isolate verbose output is <code>context: fork</code>. A smaller model does not prevent intermediate output from polluting the main session context window.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 2 — Start in execute mode, switch to plan mode if needed (Q5)</div>
+    "Begin implementing and only switch to plan mode if complexity surprises you" is always wrong for tasks with architectural implications or changes across dozens of files. Plan mode first is the documented correct approach — not a fallback.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 3 — Same-session self-review</div>
+    The model retains reasoning context from generation, making it less likely to question its own decisions. A second Claude instance reviewing only the final artifact catches what the first won't. The exam guide explicitly calls same-session self-review an anti-pattern.
+  </div>
+
+  <div class="insight">
+    <div class="insight-header">✓ Clarifying Insight</div>
+    <code>context: fork</code> and plan mode solve different problems — they are not substitutes. Plan mode prevents costly mistakes by understanding the problem space before implementation. <code>context: fork</code> prevents verbose skill output from consuming the main session's context window. Both may be relevant in the same scenario at the same time.
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SCENARIO 3 -->
+<!-- ─────────────────────────────────────────── -->
+<section class="scenario" id="s3">
+  <div class="scenario-header">
+    <div class="scenario-num">3</div>
+    <h2>Multi-Agent Research System</h2>
+  </div>
+  <p class="scenario-desc">A coordinator agent decomposes complex research topics, delegates to specialized subagents (web search, document analysis, synthesis), and produces a unified, coherent research report.</p>
+
+  <div class="domains-label">Primary Domains Tested</div>
+  <table class="domains-table">
+    <thead><tr><th>Domain</th><th>Subdomains</th><th>Why This Scenario Tests It</th></tr></thead>
+    <tbody>
+      <tr><td><span class="domain-pill d1">D1</span> Agentic Architecture</td><td>1.2, 1.3, 1.4</td><td>Coordinator/subagent architecture; parallel Task calls; structured error propagation</td></tr>
+      <tr><td><span class="domain-pill d2">D2</span> MCP Tool Design</td><td>2.3, 2.5</td><td>Least-privilege tool scoping per subagent role</td></tr>
+      <tr><td><span class="domain-pill d5">D5</span> Context Management</td><td>5.3, 5.5</td><td>Partial results with coverage annotations; error recovery without full workflow failure</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-label">Key Concepts &amp; Architectural Decisions</div>
+  <ul class="concepts-list">
+    <li>Coordinator routes all subagent outputs through a <strong>synthesis subagent</strong> — raw concatenation of outputs is an anti-pattern (Q7)</li>
+    <li>Parallel subagents = <strong>multiple <code>Task</code> calls in a single coordinator response</strong> — not across separate response turns</li>
+    <li>Subagents inherit <strong>nothing</strong> from coordinator — no history, no system prompt, no tool results — pass everything explicitly via Task invocation</li>
+    <li>Structured error context on failure: failure type + query attempted + partial results + alternative approaches — gives coordinator enough to recover intelligently (Q8)</li>
+    <li>Least privilege: give synthesis subagent only the simple <code>verify_fact</code> tool — not the full web search tool set (Q9)</li>
+    <li>Dependency-aware scheduling: only serialize at actual dependency boundaries; independent subagents launch in parallel immediately</li>
+    <li>Partial failure: return partial results with <strong>coverage annotations</strong> marking gaps — don't terminate the full workflow</li>
+  </ul>
+
+  <div class="section-label">Exam Traps</div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 1 — Parallel execution fixes synthesis quality (Q7)</div>
+    Whether subagents run in parallel or sequentially has no effect on whether outputs are properly synthesized. The root cause of raw concatenation is a missing synthesis step — not execution order. Adding parallelism to a broken coordinator does not fix the synthesis anti-pattern.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 2 — Over-provisioning synthesis subagent (Q9)</div>
+    Giving the synthesis subagent the full web search tool set violates least privilege and clutters its decision space. A scoped <code>verify_fact</code> tool covers the common case; complex multi-source verification should route through the coordinator.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 3 — Terminating workflow on single subagent failure (Q8)</div>
+    One timeout is not grounds to kill the entire research workflow. Return structured error context, annotate coverage gaps, and proceed with partial results. The coordinator decides how to recover — the subagent's job is to propagate rich error context, not to terminate everything.
+  </div>
+
+  <div class="insight">
+    <div class="insight-header">✓ Clarifying Insight</div>
+    The single most-tested concept in this scenario: <strong>subagents inherit nothing</strong>. When the exam presents a multi-agent failure — wrong outputs, repeated lookups, missing context — the root cause is almost always that something wasn't explicitly passed in the Task invocation. The fix is always "pass it explicitly," never "share it via session" or "inherit from coordinator."
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SCENARIO 4 -->
+<!-- ─────────────────────────────────────────── -->
+<section class="scenario" id="s4">
+  <div class="scenario-header">
+    <div class="scenario-num">4</div>
+    <h2>Developer Productivity with Claude</h2>
+  </div>
+  <p class="scenario-desc">Engineering teams configure Claude Code with shared conventions, file-type-specific rules, custom skills, and team commands to automate recurring developer workflows.</p>
+
+  <div class="domains-label">Primary Domains Tested</div>
+  <table class="domains-table">
+    <thead><tr><th>Domain</th><th>Subdomains</th><th>Why This Scenario Tests It</th></tr></thead>
+    <tbody>
+      <tr><td><span class="domain-pill d3">D3</span> Claude Code Workflows</td><td>3.1, 3.2, 3.3, 3.5</td><td>CLAUDE.md hierarchy; <code>.claude/rules/</code> glob patterns; skills; team commands</td></tr>
+      <tr><td><span class="domain-pill d2">D2</span> MCP Tool Design</td><td>2.1, 2.2</td><td>MCP server integration for developer tooling</td></tr>
+      <tr><td><span class="domain-pill d4">D4</span> Prompt Engineering</td><td>4.1, 4.2</td><td>Structured developer-facing prompts; output format consistency across team</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-label">Key Concepts &amp; Architectural Decisions</div>
+  <ul class="concepts-list">
+    <li><strong><code>.claude/rules/</code></strong> files with YAML frontmatter <code>paths: ["**/*.test.tsx"]</code> apply conventions automatically for matching file types — regardless of directory location (Q6)</li>
+    <li>CLAUDE.md hierarchy: <strong><code>~/.claude/CLAUDE.md</code></strong> (user-local, never shared, not in git) → <strong>project CLAUDE.md</strong> (in git, visible to all teammates) → <strong>user CLAUDE.md</strong> (in git, user-specific overrides)</li>
+    <li>Skills: <code>context: fork</code> isolates verbose output; <code>context: merge</code> surfaces findings into the main session</li>
+    <li>PreToolUse/PostToolUse hooks enforce formatting or linting deterministically — prompt instructions cannot guarantee these</li>
+    <li>Team commands in <code>.claude/commands/</code> provide shared slash commands without per-developer setup</li>
+  </ul>
+
+  <div class="section-label">Exam Traps</div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 1 — <code>~/.claude/CLAUDE.md</code> for team conventions (Q6)</div>
+    This file is user-local and is not part of the project repository. Teammates never see it. Shared team conventions belong in the project-level CLAUDE.md committed to git, or in <code>.claude/rules/</code>.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 2 — Per-directory CLAUDE.md for cross-directory file types (Q6)</div>
+    Creating a CLAUDE.md in each directory that contains test files cannot efficiently target <code>*.test.tsx</code> files spread across 20 subdirectories. <code>.claude/rules/</code> with a glob pattern handles any file matching the pattern anywhere in the project with a single file.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 3 — Relying on header inference in CLAUDE.md (Q6)</div>
+    A <code>## Test file conventions</code> section header in root CLAUDE.md does not automatically apply when test files are edited. Claude does not infer scope from section headers. Explicit <code>paths:</code> glob matching in <code>.claude/rules/</code> is required for automatic activation.
+  </div>
+
+  <div class="insight">
+    <div class="insight-header">✓ Clarifying Insight</div>
+    CLAUDE.md hierarchy and <code>.claude/rules/</code> solve different scoping dimensions. CLAUDE.md hierarchy controls <strong>which instructions are visible at which project level</strong>. <code>.claude/rules/</code> controls <strong>which instructions activate for which file types</strong>. The exam consistently tests whether candidates can identify which dimension of scoping a given problem requires — they are not interchangeable.
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SCENARIO 5 -->
+<!-- ─────────────────────────────────────────── -->
+<section class="scenario" id="s5">
+  <div class="scenario-header">
+    <div class="scenario-num">5</div>
+    <h2>Claude Code for CI/CD</h2>
+  </div>
+  <p class="scenario-desc">Claude Code runs inside automated CI/CD pipelines for security analysis, test generation, PR review, and code quality reporting — without any interactive input.</p>
+
+  <div class="domains-label">Primary Domains Tested</div>
+  <table class="domains-table">
+    <thead><tr><th>Domain</th><th>Subdomains</th><th>Why This Scenario Tests It</th></tr></thead>
+    <tbody>
+      <tr><td><span class="domain-pill d3">D3</span> Claude Code Workflows</td><td>3.6</td><td>Non-interactive CI flags; machine-parseable output; CI-specific CLAUDE.md behavior</td></tr>
+      <tr><td><span class="domain-pill d4">D4</span> Prompt Engineering</td><td>4.5</td><td>Batch API for overnight analyses vs. synchronous API for blocking pre-merge checks</td></tr>
+      <tr><td><span class="domain-pill d1">D1</span> Agentic Architecture</td><td>1.3</td><td>Independent review instances; no same-session reasoning bias in CI flow</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-label">Key Concepts &amp; Architectural Decisions</div>
+  <ul class="concepts-list">
+    <li><strong><code>-p</code> / <code>--print</code> flag</strong>: runs Claude Code in non-interactive (headless) mode — required for CI/CD pipelines (Q10)</li>
+    <li><code>--output-format stream-json</code>: machine-parseable output for pipeline scripts <span class="uncertain">[uncertain — verify exact flag syntax]</span></li>
+    <li>Pre-merge blocking checks (developers wait on result): <strong>synchronous API only</strong> — Batch API cannot guarantee the latency SLA (Q12)</li>
+    <li>Overnight/nightly jobs (tech debt, coverage): <strong>Batch API appropriate</strong> — 50% cost savings; no blocking latency requirement (Q12)</li>
+    <li>Generate + review in CI: <strong>two separate Claude instances</strong> — review instance receives only the artifact + review criteria; no generation context carries over</li>
+    <li>CI-specific CLAUDE.md: disable clarification prompts; enforce structured output format; no interactive confirmations</li>
+  </ul>
+
+  <div class="section-label">Exam Traps</div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 1 — Flags that don't exist (Q10)</div>
+    <code>--batch</code>, <code>CLAUDE_HEADLESS=true</code>, and <code>--no-config</code> are all distractors referencing non-existent flags or environment variables. Only <code>-p</code> / <code>--print</code> is the documented non-interactive mode flag. If the option sounds plausible but you haven't seen it in docs, it's probably a distractor.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 2 — Batch API for pre-merge checks (Q12)</div>
+    Developers wait on pre-merge results in real time. The Batch API has a 24-hour processing window and no guaranteed latency SLA — completely unsuitable for any workflow where someone waits on the result. Cost savings do not override blocking latency constraints.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 3 — Same-session generate + review</div>
+    Using the same Claude session to generate code and then review it carries same-session reasoning bias. The review instance must be independent — supplied with only the code artifact and review criteria, not the generation context or reasoning chain.
+  </div>
+
+  <div class="insight">
+    <div class="insight-header">✓ Clarifying Insight</div>
+    Every Batch API question pairs a latency-sensitive workload with a latency-tolerant one. The discriminator is always: <strong>does someone wait on this result in real time?</strong> If yes → synchronous API. If no (overnight, nightly, weekly) → Batch API. The 50% cost savings are real — they just don't apply when blocking latency is a constraint.
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SCENARIO 6 -->
+<!-- ─────────────────────────────────────────── -->
+<section class="scenario" id="s6">
+  <div class="scenario-header">
+    <div class="scenario-num">6</div>
+    <h2>Structured Data Extraction</h2>
+  </div>
+  <p class="scenario-desc">Claude extracts structured fields from unstructured documents (invoices, contracts, medical records) at scale, with schema validation, semantic integrity checks, and human review workflows.</p>
+
+  <div class="domains-label">Primary Domains Tested</div>
+  <table class="domains-table">
+    <thead><tr><th>Domain</th><th>Subdomains</th><th>Why This Scenario Tests It</th></tr></thead>
+    <tbody>
+      <tr><td><span class="domain-pill d4">D4</span> Prompt Engineering</td><td>4.3, 4.4, 4.5</td><td>JSON schema design; <code>tool_choice</code> forced first call; Batch API for high-volume nightly runs</td></tr>
+      <tr><td><span class="domain-pill d5">D5</span> Context Management</td><td>5.5, 5.6</td><td>Human review calibration; aggregate vs. segment-level accuracy analysis (Q11)</td></tr>
+      <tr><td><span class="domain-pill d2">D2</span> MCP Tool Design</td><td>2.2</td><td>Structured error responses for extraction failures</td></tr>
+    </tbody>
+  </table>
+
+  <div class="section-label">Key Concepts &amp; Architectural Decisions</div>
+  <ul class="concepts-list">
+    <li>JSON schema + <code>strict: true</code> eliminates <strong>syntax errors only</strong> — semantic errors (mismatched totals, invalid date ranges, mutually exclusive fields) require application-layer validation</li>
+    <li>Nullable fields (<code>"nullable": true</code>) prevent hallucination of absent data more reliably than required fields with <code>"N/A"</code> as a permitted string</li>
+    <li>Aggregate accuracy (97% overall) <strong>masks</strong> poor performance on specific document types or field segments — always verify segment-level before reducing human review (Q11)</li>
+    <li><code>tool_choice: {"type": "tool", "name": "extract_fields"}</code> forces the first tool call — guarantees structured output format immediately, no natural-language preamble turn</li>
+    <li>Batch API: appropriate for high-volume overnight extraction runs (no real-time SLA) — not for user-facing synchronous extraction</li>
+    <li>Human review thresholds must be calibrated per document-type segment, not by overall confidence scores alone</li>
+  </ul>
+
+  <div class="section-label">Exam Traps</div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 1 — 97% aggregate accuracy is reliable (Q11)</div>
+    A document type extracting at 60% accuracy could be entirely hidden inside a 97% overall metric. The exam explicitly tests the insight that aggregate metrics mask segment failures. Always verify by document type and field segment before reducing human review — never assume aggregate accuracy is uniform.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 2 — Schema catches all errors</div>
+    JSON schema catches structural and syntax issues. It cannot verify: line-item totals match invoice totals, dates fall in valid business ranges, mutually exclusive fields don't coexist, or extracted values are semantically plausible. Application-layer programmatic validation is always required on top of schema conformance.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> Trap 3 — Lower confidence threshold to reduce flagging (Q11)</div>
+    Lowering the confidence threshold suppresses detection — it does not improve extraction accuracy. This approach would reduce human review rates precisely where the model is most likely to be wrong. Higher-risk segments need more review, not less.
+  </div>
+
+  <div class="insight">
+    <div class="insight-header">✓ Clarifying Insight</div>
+    Schema compliance and semantic accuracy are <strong>independent dimensions</strong>. A document can pass schema validation perfectly and still contain wrong values, totals that don't add up, or self-contradicting fields. The correct production architecture always layers: (1) schema conformance via <code>tool_use</code> + <code>strict: true</code>, (2) application-layer semantic validation, (3) segment-aware human review thresholds. Any answer implying schema alone is sufficient is wrong.
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SUMMARY TABLE -->
+<!-- ─────────────────────────────────────────── -->
+<div class="summary-section" id="summary">
+  <h2>Cross-Scenario Quick Reference</h2>
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Scenario</th>
+        <th>Dominant Domains</th>
+        <th>Signature Pattern</th>
+        <th>Key Anti-Pattern</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td><strong>Customer Support</strong></td>
+        <td><span class="domain-pill d2">D2</span> <span class="domain-pill d4">D4</span> <span class="domain-pill d5">D5</span></td>
+        <td>Fix tool descriptions; few-shot examples for escalation calibration</td>
+        <td class="anti-pattern">ML classifier; sentiment trigger; confidence scoring</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td><strong>Code Generation</strong></td>
+        <td><span class="domain-pill d3">D3</span> <span class="domain-pill d1">D1</span></td>
+        <td><code>context: fork</code> for verbose skills; plan mode before architectural changes</td>
+        <td class="anti-pattern">Execute-then-plan; <code>model: haiku</code>; same-session review</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td><strong>Multi-Agent Research</strong></td>
+        <td><span class="domain-pill d1">D1</span> <span class="domain-pill d2">D2</span> <span class="domain-pill d5">D5</span></td>
+        <td>Synthesis subagent (not concatenation); structured error propagation; explicit context passing</td>
+        <td class="anti-pattern">Concatenating outputs; terminating on one failure; inheriting context</td>
+      </tr>
+      <tr>
+        <td>4</td>
+        <td><strong>Developer Productivity</strong></td>
+        <td><span class="domain-pill d3">D3</span> <span class="domain-pill d2">D2</span></td>
+        <td><code>.claude/rules/</code> glob for file types; project CLAUDE.md for team; hierarchy matters</td>
+        <td class="anti-pattern"><code>~/.claude/CLAUDE.md</code> for team; per-dir files for cross-dir patterns</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td><strong>CI/CD Integration</strong></td>
+        <td><span class="domain-pill d3">D3</span> <span class="domain-pill d4">D4</span></td>
+        <td><code>-p</code> flag for headless; Batch API for overnight only; independent review instances</td>
+        <td class="anti-pattern">Fake flags (<code>--batch</code>); Batch API on blocking pre-merge checks</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td><strong>Structured Extraction</strong></td>
+        <td><span class="domain-pill d4">D4</span> <span class="domain-pill d5">D5</span></td>
+        <td>Schema = syntax only; verify segment-level metrics before reducing review</td>
+        <td class="anti-pattern">Aggregate accuracy as sufficient; schema catches everything; lower threshold to reduce flagging</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<a class="back-top" href="#">↑ Back to top</a>
+
+</main>
+</div>
+
+<script>
+// Highlight active nav link on scroll
+const sections = document.querySelectorAll('section.scenario, .summary-section');
+const navLinks = document.querySelectorAll('nav a');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const id = entry.target.id;
+      const active = document.querySelector(`nav a[href="#${id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+
+sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
