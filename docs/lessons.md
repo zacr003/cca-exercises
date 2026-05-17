@@ -151,7 +151,10 @@ This applies to every subdomain across all domains. For reference-only exercises
 
 ## Question Bank Drill — Loading Method
 
-- Read the question bank JSON **directly** using the Read tool — do not spawn an agent to load it. Spawning an agent adds significant latency. The file is at `~/Desktop/Ramsey-Brain/raw/cca_f_question_bank_v2.0.0.json`. Read it once per session and keep the relevant questions in context.
+- Read the question bank JSON **directly** using the Read tool — do not spawn an agent to load it. Spawning an agent adds significant latency.
+- **Active bank**: `~/Desktop/Ramsey-Brain/raw/cca_f_question_bank_v3.0.0.json` (242 curated, tiered). Use for targeted drilling; filter by `curated_tier` (1/2/3) or `domain_id`.
+- **Broad bank**: `~/Desktop/Ramsey-Brain/raw/cca_f_question_bank_v2.0.0.json` (1,489 Qs) — use for subdomain coverage when v3 doesn't have enough questions for a domain.
+- Read once per session and keep the relevant questions in context.
 
 ---
 
@@ -162,6 +165,36 @@ This applies to every subdomain across all domains. For reference-only exercises
 - Questions are presented one at a time. User answers; Claude scores and explains immediately before moving to the next.
 - 20-question batches are the standard for a domain drill session.
 - Queue state (unanswered questions + correct answers) is saved to memory file `d5_question_bank_queue.md` when a session is interrupted mid-drill.
+
+---
+
+## CCA-F Exam Intelligence — v3.0.0 Prep Guide (2026-05-16)
+
+From a passed candidate (784/1000, exam taken 2026-05-13). Apply to every practice session.
+
+### Four mental moves (exam-day discipline)
+1. **Click the blue scenario box first** — each question has a collapsed blue scenario context box (upper-right). Easy to miss; questions misread without it. Scenario box → stem → options.
+2. **Name the symptom axis before evaluating options** — e.g., "agent forgets custom class after N turns" is attention-dilution, not token-budget. Name it first, then discard options addressing the wrong axis.
+3. **Translate behavior to mechanism, not parameter name** — exam describes behavior ("agent cuts off after 10 iterations"), not syntax (`max_turns`). Identify the mechanism; pick the option that addresses it.
+4. **"Increase context window" is almost never the answer** for forgetting — attention dilution, recency bias, and compaction-induced loss all produce forgetting without exhausting tokens. Right fixes: few-shot examples, scratchpad re-read, periodic summary injection.
+
+### Stem keyword signal
+When stem contains **"must," "always," "guarantee,"** or **"before model sees"** → correct answer is **never a system prompt**. Always a hook, programmatic gate, forced tool selection, or JSON schema + strict:true.
+
+### Fabricated hook names — recurring distractors
+`PreToolCall` and `OnToolReturn` do not exist. Only `PreToolUse` and `PostToolUse` are valid. Never select a fabricated hook name.
+
+### Practice exam behavior
+The official Anthropic practice exam presents the **same 60 questions every attempt** — only scenario order shuffles. Re-taking it yields zero new coverage. Use the curated bank for fresh questions.
+
+### Question bank to use going forward
+`~/Desktop/Ramsey-Brain/raw/cca_f_question_bank_v3.0.0.json` — 242 curated questions, tiered 58/115/69. Filter by `curated_tier` (1/2/3). Use v2.0.0 (`cca_f_question_bank_v2.0.0.json`) for broad subdomain drilling.
+
+### Drift scenarios (rotation hedge — not in official 6)
+- Conversational AI Patterns (appeared on n=1 form)
+- Long Document Processing
+- Agent Skills (Enterprise KM / Developer Tooling / Code Execution)
+- Claude for Operations / Agentic Tool Design
 
 ---
 
