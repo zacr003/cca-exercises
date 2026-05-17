@@ -160,7 +160,7 @@ This applies to every subdomain across all domains. For reference-only exercises
 
 ## In-Chat Question Bank Drill Pattern
 
-- **No Python script needed** for question bank drills. Claude reads the JSON directly (`~/Desktop/Ramsey-Brain/raw/cca_f_question_bank_v2.0.0.json`), filters by `domain_id`, and presents questions one at a time in chat.
+- **No Python script needed** for question bank drills. Claude reads the JSON directly, filters by `domain_id`, and presents questions one at a time in chat. **Active bank**: v3.0.0 (`cca_f_question_bank_v3.0.0.json`, 242 curated). Fall back to v2.0.0 (1,489 Qs) if v3 lacks coverage for a subdomain.
 - Filter field is `domain_id` (integer, e.g. `5`), not `domain` (string).
 - Questions are presented one at a time. User answers; Claude scores and explains immediately before moving to the next.
 - 20-question batches are the standard for a domain drill session.
@@ -186,6 +186,22 @@ When stem contains **"must," "always," "guarantee,"** or **"before model sees"**
 
 ### Practice exam behavior
 The official Anthropic practice exam presents the **same 60 questions every attempt** — only scenario order shuffles. Re-taking it yields zero new coverage. Use the curated bank for fresh questions.
+
+### Exam format (Zain, AI Dept lead, 2026-05-15)
+Exam is **broad/situational** — scenario-based reasoning, not syntax recall. Zain's exam did NOT test CLAUDE.md file specifics or commands vs skills distinction. Focus on "what do you do in this situation?" not configuration details.
+
+### The 6 official exam scenarios (4 randomly selected per sitting)
+
+| # | Scenario | Core concepts tested |
+|---|----------|---------------------|
+| 1 | Customer Support Agent | Tool description disambiguation; escalation criteria + few-shot |
+| 2 | Code Gen with Claude Code | `context: fork` for verbose skills; plan mode for architectural changes |
+| 3 | Claude Code Configuration | `.claude/rules/` glob paths; cross-directory rule activation |
+| 4 | Multi-Agent Research System | Coordinator routes through synthesis; structured error propagation; least-privilege tools |
+| 5 | CI/CD Integration | `-p` flag for headless mode; Batch API = latency-tolerant only |
+| 6 | Structured Data Extraction | Aggregate metrics mask segment failures; stratified analysis before reducing review |
+
+Source: official exam guide v0.1 (Feb 2025). Sample questions: `~/Desktop/Ramsey-Brain/wiki/syntheses/cca-f-sample-questions.md`.
 
 ### Question bank to use going forward
 `~/Desktop/Ramsey-Brain/raw/cca_f_question_bank_v3.0.0.json` — 242 curated questions, tiered 58/115/69. Filter by `curated_tier` (1/2/3). Use v2.0.0 (`cca_f_question_bank_v2.0.0.json`) for broad subdomain drilling.

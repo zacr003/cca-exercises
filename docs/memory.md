@@ -16,7 +16,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 
 ---
 
-## Current State (as of 2026-05-14)
+## Current State (as of 2026-05-16)
 
 ### Domain Progress
 
@@ -113,5 +113,9 @@ _Updated by `/sync` at end of each session._
 - 2026-05-12: D5 exercise Q&A scores — ex1: 2/3, ex2: 2/3, ex3: 3/3, ex4: 3/3; weak spots: empty result vs. error distinction (5.3), handoff summary content (5.2)
 - 2026-05-12: D5 bank question drill — 20 random questions pulled and saved to memory; paused at Q1 (none answered yet); in-chat drill format (no Python script)
 - 2026-05-12: In-chat question bank drill pattern established — Claude reads JSON directly, filters by domain_id, presents one question at a time; no Python script required
+- 2026-05-16: Reviewed 6 official exam scenarios + 12 official sample questions from exam guide; 4 of 6 scenarios randomly selected per sitting; 720/1000 to pass
+- 2026-05-16: Exam intel from Zain (AI Dept lead, passed CCA-F) — exam is broad/situational, not syntax-detail; his exam did NOT test CLAUDE.md specifics or commands vs skills distinction; scenario-based reasoning is the format
+- 2026-05-16: Zain uploading a new curated question bank (1,489-question bank too large to get through before exam)
+- 2026-05-16: D5 spot review concept anchors done — cache_control after compaction, hybrid summarization, JSON manifest crash recovery, PDF/stratified sampling; Q1 drill presented but not answered (user unavailable)
 - 2026-05-14: D5 question bank drill complete — 16/20 (80%); misses: Q5 (cache_control breakpoint after compaction), Q6 (PDF full automation vs stratified sampling), Q9 (hybrid summarization), Q19 (JSON manifest for crash recovery vs reconnection)
 - 2026-05-14: D5 weak spots to review before Exam 2 — prompt caching mechanics (cache_control after compaction), hybrid summarization pattern, JSON manifest crash recovery; resource: docs.anthropic.com prompt caching section
