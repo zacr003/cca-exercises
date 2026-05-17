@@ -50,15 +50,15 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] ex3: Context degradation — API statelessness, scratchpad files, case-facts block (5.4, 5.5)
 - [x] ex4: Error propagation — structured errors, coverage annotations, multi-agent recovery (5.3)
 - [x] Domain 5 practice questions — 20 done (2026-05-14, 16/20 = 80%; misses: cache_control after compaction, hybrid summarization, JSON manifest crash recovery, PDF full automation vs sampling)
-- [ ] D5 spot drill — 4 targeted questions on weak spots; Q1 presented, not yet answered
+- [x] D5 spot drill — 4/4 (100%) — cache_control, hybrid summarization, JSON manifest, PDF sampling
 
 ---
 
 ## Practice Exams
 
 - [x] **Practice Exam 1 (Udemy)** — 76% (46/60) taken May 10; weak spots: D4 (67%), D1 (75%)
-- [ ] **Anthropic Official Practice Exam** — take before or alongside Exam 2; scenario-based format matches real exam
-- [ ] **Practice Exam 2 (Udemy)** — timed, full sim (due: May 18); target weak domains from Exam 1
+- [ ] **Anthropic Official Practice Exam** — scenario-based format matches real exam; presents same 60 Qs every attempt (order shuffles only)
+- [x] **Practice Exam 2 (Udemy)** — **88% (53/60)** taken May 17; domain breakdown: Context 100%, D3 92%, D1 88%, D4 83%, D2 82%
 - [ ] **Practice Exam 3 (Udemy)** — timed, full sim (May 19–21); review every wrong answer
 
 ---
@@ -71,4 +71,4 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-_Last updated: 2026-05-16_
+_Last updated: 2026-05-17_

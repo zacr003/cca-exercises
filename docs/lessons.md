@@ -214,6 +214,42 @@ Source: official exam guide v0.1 (Feb 2025). Sample questions: `~/Desktop/Ramsey
 
 ---
 
+## MCP Resources vs Tools (CCA-F Exam Critical — surfaced 2026-05-17)
+
+- **Resources** = read-only, reference data (catalogs, policy lists, static configs). No tool call overhead; agent references them directly.
+- **Tools** = actions and dynamic lookups that change state or require live computation.
+- If an agent repeatedly calls a "list_X" tool for stable reference data → convert to an MCP resource.
+- Forcing a first-turn `tool_choice` to load catalogs is wrong — it still burns a tool call turn and doesn't solve the overhead problem.
+
+---
+
+## Extraction Reliability — Missing Source Pattern (CCA-F Exam Critical — surfaced 2026-05-17)
+
+- When a required field is absent because the **source document was never provided**, retrying is harmful — it produces hallucinated values.
+- Correct pattern: **detect absence → halt retries → mark incomplete → request the missing document**.
+- "Infer from nearby dates" = fabrication. "Retry with explicit prompts" = majority vote on hallucinations. Both are wrong.
+- Rule: **missing source is a pipeline input problem, not an extraction problem**.
+
+---
+
+## Subagent Tool Scoping — Least Privilege in Practice (CCA-F Exam Critical — surfaced 2026-05-17)
+
+- **Read-only tools can and should be delegated** to subagents that need them frequently. Forcing coordinator round trips for read-only data is unnecessary latency.
+- **State-changing tools** (`process_refund`, `escalate_to_human`, etc.) stay coordinator-only — centralized oversight of actions that modify backend state.
+- "Keep all tools coordinator-only" is wrong when it causes avoidable round trips for reads.
+- "Give all subagents all tools" eliminates the control layer entirely — wrong.
+
+---
+
+## Session Management — Resume + Targeted Revalidation (surfaced 2026-05-17)
+
+- When files have changed since a named session was last active: **resume the session + revalidate only the changed files**.
+- Do NOT start a fresh session — that discards valid prior analysis on unchanged files.
+- Do NOT proceed unchanged — stale assumptions on modified files are dangerous.
+- A single "confidence score" is not a substitute for targeted revalidation — it doesn't tell you which assumptions are stale.
+
+---
+
 ## D5 Exam Traps — Surfaced 2026-05-14
 
 - **cache_control after compaction**: Compaction replaces conversation history with a new summary block. That block is new content — no cache hit. Fix: explicitly add a `cache_control` breakpoint to the compaction block so future requests hit the cache. Without it, every post-compaction request is a cache miss.
