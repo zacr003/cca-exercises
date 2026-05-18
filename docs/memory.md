@@ -16,7 +16,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 
 ---
 
-## Current State (as of 2026-05-17)
+## Current State (as of 2026-05-18)
 
 ### Domain Progress
 
@@ -49,6 +49,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | D5 question bank drill | 2026-05-14 | **80% (16/20)** | — | — | — | — | 80% |
 | D4 HTML quiz | 2026-05-13 | **79% (11/14)** | — | — | — | 79% | — |
 | Exam 2 (Udemy) | 2026-05-17 | **88% (53/60)** | 88% | 82% | 92% | 83% | 100% |
+| T1 targeted drill (5.4/4.2/1.5/4.3) | 2026-05-18 | **85% (17/20)** | — | — | — | — | — |
 | Exam 3 (Udemy) | 2026-05-19–21 | — | — | — | — | — | — |
 
 ---
@@ -113,6 +114,12 @@ _Updated by `/sync` at end of each session._
 - 2026-05-12: D5 exercise Q&A scores — ex1: 2/3, ex2: 2/3, ex3: 3/3, ex4: 3/3; weak spots: empty result vs. error distinction (5.3), handoff summary content (5.2)
 - 2026-05-12: D5 bank question drill — 20 random questions pulled and saved to memory; paused at Q1 (none answered yet); in-chat drill format (no Python script)
 - 2026-05-12: In-chat question bank drill pattern established — Claude reads JSON directly, filters by domain_id, presents one question at a time; no Python script required
+- 2026-05-18: "v3.0.0" bank received from Zain — internally named "Streamlined CCA-F curated curriculum v1"; generated 2026-05-15 FROM the existing v2.0.0 source bank (1,489 Qs); file at `~/Desktop/Ramsey-Brain/raw/cca_f_question_bank_v3.0.0.json`; ingested into Ramsey-Brain
+- 2026-05-18: 209 of 242 Qs are pulled directly from v2.0.0; 33 are candidate-authored gap-fillers (`anthropic_vetted: false`); D2=6 and D5=11 because the source bank was thin there — not a fix failure
+- 2026-05-18: Genuine new value: tier labeling (T1=58 highest-leverage + 4 confirmed near-verbatim matches, T2=115, T3=69 rotation hedge) and 33 candidate-authored Qs; not a new source bank
+- 2026-05-18: Prep guide §3 priority drill order: 5.4 → 4.2 → 1.5 → 4.3 → 5.2 → 1.4 → 1.3 → 1.2 → 3.2
+- 2026-05-18: Exam-day mental moves (§5): (1) click scenario box first, (2) name failure axis before reading options, (3) behavior → mechanism not parameter, (4) "increase context window" is almost never right for forgetting
+- 2026-05-18: T1 targeted drill (5.4/4.2/1.5/4.3) — 17/20 (85%); misses: Q5 Batch routing (nightly=latency-tolerant=Batch), Q11 nullable fields (required fields with no source = hallucination pressure), Q18 two-tools vs anyOf (tool-selection enforcement beats within-schema conditionality)
 - 2026-05-17: D5 spot drill complete — 4/4 (100%); cache_control after compaction, hybrid summarization, JSON manifest crash recovery, PDF stratified sampling all solid
 - 2026-05-17: Udemy Practice Exam 2 — 88% (53/60), up +12 from Exam 1 (76%); D5 100%, D3 92%, D1 88%, D4 83%, D2 82%
 - 2026-05-17: Wrong answer drill — 7/7 (100%); concepts: stop_reason loop, MCP resources vs tools, missing source detection, session resume+revalidation, subagent tool scoping, skills vs commands, schema vs semantic validation

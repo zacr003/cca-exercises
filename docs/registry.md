@@ -126,4 +126,4 @@ Used explicitly in `.claude/settings.json` hook commands.
 
 ---
 
-_Last updated: 2026-05-17_
+_Last updated: 2026-05-18_

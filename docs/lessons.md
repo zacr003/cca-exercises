@@ -97,9 +97,9 @@ This applies to every subdomain across all domains. For reference-only exercises
 
 ## Question Bank Location
 
-- Full question bank: `~/Desktop/Ramsey-Brain/raw/cca_f_question_bank_v2.0.0.json`
-- 1,489 questions total; filter by `domain_id` (not `domain`) for per-domain drills
-- D4: 333 questions across subdomains 4.1–4.6
+- **Primary (curated)**: `~/Desktop/Ramsey-Brain/raw/cca_f_question_bank_v3.0.0.json` — 242 questions, tiered T1/T2/T3 (58/115/69). Internally named "Streamlined CCA-F curated curriculum v1" — a curated subset of v2.0.0, not a new source bank. 209 questions pulled from v2.0.0; 33 candidate-authored gap-fillers (`anthropic_vetted: false`). Filter by `curated_tier` for prioritized drilling.
+- **Broad bank**: `~/Desktop/Ramsey-Brain/raw/cca_f_question_bank_v2.0.0.json` — 1,489 questions; use when v3 lacks coverage for a subdomain (e.g., D2=6, D5=11 in v3). Filter by `domain_id` (not `domain`).
+- D2 and D5 are thin in the curated bank — source bank limitation, not a coverage fix failure.
 - Session state saved to `domain-X/dX_session.json` (not committed — transient)
 - Resume a drill by reading `dX_session.json` for `current` index and `score`
 
@@ -247,6 +247,27 @@ Source: official exam guide v0.1 (Feb 2025). Sample questions: `~/Desktop/Ramsey
 - Do NOT start a fresh session — that discards valid prior analysis on unchanged files.
 - Do NOT proceed unchanged — stale assumptions on modified files are dangerous.
 - A single "confidence score" is not a substitute for targeted revalidation — it doesn't tell you which assumptions are stale.
+
+---
+
+## Structured Output — Two Tools vs anyOf (CCA-F Exam Critical — surfaced 2026-05-18)
+
+- When different activity/entity types need different required fields (e.g., cardio needs time+distance, strength needs reps+weight), **splitting into two tools is stronger than a single tool with an `anyOf` schema**.
+- **Two tools** = tool-selection enforcement. The cardio tool structurally cannot accept reps/weight. The model picks the tool; the schema does the rest.
+- **anyOf** = right layer, weaker mechanism. Complex conditional schemas are harder for the model to adhere to; failures still hit server-side validation after the call is made (turns into a retry loop).
+- Rule: **when you can make it a routing problem, do that — don't make it a schema validation gamble**.
+
+---
+
+## Batch API — Blocking vs Latency-Tolerant (reinforced 2026-05-18)
+
+The single criterion: **does something block on this completing right now?**
+
+- Pre-merge CI checks → block developers → **synchronous**
+- Nightly test generation → runs overnight, nobody is waiting → **Batch**
+- Weekly security audits → scheduled, not blocking → **Batch**
+
+Common miss: treating "nightly" as synchronous because it's automated. Nightly = latency-tolerant. If a developer isn't waiting on it, it's Batch.
 
 ---
 
