@@ -271,6 +271,37 @@ Common miss: treating "nightly" as synchronous because it's automated. Nightly =
 
 ---
 
+## D3 Exam Traps — Surfaced 2026-05-19
+
+**Probabilistic vs. deterministic axis** — the single most common D3 miss pattern:
+- `PostToolUse` hook = automatic, harness-enforced, fires after every tool call ✓
+- CLAUDE.md instruction = probabilistic, model can forget or skip ✗
+- Slash command = requires manual user invocation, not automatic ✗
+- When stem says "automatically" or "without adding to every prompt" → hook is the answer
+
+**Prior findings in context for re-review runs (3.6):**
+- When a re-review produces duplicate findings on already-fixed code: include prior findings in context and instruct Claude to report only new/still-unaddressed issues
+- Post-processing string-match filters are brittle — small wording changes evade dedup and don't help Claude understand what was fixed
+- Rule: **in-context awareness beats downstream filters**
+
+**Interacting problems → single message (3.5):**
+- When two failures share a code path (e.g., same helper function), fixing them sequentially risks introducing another regression on the shared path
+- Signal: "the regression was introduced by Claude's previous fix" = interacting
+- Signal: "fixing one won't affect the other" = independent → sequential
+- Rule: **shared code path = single message**
+
+**Generic tool misuse → constrained replacement (D1/D3 crossover):**
+- When a generic tool (e.g., `fetch_url`) is being misused (agent uses it as a backdoor search), the fix is a constrained replacement (`load_document` that validates URL format)
+- Domain-blocklists are brittle; prompt instructions are bypassable
+- Routing around it (through coordinator) doesn't enforce the constraint at the call site
+- Rule: **structural enforcement at the tool level, not routing or instructions**
+
+**Constraint elimination technique (Q7 pattern):**
+- When a question lists a stakeholder constraint ("no filtering before developer review"), scan all options first and eliminate any that violate the constraint before reading explanations
+- A and C both filtered findings → eliminated immediately regardless of how reasonable they sounded
+
+---
+
 ## D5 Exam Traps — Surfaced 2026-05-14
 
 - **cache_control after compaction**: Compaction replaces conversation history with a new summary block. That block is new content — no cache hit. Fix: explicitly add a `cache_control` breakpoint to the compaction block so future requests hit the cache. Without it, every post-compaction request is a cache miss.

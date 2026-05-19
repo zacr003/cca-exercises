@@ -16,7 +16,7 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] ex6: Session management (markdown reference)
 - [x] Hooks: hook_pre_production_gate, hook_pre_refund_gate, hook_post_pii_trim
 - [x] Domain 1 HTML quiz — 12/12 (100%) — D1 mastered
-- [ ] Domain 1 practice questions — 20 from the question bank (HTML quiz done; bank drill pending)
+- [ ] Domain 1 practice questions — 15 done 93% (2026-05-19); 5 remaining; miss: generic tool misuse → constrained replacement
 
 ### Domain 2 — MCP Tool Design (18%) — EXERCISES COMPLETE
 - [x] ex1: Tool descriptions — overlapping tools, disambiguation
@@ -34,7 +34,7 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] ex3: Path-scoped rules — 90% drill (9/10); miss: monorepo directory boundary vs glob distinction
 - [x] ex4: Plan mode — 80% drill (8/10); misses: plan mode cannot gate mid-execution (PreToolUse hook), auto-memory location
 - [x] ex5: CI/CD headless mode — 70% drill (7/10); misses: prior findings in context (Q3), inline confidence for triage (Q4)
-- [ ] Domain 3 practice questions — 20 from the question bank (not started)
+- [x] Domain 3 practice questions — 14/20 (70%) 2026-05-19; re-drill 6/6 (100%); weak spot: probabilistic vs deterministic axis
 
 ### Domain 4 — Prompt Engineering (20%) — EXERCISES COMPLETE
 - [x] ex1: Few-shot prompting — vague vs explicit criteria vs contrastive examples (4.1, 4.2)
@@ -59,7 +59,7 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] **Practice Exam 1 (Udemy)** — 76% (46/60) taken May 10; weak spots: D4 (67%), D1 (75%)
 - [ ] **Anthropic Official Practice Exam** — scenario-based format matches real exam; presents same 60 Qs every attempt (order shuffles only)
 - [x] **Practice Exam 2 (Udemy)** — **88% (53/60)** taken May 17; domain breakdown: Context 100%, D3 92%, D1 88%, D4 83%, D2 82%
-- [ ] **Practice Exam 3 (Udemy)** — timed, full sim (May 19–21); review every wrong answer
+- [ ] **Practice Exam 3 (Udemy)** — timed, full sim (May 20–21); review every wrong answer
 
 ---
 
@@ -71,4 +71,4 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-_Last updated: 2026-05-18_
+_Last updated: 2026-05-19_

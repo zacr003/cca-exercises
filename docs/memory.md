@@ -16,7 +16,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 
 ---
 
-## Current State (as of 2026-05-18)
+## Current State (as of 2026-05-19)
 
 ### Domain Progress
 
@@ -24,7 +24,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 |--------|--------|--------|--------|
 | 1 — Agentic Architecture | 27% | Complete — D1 HTML quiz 12/12 (100%) | `domain-1/` |
 | 2 — MCP Tool Design | 18% | Exercises complete | `domain-2/` |
-| 3 — Claude Code Workflows | 20% | Complete — all exercises done; practice Qs not started | `domain-3/` |
+| 3 — Claude Code Workflows | 20% | Complete — exercises done; practice drill 14/20 (70%); weak spot: probabilistic vs deterministic axis | `domain-3/` |
 | 4 — Prompt Engineering | 20% | Exercises complete; Q21–Q50 done (90%); 4.5/4.6 drill done (60%); HTML quiz 11/14 (79%) | `domain-4/` |
 | 5 — Context Management | 15% | Exercises complete; bank drill done — 16/20 (80%); weak spots: cache_control after compaction, hybrid summarization, JSON manifest crash recovery | `domain-5/` |
 
@@ -50,7 +50,10 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | D4 HTML quiz | 2026-05-13 | **79% (11/14)** | — | — | — | 79% | — |
 | Exam 2 (Udemy) | 2026-05-17 | **88% (53/60)** | 88% | 82% | 92% | 83% | 100% |
 | T1 targeted drill (5.4/4.2/1.5/4.3) | 2026-05-18 | **85% (17/20)** | — | — | — | — | — |
-| Exam 3 (Udemy) | 2026-05-19–21 | — | — | — | — | — | — |
+| D3 bank drill | 2026-05-19 | **70% (14/20)** | — | — | 70% | — | — |
+| D3 re-drill (6 misses) | 2026-05-19 | **100% (6/6)** | — | — | 100% | — | — |
+| D1 bank drill (15 Qs) | 2026-05-19 | **93% (14/15)** | 93% | — | — | — | — |
+| Exam 3 (Udemy) | 2026-05-20–21 | — | — | — | — | — | — |
 
 ---
 
@@ -119,6 +122,9 @@ _Updated by `/sync` at end of each session._
 - 2026-05-18: Genuine new value: tier labeling (T1=58 highest-leverage + 4 confirmed near-verbatim matches, T2=115, T3=69 rotation hedge) and 33 candidate-authored Qs; not a new source bank
 - 2026-05-18: Prep guide §3 priority drill order: 5.4 → 4.2 → 1.5 → 4.3 → 5.2 → 1.4 → 1.3 → 1.2 → 3.2
 - 2026-05-18: Exam-day mental moves (§5): (1) click scenario box first, (2) name failure axis before reading options, (3) behavior → mechanism not parameter, (4) "increase context window" is almost never right for forgetting
+- 2026-05-19: D3 bank drill — 14/20 (70%); re-drill 6/6 (100%); weak spot: probabilistic vs deterministic axis (hooks over CLAUDE.md/slash commands, in-context over filters, constrained tools over generic); pattern also showed in D1 Q14 miss
+- 2026-05-19: D1 bank drill (15 Qs) — 14/15 (93%); miss: generic tool misuse fix = replace with constrained alternative (load_document instead of fetch_url), not route around it; D1 is strongest domain
+- 2026-05-19: D3 key miss patterns — PostToolUse hook for auto-test (not slash command), prior findings in context for re-review runs (not string-match filters), interacting problems → single message (shared code path is the signal), inline confidence for triage (constraint elimination: stakeholders rejected filtering → A/C both wrong)
 - 2026-05-18: T1 targeted drill (5.4/4.2/1.5/4.3) — 17/20 (85%); misses: Q5 Batch routing (nightly=latency-tolerant=Batch), Q11 nullable fields (required fields with no source = hallucination pressure), Q18 two-tools vs anyOf (tool-selection enforcement beats within-schema conditionality)
 - 2026-05-17: D5 spot drill complete — 4/4 (100%); cache_control after compaction, hybrid summarization, JSON manifest crash recovery, PDF stratified sampling all solid
 - 2026-05-17: Udemy Practice Exam 2 — 88% (53/60), up +12 from Exam 1 (76%); D5 100%, D3 92%, D1 88%, D4 83%, D2 82%
