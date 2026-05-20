@@ -6,3 +6,8 @@ hook_debug.log
 *.out
 .DS_Store
 .claude/settings.local.json
+.claude/worktrees/
+.claude/worktrees/
+D3_QUESTIONS_DATA.txt
+d3_questions_raw.json
+drill_30q.txt
