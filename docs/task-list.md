@@ -4,7 +4,7 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-## Active Sprint — CCA-F Exam (Target: 2026-05-27)
+## Active Sprint — CCA-F Exam (Target: 2026-05-26 — moved up from May 27)
 
 ### Domain 1 — Agentic Architecture (27%) — COMPLETE
 - [x] ex1: Basic agentic loop — check `stop_reason`, append `tool_result` blocks, handle `max_tokens`
@@ -57,9 +57,10 @@ _Current exercise backlog. Updated by `/sync`._
 ## Practice Exams
 
 - [x] **Practice Exam 1 (Udemy)** — 76% (46/60) taken May 10; weak spots: D4 (67%), D1 (75%)
-- [ ] **Anthropic Official Practice Exam** — scenario-based format matches real exam; presents same 60 Qs every attempt (order shuffles only)
+- [ ] **Anthropic Official Practice Exam** — Mon May 25; same 60 Qs every attempt (one-time calibration — save for closest to exam)
 - [x] **Practice Exam 2 (Udemy)** — **88% (53/60)** taken May 17; domain breakdown: Context 100%, D3 92%, D1 88%, D4 83%, D2 82%
-- [ ] **Practice Exam 3 (Udemy)** — timed, full sim (May 20–21); review every wrong answer
+- [x] **30Q weighted mixed drill** — 24/30 (80%) taken May 20; miss redrill 6/6 (100%)
+- [ ] **Practice Exam 3 (Udemy)** — Mon May 25 if time permits after Anthropic Mock; review every wrong answer
 
 ---
 
@@ -71,4 +72,4 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-_Last updated: 2026-05-19_
+_Last updated: 2026-05-20_

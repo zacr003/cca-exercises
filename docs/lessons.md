@@ -259,7 +259,7 @@ Source: official exam guide v0.1 (Feb 2025). Sample questions: `~/Desktop/Ramsey
 
 ---
 
-## Batch API — Blocking vs Latency-Tolerant (reinforced 2026-05-18)
+## Batch API — Blocking vs Latency-Tolerant (reinforced 2026-05-18, clarified 2026-05-20)
 
 The single criterion: **does something block on this completing right now?**
 
@@ -268,6 +268,12 @@ The single criterion: **does something block on this completing right now?**
 - Weekly security audits → scheduled, not blocking → **Batch**
 
 Common miss: treating "nightly" as synchronous because it's automated. Nightly = latency-tolerant. If a developer isn't waiting on it, it's Batch.
+
+**Exam signal for Batch API eligibility (clarified 2026-05-20):**
+The exam uses an **explicitly stated hard deadline** as the signal for synchronous, not the operational window.
+- Hard deadline named (e.g., "must complete by Tuesday 9am") → check if 24h window leaves buffer; if not → **synchronous**
+- No hard deadline stated (e.g., "nightly", "weekly", "runs overnight") → **Batch API eligible**
+- Real-world concern ("nightly window is only 12 hours") is valid in ops but irrelevant on the exam — the exam grades against the documented rule, not operational constraints.
 
 ---
 

@@ -94,6 +94,12 @@ cca-exercises/
 | `customer_data.txt` | Sample PII data used in hook_post_pii_trim exercises |
 | `test.txt` | Scratch file |
 
+### Root (`cca-exercises/`)
+
+| File | Description |
+|------|-------------|
+| `drill_30q.txt` | Generated 30Q weighted mixed drill questions (temp; regenerated each session) |
+
 ---
 
 ## Tools & Dependencies
@@ -126,4 +132,4 @@ Used explicitly in `.claude/settings.json` hook commands.
 
 ---
 
-_Last updated: 2026-05-19_
+_Last updated: 2026-05-20_

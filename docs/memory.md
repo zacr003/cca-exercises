@@ -16,7 +16,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 
 ---
 
-## Current State (as of 2026-05-19)
+## Current State (as of 2026-05-20)
 
 ### Domain Progress
 
@@ -53,7 +53,9 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | D3 bank drill | 2026-05-19 | **70% (14/20)** | — | — | 70% | — | — |
 | D3 re-drill (6 misses) | 2026-05-19 | **100% (6/6)** | — | — | 100% | — | — |
 | D1 bank drill (15 Qs) | 2026-05-19 | **93% (14/15)** | 93% | — | — | — | — |
-| Exam 3 (Udemy) | 2026-05-20–21 | — | — | — | — | — | — |
+| 30Q weighted mixed drill | 2026-05-20 | **80% (24/30)** | 75% | 80% | 83% | 83% | 80% |
+| 30Q miss redrill (6 Qs) | 2026-05-20 | **100% (6/6)** | — | — | — | — | — |
+| Exam 3 (Udemy) | TBD (Mon 2026-05-26 if time) | — | — | — | — | — | — |
 
 ---
 
@@ -63,9 +65,10 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 |------|-----------|
 | ~~May 11 (Sun)~~ May 10 | ✅ Udemy Practice Exam 1 — 76% (46/60) |
 | May 18 (Sun) | Udemy Practice Exam 2 — timed, full sim |
-| May 19–21 | Udemy Practice Exam 3 + weak spot review |
-| May 26 (Tue) | Refresh day — no new exercises |
-| **May 27 (Wed)** | **CCA-F Exam** |
+| May 21 (Thu) | Birthday drill — 30Q mixed |
+| May 22–24 | Wedding — off |
+| May 25 (Mon) | Anthropic Official Mock + Udemy Exam 3 if time permits |
+| **May 26 (Tue)** | **CCA-F Exam — target sit date (moved up from May 27)** |
 
 ---
 
@@ -124,6 +127,9 @@ _Updated by `/sync` at end of each session._
 - 2026-05-18: Exam-day mental moves (§5): (1) click scenario box first, (2) name failure axis before reading options, (3) behavior → mechanism not parameter, (4) "increase context window" is almost never right for forgetting
 - 2026-05-19: D3 bank drill — 14/20 (70%); re-drill 6/6 (100%); weak spot: probabilistic vs deterministic axis (hooks over CLAUDE.md/slash commands, in-context over filters, constrained tools over generic); pattern also showed in D1 Q14 miss
 - 2026-05-19: D1 bank drill (15 Qs) — 14/15 (93%); miss: generic tool misuse fix = replace with constrained alternative (load_document instead of fetch_url), not route around it; D1 is strongest domain
+- 2026-05-20: 30Q weighted mixed drill — 24/30 (80%); miss redrill 6/6 (100%); misses: MCP resources vs mandatory tool_choice (resources = on-demand, not forced round-trip), composite tools vs prompt-level parallel batching, tool description fix beats routing layer, subagents + scratchpad for long sessions, Batch API nightly = latency-tolerant
+- 2026-05-20: Exam intel from coworker: "Conversational AI Patterns" section (~15 Qs) appeared on live exam — not in Udemy, Skilljar, or Anthropic docs; logged as drift scenario; no actionable prep material found
+- 2026-05-20: Exam schedule revised — target sit date moved to Tuesday May 26; Anthropic Official Mock on Monday May 25; Udemy Exam 3 if time permits Monday
 - 2026-05-19: D3 key miss patterns — PostToolUse hook for auto-test (not slash command), prior findings in context for re-review runs (not string-match filters), interacting problems → single message (shared code path is the signal), inline confidence for triage (constraint elimination: stakeholders rejected filtering → A/C both wrong)
 - 2026-05-18: T1 targeted drill (5.4/4.2/1.5/4.3) — 17/20 (85%); misses: Q5 Batch routing (nightly=latency-tolerant=Batch), Q11 nullable fields (required fields with no source = hallucination pressure), Q18 two-tools vs anyOf (tool-selection enforcement beats within-schema conditionality)
 - 2026-05-17: D5 spot drill complete — 4/4 (100%); cache_control after compaction, hybrid summarization, JSON manifest crash recovery, PDF stratified sampling all solid
