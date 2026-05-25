@@ -16,7 +16,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 
 ---
 
-## Current State (as of 2026-05-20)
+## Current State (as of 2026-05-25)
 
 ### Domain Progress
 
@@ -129,6 +129,8 @@ _Updated by `/sync` at end of each session._
 - 2026-05-19: D1 bank drill (15 Qs) — 14/15 (93%); miss: generic tool misuse fix = replace with constrained alternative (load_document instead of fetch_url), not route around it; D1 is strongest domain
 - 2026-05-20: 30Q weighted mixed drill — 24/30 (80%); miss redrill 6/6 (100%); misses: MCP resources vs mandatory tool_choice (resources = on-demand, not forced round-trip), composite tools vs prompt-level parallel batching, tool description fix beats routing layer, subagents + scratchpad for long sessions, Batch API nightly = latency-tolerant
 - 2026-05-20: Exam intel from coworker: "Conversational AI Patterns" section (~15 Qs) appeared on live exam — not in Udemy, Skilljar, or Anthropic docs; logged as drift scenario; no actionable prep material found
+- 2026-05-25: Co-worker post-exam intel — "why not how" exam; Anthropic worldview is the answer key; watch outcome keywords ("effective," "reduces," "what type of change"); human-interaction Qs default to Anthropic oversight/transparency/escalation philosophy; light on mechanistic/config questions; DO NOT use Sparq machine (IT blocks proctoring app)
+- 2026-05-25: Sparq study site (https://sparq-study.alemadlei.tech/) — quiz runner built by coworker; user loaded this repo's question bank into it; no standalone question bank, it drills whatever JSON you load
 - 2026-05-20: Exam schedule revised — target sit date moved to Tuesday May 26; Anthropic Official Mock on Monday May 25; Udemy Exam 3 if time permits Monday
 - 2026-05-19: D3 key miss patterns — PostToolUse hook for auto-test (not slash command), prior findings in context for re-review runs (not string-match filters), interacting problems → single message (shared code path is the signal), inline confidence for triage (constraint elimination: stakeholders rejected filtering → A/C both wrong)
 - 2026-05-18: T1 targeted drill (5.4/4.2/1.5/4.3) — 17/20 (85%); misses: Q5 Batch routing (nightly=latency-tolerant=Batch), Q11 nullable fields (required fields with no source = hallucination pressure), Q18 two-tools vs anyOf (tool-selection enforcement beats within-schema conditionality)

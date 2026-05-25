@@ -72,4 +72,4 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-_Last updated: 2026-05-20_
+_Last updated: 2026-05-25_
