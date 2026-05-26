@@ -60,7 +60,8 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] **Anthropic Official Practice Exam** — Taken 2026-05-25 (twice); both scores lost to Skilljar platform bug; Anthropic support contacted
 - [x] **Practice Exam 2 (Udemy)** — **88% (53/60)** taken May 17; domain breakdown: Context 100%, D3 92%, D1 88%, D4 83%, D2 82%
 - [x] **30Q weighted mixed drill** — 24/30 (80%) taken May 20; miss redrill 6/6 (100%)
-- [ ] **Practice Exam 3 (Udemy)** — Skipped; real exam sitting today
+- [x] **Practice Exam 3 (Udemy)** — Skipped; replaced by Skilljar practice exam
+- [x] **Skilljar practice exam** — 93% (56/60) 2026-05-26 — PASSED (72% threshold)
 
 ---
 

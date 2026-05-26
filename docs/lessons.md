@@ -308,6 +308,74 @@ The exam uses an **explicitly stated hard deadline** as the signal for synchrono
 
 ---
 
+## Explicit Criteria vs Few-Shot Examples — Decision Rule (locked in 2026-05-26)
+
+When the problem is **missing definition** → explicit criteria first
+- "Check that comments are accurate" → not actionable → add: "flag when claimed behavior contradicts actual code behavior"
+- "Classify sentiment" → undefined → add: "classify as negative when message expresses dissatisfaction regardless of tone"
+
+When the problem is **inconsistent application of a known target** → few-shot examples
+- Detailed instructions don't consistently work → switch to examples
+- Prose produces different interpretations each turn → concrete input/output examples
+
+**The sequence:** missing definition → criteria → inconsistency persists → examples → never "more instructions"
+
+**Exam signal table:**
+- "Vague instruction", "doesn't define what qualifies" → explicit criteria
+- "Instructions already added, still inconsistent", "prose produces different results" → few-shot examples
+- "Detailed instructions don't consistently work" → few-shot examples
+
+---
+
+## Prerequisite Gates for Required Workflow Ordering (surfaced 2026-05-26)
+
+- When a step must always happen before a downstream step: **coordinator-side prerequisite gate** that blocks the downstream Task call until the required artifact exists
+- Prompt instructions alone have a non-zero failure rate for required ordering — not acceptable for guaranteed compliance
+- Parsing natural language signals ("complete", "ready") to determine loop behavior = documented anti-pattern
+- PreToolUse hook = blocks a tool until a condition is met (single agent)
+- Coordinator prerequisite gate = blocks a subagent Task call until upstream artifact is confirmed
+
+---
+
+## Coordinator Decomposition Coverage (surfaced 2026-05-26)
+
+- When broad codebase/research coverage is incomplete despite all subagents completing: the **coordinator's decomposition was too narrow**
+- Subagents did their jobs — they only covered what the coordinator assigned them
+- Fix: revise coordinator planning to identify ALL plausible entry points before delegating
+- Strengthening synthesis to "infer missing workflows" produces confident fabrication — not a fix
+
+---
+
+## Stratified Sampling Before Reducing Review (surfaced 2026-05-26)
+
+- Aggregate accuracy metrics (e.g., 97% overall) can mask concentrated errors in specific segments
+- Before reducing reviewer coverage: stratified random sampling across topic, source type, and report section
+- Detects hidden error rates and novel failure patterns that aggregate metrics miss
+- Reviewing only low-confidence claims assumes high-confidence = no errors — incorrect
+
+---
+
+## Plan Mode Triggers (reinforced 2026-05-26)
+
+Use plan mode when:
+- Large-scale changes affecting many files
+- Multiple valid implementation approaches exist
+- Architectural decisions need to be made
+- Task requirements are ambiguous or underspecified
+
+Do NOT start with direct execution and switch to plan mode later — costs rework.
+
+---
+
+## CI Structured Output — `--output-format json --json-schema` (surfaced 2026-05-26)
+
+- For reliable CI automation, use `--output-format json` + `--json-schema` flags
+- Guarantees field names and types programmatically — stronger than prompt instructions
+- Stronger prompt wording is still probabilistic; schema flags are deterministic
+- Regex parsing on variable markdown output is fragile — replace with structured output flags
+
+---
+
 ## PostToolUse Hook vs Wrapper Tools — Normalization Pattern (surfaced 2026-05-25)
 
 - When normalizing data from mixed-format tools (some third-party, unmodifiable): **PostToolUse hook is more maintainable than wrapper tools**
