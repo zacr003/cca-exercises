@@ -16,7 +16,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 
 ---
 
-## Current State (as of 2026-05-25)
+## Current State (as of 2026-05-26)
 
 ### Domain Progress
 
@@ -55,7 +55,12 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | D1 bank drill (15 Qs) | 2026-05-19 | **93% (14/15)** | 93% | — | — | — | — |
 | 30Q weighted mixed drill | 2026-05-20 | **80% (24/30)** | 75% | 80% | 83% | 83% | 80% |
 | 30Q miss redrill (6 Qs) | 2026-05-20 | **100% (6/6)** | — | — | — | — | — |
-| Exam 3 (Udemy) | TBD (Mon 2026-05-26 if time) | — | — | — | — | — | — |
+| Sparq Q bank (coworker site) | 2026-05-25 | **84% (52/62)** | 80% | 100% | 80% | 73% | 100% |
+| D4 in-chat drill | 2026-05-25 | **90% (9/10)** | — | — | — | 90% | — |
+| D4 HTML quiz (re-run) | 2026-05-25 | **71% (10/14)** | — | — | — | 71% | — |
+| Anthropic Official Mock (attempt 1) | 2026-05-25 | Score lost — Skilljar platform bug | — | — | — | — | — |
+| Anthropic Official Mock (attempt 2) | 2026-05-25 | Score lost — Skilljar platform bug | — | — | — | — | — |
+| Exam 3 (Udemy) | Not taken — skipped | — | — | — | — | — | — |
 
 ---
 
@@ -68,7 +73,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | May 21 (Thu) | Birthday drill — 30Q mixed |
 | May 22–24 | Wedding — off |
 | May 25 (Mon) | Anthropic Official Mock + Udemy Exam 3 if time permits |
-| **May 26 (Tue)** | **CCA-F Exam — target sit date (moved up from May 27)** |
+| **May 26 (Tue)** | **CCA-F Exam — sitting this afternoon** |
 
 ---
 
@@ -129,6 +134,9 @@ _Updated by `/sync` at end of each session._
 - 2026-05-19: D1 bank drill (15 Qs) — 14/15 (93%); miss: generic tool misuse fix = replace with constrained alternative (load_document instead of fetch_url), not route around it; D1 is strongest domain
 - 2026-05-20: 30Q weighted mixed drill — 24/30 (80%); miss redrill 6/6 (100%); misses: MCP resources vs mandatory tool_choice (resources = on-demand, not forced round-trip), composite tools vs prompt-level parallel batching, tool description fix beats routing layer, subagents + scratchpad for long sessions, Batch API nightly = latency-tolerant
 - 2026-05-20: Exam intel from coworker: "Conversational AI Patterns" section (~15 Qs) appeared on live exam — not in Udemy, Skilljar, or Anthropic docs; logged as drift scenario; no actionable prep material found
+- 2026-05-26: **REAL EXAM TODAY (afternoon).** Confirmed passing threshold: 720/1000 (72%). Colleagues passing at 749, 780, 791 — "90% required" framing was incorrect.
+- 2026-05-26: Key miss patterns from mock runs — PostToolUse hook beats wrapper tools for normalization (centralized, one place, covers third-party); tool misrouting → fix descriptions first; prose failing → examples not more instructions; coordinator = centralized visibility + error handling + info control
+- 2026-05-26: Anthropic support emailed re: lost mock scores — Skilljar platform bug on both attempts
 - 2026-05-25: Co-worker post-exam intel — "why not how" exam; Anthropic worldview is the answer key; watch outcome keywords ("effective," "reduces," "what type of change"); human-interaction Qs default to Anthropic oversight/transparency/escalation philosophy; light on mechanistic/config questions; DO NOT use Sparq machine (IT blocks proctoring app)
 - 2026-05-25: Sparq study site (https://sparq-study.alemadlei.tech/) — quiz runner built by coworker; user loaded this repo's question bank into it; no standalone question bank, it drills whatever JSON you load
 - 2026-05-20: Exam schedule revised — target sit date moved to Tuesday May 26; Anthropic Official Mock on Monday May 25; Udemy Exam 3 if time permits Monday

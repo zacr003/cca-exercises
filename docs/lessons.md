@@ -308,6 +308,42 @@ The exam uses an **explicitly stated hard deadline** as the signal for synchrono
 
 ---
 
+## PostToolUse Hook vs Wrapper Tools — Normalization Pattern (surfaced 2026-05-25)
+
+- When normalizing data from mixed-format tools (some third-party, unmodifiable): **PostToolUse hook is more maintainable than wrapper tools**
+- Hook = one centralized transformation layer, works on all tools including third-party
+- Wrapper tools = two strategies (modify owned + wrap third-party) = two places to maintain, inconsistent architecture
+- The deciding criterion is **maintainability**, not correctness — both approaches work; hook wins on maintenance burden
+- Trap: C (wrapper tools) sounds like clean architecture but creates dual strategy when third-party tools are involved
+
+---
+
+## Tool Misrouting — Fix Descriptions First (reinforced 2026-05-25)
+
+- Consistent wrong tool selection → **examine and fix tool descriptions first**, always
+- Overlapping descriptions (near-identical wording) → rename + rewrite at source; don't add routing layers or classifiers
+- Pre-routing classifiers and few-shot examples both treat the symptom; description fix eliminates the root cause
+- Examining descriptions is the diagnostic step; rewriting is the fix
+
+---
+
+## Coordinator Pattern — Hub-and-Spoke Benefits (reinforced 2026-05-25)
+
+- The primary advantage of routing through a coordinator (vs. direct subagent-to-subagent): **centralized visibility, consistent error handling, controlled information flow**
+- Not serialization, not batching, not automatic retry — those are distractors
+- Hub-and-spoke = coordinator sees everything, handles errors in one place, decides what each subagent receives
+
+---
+
+## Passing Threshold — Confirmed 2026-05-26
+
+- **720/1000 (72%) to pass the real CCA-F exam**
+- Colleagues passing at 749, 780, 791 — no scores above 800 observed in this cohort
+- The "90% required" framing circulating pre-exam is **incorrect**
+- Practice exam scores of 80%+ are comfortably above threshold
+
+---
+
 ## D5 Exam Traps — Surfaced 2026-05-14
 
 - **cache_control after compaction**: Compaction replaces conversation history with a new summary block. That block is new content — no cache hit. Fix: explicitly add a `cache_control` breakpoint to the compaction block so future requests hit the cache. Without it, every post-compaction request is a cache miss.
