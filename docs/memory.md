@@ -65,7 +65,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | Mixed drill #1 (in-chat) | 2026-05-26 | **80% (8/10)** | — | — | — | — | — |
 | Mixed drill #2 (in-chat) | 2026-05-26 | **100% (10/10)** | — | — | — | — | — |
 | Mixed drill #3 (in-chat) | 2026-05-26 | **100% (10/10)** | — | — | — | — | — |
-| Skilljar practice exam (56/60) | 2026-05-26 | **93% — PASSED** | 100% | 82% | 92% | 100% | 89% |
+| Exam 3 (Udemy) | 2026-05-26 | **93% (56/60) — PASSED** | 100% | 82% | 92% | 100% | 89% |
 
 ---
 
@@ -139,7 +139,7 @@ _Updated by `/sync` at end of each session._
 - 2026-05-19: D1 bank drill (15 Qs) — 14/15 (93%); miss: generic tool misuse fix = replace with constrained alternative (load_document instead of fetch_url), not route around it; D1 is strongest domain
 - 2026-05-20: 30Q weighted mixed drill — 24/30 (80%); miss redrill 6/6 (100%); misses: MCP resources vs mandatory tool_choice (resources = on-demand, not forced round-trip), composite tools vs prompt-level parallel batching, tool description fix beats routing layer, subagents + scratchpad for long sessions, Batch API nightly = latency-tolerant
 - 2026-05-20: Exam intel from coworker: "Conversational AI Patterns" section (~15 Qs) appeared on live exam — not in Udemy, Skilljar, or Anthropic docs; logged as drift scenario; no actionable prep material found
-- 2026-05-26: Skilljar practice exam 93% (56/60) — PASSED. Agentic Architecture 100%, Prompt Engineering 100%, Claude Code Config 92%, Context Management 89%, Tool Design 82%. Taking break then sitting real exam.
+- 2026-05-26: Udemy Practice Exam 3 — 93% (56/60) PASSED. Agentic Architecture 100%, Prompt Engineering 100%, Claude Code Config 92%, Context Management 89%, Tool Design 82%. Taking break then sitting real exam.
 - 2026-05-26: Explicit criteria vs examples distinction locked in — missing definition → criteria first; criteria clear but inconsistent → examples; prose failing → skip to examples
 - 2026-05-26: Three targeted in-chat drills — 90%, 100%, 100% — all patterns from mock misses corrected
 - 2026-05-26: **REAL EXAM TODAY (afternoon).** Confirmed passing threshold: 720/1000 (72%). Colleagues passing at 749, 780, 791 — "90% required" framing was incorrect.
