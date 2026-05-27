@@ -94,6 +94,12 @@ cca-exercises/
 | `customer_data.txt` | Sample PII data used in hook_post_pii_trim exercises |
 | `test.txt` | Scratch file |
 
+### HTML Resources (`html-resource-guide/`)
+
+| File | Description | Status |
+|------|-------------|--------|
+| `pre-exam-summary.html` | Pre-exam reference card — mental moves, miss patterns, domain anchors, distinctions table, anti-patterns | Created 2026-05-26 |
+
 ### Root (`cca-exercises/`)
 
 | File | Description |
@@ -132,4 +138,4 @@ Used explicitly in `.claude/settings.json` hook commands.
 
 ---
 
-_Last updated: 2026-05-20_
+_Last updated: 2026-05-26_

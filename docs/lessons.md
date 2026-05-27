@@ -403,6 +403,25 @@ Do NOT start with direct execution and switch to plan mode later — costs rewor
 
 ---
 
+## Edit Fallback — Non-Unique Anchor (surfaced 2026-05-26 drill)
+
+- When `Edit` fails because the anchor text appears multiple times in the file: **do not Grep + replace-all**
+- Correct pattern: `Read` the full file → identify the intended block by surrounding context → `Write` the complete corrected file
+- Grep + replace-all changes every occurrence — violates the requirement to change only one
+- Retrying `Edit` with broader text still doesn't guarantee hitting the right occurrence
+- Rule: **ambiguous anchor → full-file Read + Write**
+
+---
+
+## -p / --print vs --output-format json (CI interactivity — reinforced 2026-05-26 drill)
+
+- **`-p` / `--print`** = non-interactive execution mode — Claude Code processes prompt, writes output, exits. Fixes CI hangs caused by interactive mode.
+- **`--output-format json`** = structured output format for machine parsing. Does NOT change whether the process waits for input.
+- These solve different problems. A CI hang = interactivity issue = use `--print`. Machine-parseable output = use `--output-format json`. Both can be combined when both are needed.
+- Trap: `--output-format json` sounds like it controls process behavior — it does not.
+
+---
+
 ## Passing Threshold — Confirmed 2026-05-26
 
 - **720/1000 (72%) to pass the real CCA-F exam**

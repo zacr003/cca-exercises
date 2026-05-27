@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CCA-F Pre-Exam Summary</title>
+<style>
+  :root {
+    --green: #16a34a; --green-bg: #f0fdf4; --green-border: #bbf7d0;
+    --blue: #1d4ed8; --blue-bg: #eff6ff; --blue-border: #bfdbfe;
+    --amber: #b45309; --amber-bg: #fffbeb; --amber-border: #fde68a;
+    --red: #dc2626; --red-bg: #fef2f2; --red-border: #fecaca;
+    --purple: #7c3aed; --purple-bg: #f5f3ff; --purple-border: #ddd6fe;
+    --gray: #374151; --gray-light: #f9fafb; --gray-border: #e5e7eb;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --mono: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); font-size: 14px; color: var(--gray); background: #fff; line-height: 1.5; }
+
+  header { background: #0f172a; color: #fff; padding: 20px 24px 16px; }
+  header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+  header p { font-size: 13px; color: #94a3b8; margin-top: 3px; }
+
+  .top-bar { display: flex; gap: 12px; padding: 14px 24px; background: var(--gray-light); border-bottom: 1px solid var(--gray-border); flex-wrap: wrap; }
+  .stat { background: #fff; border: 1px solid var(--gray-border); border-radius: 8px; padding: 10px 16px; text-align: center; min-width: 100px; }
+  .stat .val { font-size: 20px; font-weight: 700; color: var(--green); }
+  .stat .lbl { font-size: 11px; color: #6b7280; margin-top: 1px; }
+  .stat.warn .val { color: var(--amber); }
+  .stat.info .val { color: var(--blue); }
+
+  main { max-width: 960px; margin: 0 auto; padding: 20px 24px 60px; }
+
+  h2 { font-size: 15px; font-weight: 700; color: #0f172a; margin: 24px 0 10px; border-bottom: 2px solid var(--gray-border); padding-bottom: 6px; }
+  h3 { font-size: 13px; font-weight: 700; color: #0f172a; margin: 14px 0 6px; }
+
+  .callout { border-radius: 8px; padding: 12px 16px; margin-bottom: 12px; border-left: 4px solid; }
+  .callout.green { background: var(--green-bg); border-color: var(--green); }
+  .callout.blue { background: var(--blue-bg); border-color: var(--blue); }
+  .callout.amber { background: var(--amber-bg); border-color: var(--amber); }
+  .callout.red { background: var(--red-bg); border-color: var(--red); }
+  .callout.purple { background: var(--purple-bg); border-color: var(--purple); }
+  .callout strong { font-weight: 700; }
+
+  details { border: 1px solid var(--gray-border); border-radius: 8px; margin-bottom: 10px; overflow: hidden; }
+  details[open] { box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  summary { padding: 12px 16px; cursor: pointer; font-weight: 600; font-size: 13px; background: var(--gray-light); display: flex; justify-content: space-between; align-items: center; list-style: none; user-select: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '▸'; font-size: 11px; color: #9ca3af; transition: transform 0.15s; }
+  details[open] summary::after { transform: rotate(90deg); }
+  summary .badge { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 12px; margin-left: 8px; }
+  .badge.green { background: var(--green-bg); color: var(--green); }
+  .badge.amber { background: var(--amber-bg); color: var(--amber); }
+  .badge.blue { background: var(--blue-bg); color: var(--blue); }
+  .detail-body { padding: 14px 16px; }
+
+  ul { padding-left: 18px; }
+  li { margin-bottom: 5px; }
+  li::marker { color: #9ca3af; }
+
+  code { font-family: var(--mono); font-size: 12px; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 4px; padding: 1px 5px; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 10px 0; }
+  th { background: #f1f5f9; font-weight: 600; text-align: left; padding: 8px 12px; border-bottom: 2px solid var(--gray-border); }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--gray-border); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--gray-light); }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+
+  .rule { background: #fff; border: 1px solid var(--gray-border); border-radius: 8px; padding: 12px 14px; }
+  .rule .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #6b7280; margin-bottom: 4px; }
+  .rule .text { font-size: 13px; }
+
+  .vs { display: flex; gap: 8px; align-items: stretch; margin: 8px 0; }
+  .vs-item { flex: 1; border-radius: 6px; padding: 10px 12px; font-size: 12px; }
+  .vs-item .head { font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+  .vs-correct { background: var(--green-bg); border: 1px solid var(--green-border); }
+  .vs-correct .head { color: var(--green); }
+  .vs-wrong { background: var(--red-bg); border: 1px solid var(--red-border); }
+  .vs-wrong .head { color: var(--red); }
+
+  .moves { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; }
+  .move { background: #0f172a; color: #e2e8f0; border-radius: 8px; padding: 12px 14px; }
+  .move .num { font-size: 20px; font-weight: 800; color: #475569; line-height: 1; margin-bottom: 4px; }
+  .move .text { font-size: 12px; line-height: 1.4; }
+
+  .tag { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.4px; margin-left: 4px; vertical-align: middle; }
+  .tag.miss { background: #fee2e2; color: #b91c1c; }
+  .tag.key { background: #dbeafe; color: #1d4ed8; }
+
+  @media (max-width: 600px) {
+    .grid2, .grid3, .moves { grid-template-columns: 1fr; }
+    .vs { flex-direction: column; }
+    .top-bar { gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>CCA-F Pre-Exam Reference</h1>
+  <p>Last drill: 5/5 (100%) &nbsp;·&nbsp; Exam 3: 93% (56/60) &nbsp;·&nbsp; Today: 2026-05-26</p>
+</header>
+
+<div class="top-bar">
+  <div class="stat"><div class="val">720</div><div class="lbl">Pass threshold / 1000</div></div>
+  <div class="stat info"><div class="val">27%</div><div class="lbl">D1 Agentic Arch</div></div>
+  <div class="stat info"><div class="val">20%</div><div class="lbl">D3 Claude Code</div></div>
+  <div class="stat info"><div class="val">20%</div><div class="lbl">D4 Prompt Eng</div></div>
+  <div class="stat info"><div class="val">18%</div><div class="lbl">D2 MCP Tools</div></div>
+  <div class="stat info"><div class="val">15%</div><div class="lbl">D5 Context Mgmt</div></div>
+  <div class="stat warn"><div class="val">D2</div><div class="lbl">Weakest domain (82%)</div></div>
+</div>
+
+<main>
+
+  <h2>Mental Moves — Apply Before Reading Options</h2>
+  <div class="moves">
+    <div class="move"><div class="num">1</div><div class="text">Read the scenario box fully before touching the answer options</div></div>
+    <div class="move"><div class="num">2</div><div class="text">Name the failure axis first — what is actually broken?</div></div>
+    <div class="move"><div class="num">3</div><div class="text">Behavior → mechanism, not parameter. What does the system <em>do</em>?</div></div>
+    <div class="move"><div class="num">4</div><div class="text">"Increase context window" is almost never right for forgetting</div></div>
+    <div class="move"><div class="num">5</div><div class="text">Outcome keywords: "effective," "reduces," "what type of change" — pick the <em>why</em> answer</div></div>
+    <div class="move"><div class="num">6</div><div class="text">Human-interaction Qs → default to oversight, transparency, escalation</div></div>
+    <div class="move"><div class="num">7</div><div class="text">Light on config/syntax. "Why not how" exam — Anthropic worldview is the answer key</div></div>
+    <div class="move"><div class="num">8</div><div class="text">When two answers feel right, pick the one that's more deterministic or more targeted</div></div>
+  </div>
+
+  <h2>Today's Miss Patterns <span class="tag miss">Drill</span></h2>
+
+  <div class="callout amber">
+    <strong>Pattern 1 — Read + Write fallback (appeared twice).</strong> When <code>Edit</code> fails on non-unique anchor text → don't Grep + replace-all. Use <code>Read</code> to load the full file, modify the intended block, then <code>Write</code> the complete corrected file. Grep + replace-all changes unintended occurrences.
+  </div>
+  <div class="callout amber">
+    <strong>Pattern 2 — Stratified sampling.</strong> Uniform sampling misses rare segments even at higher rates. When failures are concentrated in a low-volume slice → stratify by segment (issue type, channel, age, action). Confidence thresholds don't fix coverage gaps.
+  </div>
+  <div class="callout amber">
+    <strong>Pattern 3 — <code>-p</code> / <code>--print</code> for CI.</strong> <code>--print</code> = non-interactive mode (exits after output). <code>--output-format json</code> = structured parsing. Different problems. CI hangs = interactivity problem = use <code>--print</code>.
+  </div>
+
+  <h2>D4 Quick Reference — Prompt Engineering</h2>
+
+  <details open>
+    <summary>When to use criteria vs. examples <span class="badge amber">Key distinction</span></summary>
+    <div class="detail-body">
+      <table>
+        <tr><th>Situation</th><th>Fix</th></tr>
+        <tr><td>Definition is missing — model has no basis to judge</td><td><strong>Criteria first</strong> — write explicit rules</td></tr>
+        <tr><td>Criteria are clear but output is inconsistent</td><td><strong>Add few-shot examples</strong> — anchor the pattern</td></tr>
+        <tr><td>Prose instructions keep failing despite edits</td><td><strong>Skip to examples</strong> — don't add more instructions</td></tr>
+        <tr><td>Edge case behavior needs to be locked in</td><td><strong>Contrastive examples</strong> — show right vs. wrong</td></tr>
+      </table>
+      <div class="callout blue" style="margin-top:10px">
+        <strong>Rule:</strong> More instructions ≠ better behavior. When prose fails, examples are the fix — not more prose.
+      </div>
+    </div>
+  </details>
+
+  <details open>
+    <summary>Enums with unknown fields <span class="badge amber">Key distinction</span></summary>
+    <div class="detail-body">
+      <p style="margin-bottom:10px">When a field has a fixed set of values but real inputs won't always match — add an <code>"other"</code> escape value plus a companion <code>detail</code> field. Never make the schema hallucinate a false category.</p>
+      <div class="vs">
+        <div class="vs-item vs-wrong">
+          <div class="head">Anti-pattern</div>
+          <code>enum: ["return", "billing", "account"]</code><br><br>
+          Forces model to pick a category even when none fits → hallucination pressure on every misfit input.
+        </div>
+        <div class="vs-item vs-correct">
+          <div class="head">Correct pattern</div>
+          <code>enum: ["return", "billing", "account", "other"]</code><br>
+          + companion field: <code>"issue_detail": string | null</code><br><br>
+          Model picks "other" and puts the real value in <code>issue_detail</code>. No forced hallucination.
+        </div>
+      </div>
+      <div class="callout blue">
+        <strong>Rule:</strong> Required fields with no reliable source = hallucination pressure. Nullable companion fields are the safety valve.
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>tool_choice: auto vs any vs forced <span class="badge blue">Core</span></summary>
+    <div class="detail-body">
+      <table>
+        <tr><th>Value</th><th>Behavior</th><th>When to use</th></tr>
+        <tr><td><code>{"type": "auto"}</code></td><td>Model decides whether to use a tool</td><td>Default — open-ended tasks</td></tr>
+        <tr><td><code>{"type": "any"}</code></td><td>Must use <em>some</em> tool, model picks which</td><td>Force structured output without fixing which tool</td></tr>
+        <tr><td><code>{"type": "tool", "name": "..."}</code></td><td>Must use this specific tool</td><td>First turn extraction, then switch back to auto</td></tr>
+      </table>
+      <div class="callout blue" style="margin-top:10px">
+        <strong>Pattern:</strong> Force tool on turn 1 for structured extraction → switch to <code>auto</code> for follow-up turns.
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Batch API <span class="badge blue">Core</span></summary>
+    <div class="detail-body">
+      <ul>
+        <li>Use when: latency-tolerant, nightly jobs, bulk classification, cost-sensitive at scale</li>
+        <li>Correlate results via <code>custom_id</code> — not position</li>
+        <li>On partial failure: resubmit only failed <code>custom_id</code>s, not the full batch</li>
+        <li><strong>Not for</strong>: real-time, interactive, or conversational flows</li>
+      </ul>
+      <div class="callout amber" style="margin-top:10px">
+        <strong>Trap:</strong> "nightly classification job" → Batch API. "User-facing chat" → never Batch.
+      </div>
+    </div>
+  </details>
+
+  <h2>D1 — Agentic Architecture (27% — Strongest Domain)</h2>
+
+  <details open>
+    <summary>Agentic loop skeleton <span class="badge green">Mastered</span></summary>
+    <div class="detail-body">
+      <ol style="padding-left:18px">
+        <li>Call API → check <code>stop_reason</code></li>
+        <li>If <code>tool_use</code> → execute all tool calls (parallel if independent)</li>
+        <li>Append <code>tool_result</code> blocks for every tool call in that response</li>
+        <li>Recurse → repeat until <code>stop_reason == "end_turn"</code></li>
+        <li>Handle <code>max_tokens</code> → resume with continuation prompt</li>
+      </ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>Coordinator pattern <span class="badge blue">Key</span></summary>
+    <div class="detail-body">
+      <p>Coordinator = centralized visibility + error handling + information control. It holds state, dispatches to subagents, and decides what context each subagent gets. Subagents should not share state directly.</p>
+      <div class="callout blue" style="margin-top:8px">
+        <strong>PostToolUse hook beats wrapper tools</strong> for output normalization — it's centralized, covers third-party tools, and doesn't require per-tool implementation.
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Constrained tools > generic tools <span class="badge blue">Key</span></summary>
+    <div class="detail-body">
+      <div class="vs">
+        <div class="vs-item vs-wrong"><div class="head">Generic (anti-pattern)</div><code>fetch_url</code> — unrestricted, can fetch anything</div>
+        <div class="vs-item vs-correct"><div class="head">Constrained (correct)</div><code>load_document(id)</code> — scoped to known sources, auditable</div>
+      </div>
+      <p style="margin-top:8px">When a tool is misused → fix: replace with a constrained alternative. Don't route around it.</p>
+    </div>
+  </details>
+
+  <h2>D2 — MCP Tool Design (18% — Weakest Domain)</h2>
+
+  <details open>
+    <summary>Tool description is the first fix <span class="badge amber">Watch</span></summary>
+    <div class="detail-body">
+      <ul>
+        <li>Model misroutes to the wrong tool → fix the description, not the routing layer</li>
+        <li>Overlap between tools → split them or add disambiguation language</li>
+        <li>MCP resources = on-demand context, not a forced round-trip (≠ <code>tool_choice</code> forced)</li>
+        <li>Composite tools vs. prompt-level batching — composite when the operations always go together; batching when they're independent</li>
+      </ul>
+    </div>
+  </details>
+
+  <details>
+    <summary>Structured errors <span class="badge blue">Core</span></summary>
+    <div class="detail-body">
+      <table>
+        <tr><th>Field</th><th>Purpose</th></tr>
+        <tr><td><code>isError: true</code></td><td>Signal this is an error result</td></tr>
+        <tr><td><code>errorCategory</code></td><td>Classify the failure type</td></tr>
+        <tr><td><code>isRetryable: bool</code></td><td>Tell the agent whether to retry</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <h2>D3 — Claude Code Workflows (20%)</h2>
+
+  <details open>
+    <summary>CI/CD invocation <span class="badge amber">Today's miss</span></summary>
+    <div class="detail-body">
+      <div class="vs">
+        <div class="vs-item vs-wrong"><div class="head">Wrong — structured output</div><code>claude --output-format json ...</code><br>Solves parsing, not interactivity.</div>
+        <div class="vs-item vs-correct"><div class="head">Correct — non-interactive</div><code>claude -p "prompt"</code> or <code>--print</code><br>Processes prompt, writes output, exits.</div>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Hooks vs. CLAUDE.md vs. skills <span class="badge blue">Core</span></summary>
+    <div class="detail-body">
+      <table>
+        <tr><th>Mechanism</th><th>Type</th><th>Use when</th></tr>
+        <tr><td>PreToolUse / PostToolUse hook</td><td>Deterministic</td><td>Must gate or normalize every tool call</td></tr>
+        <tr><td>CLAUDE.md rule</td><td>Probabilistic</td><td>Guide behavior, not enforce it</td></tr>
+        <tr><td>Slash command</td><td>User-triggered</td><td>On-demand workflows</td></tr>
+        <tr><td>Skill (with frontmatter)</td><td>Reusable</td><td>Complex multi-step patterns; <code>context:fork</code> for isolation</td></tr>
+      </table>
+      <div class="callout amber" style="margin-top:8px">
+        <strong>Plan mode ≠ extended thinking.</strong> Plan mode = Claude Code read-only. Extended thinking = API <code>thinking:{type:"enabled"}</code>. Plan mode can't gate mid-execution — use PreToolUse hook for that.
+      </div>
+    </div>
+  </details>
+
+  <h2>D5 — Context Management (15%)</h2>
+
+  <details>
+    <summary>Key patterns <span class="badge blue">Core</span></summary>
+    <div class="detail-body">
+      <table>
+        <tr><th>Pattern</th><th>Rule</th></tr>
+        <tr><td>cache_control placement</td><td>Set breakpoints <strong>after</strong> compaction, not before — cache the stable tail</td></tr>
+        <tr><td>Hybrid summarization</td><td>Structured summary + raw transcript tail (not full raw, not full summary)</td></tr>
+        <tr><td>JSON manifest</td><td>Crash recovery — store progress externally so agent can resume mid-task</td></tr>
+        <tr><td>PDF large docs</td><td>Stratified sampling — not full automation; sample key sections representatively</td></tr>
+        <tr><td>Lost in the middle</td><td>Key findings at top of context + trim tool outputs</td></tr>
+        <tr><td>Forgetting pattern</td><td>"Increase context window" is almost never the answer</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <h2>Key Distinctions Table</h2>
+
+  <table>
+    <tr><th>If you see…</th><th>The answer is…</th><th>Not…</th></tr>
+    <tr><td>Edit fails, non-unique text</td><td>Read + Write full file</td><td>Grep + replace-all</td></tr>
+    <tr><td>Failures in rare segment, uniform sampling</td><td>Stratified sampling by segment</td><td>Larger uniform sample or confidence filter</td></tr>
+    <tr><td>CI job hangs on claude command</td><td><code>-p</code> / <code>--print</code></td><td><code>--output-format json</code></td></tr>
+    <tr><td>Tool misrouting / wrong tool used</td><td>Fix tool description</td><td>Add routing layer</td></tr>
+    <tr><td>Output normalization across tools</td><td>PostToolUse hook</td><td>Wrapper tool per tool</td></tr>
+    <tr><td>Enum can't capture all real values</td><td>Add "other" + nullable detail field</td><td>Expand enum or require a category</td></tr>
+    <tr><td>Prose instructions failing</td><td>Add few-shot examples</td><td>More instructions / rewrite prose</td></tr>
+    <tr><td>MCP resources described as "mandatory"</td><td>Resources are on-demand context</td><td>tool_choice forced round-trip</td></tr>
+    <tr><td>Nightly bulk job, latency-tolerant</td><td>Batch API</td><td>Streaming or real-time API</td></tr>
+    <tr><td>Agent forgets across turns</td><td>Scratchpad / external state / summarization</td><td>Increase context window</td></tr>
+    <tr><td>Gate execution mid-workflow</td><td>PreToolUse hook</td><td>Plan mode</td></tr>
+    <tr><td>High-confidence failures in rare segment</td><td>Confidence ≠ accuracy per segment — stratify</td><td>Raise confidence threshold</td></tr>
+  </table>
+
+  <h2>Anti-Patterns — Eliminate These First</h2>
+
+  <div class="grid2">
+    <div class="callout red"><strong>Grep + replace-all</strong> when only one occurrence should change</div>
+    <div class="callout red"><strong>Retrying ambiguous Edit</strong> without adding context</div>
+    <div class="callout red"><strong>Confidence threshold as QA</strong> — doesn't measure per-segment accuracy</div>
+    <div class="callout red"><strong>Uniform sampling</strong> when failures are concentrated in rare slices</div>
+    <div class="callout red"><strong>stdin redirect</strong> to fix CI hang — it's an invocation mode issue</div>
+    <div class="callout red"><strong>Prompt instructions</strong> to fix CLI process behavior</div>
+    <div class="callout red"><strong>Routing layer</strong> to fix tool misrouting — fix the description</div>
+    <div class="callout red"><strong>"Increase context window"</strong> for agent forgetting</div>
+  </div>
+
+  <div class="callout green" style="margin-top:24px; font-size:14px;">
+    <strong>You're ready.</strong> Exam 3: 93%. Last drill: 5/5. All miss patterns corrected. Pass threshold is 72% — you've been clearing 88–93% consistently. Go take it.
+  </div>
+
+</main>
+</body>
+</html>

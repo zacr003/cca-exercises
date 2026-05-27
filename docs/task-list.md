@@ -66,10 +66,11 @@ _Current exercise backlog. Updated by `/sync`._
 
 ## Post-Exam Cleanup
 
+- [ ] Await CCA-F results — expected 7–10 days from 2026-05-26
 - [ ] Archive domain-1/ and domain-2/ exercise notes into Ramsey-Brain wiki
 - [ ] Tag any reusable patterns (agentic loop skeleton, hook templates) for future reference
 - [ ] Lint check: confirm no literal secrets in any exercise files
 
 ---
 
-_Last updated: 2026-05-26_
+_Last updated: 2026-05-26 (post-exam)_
