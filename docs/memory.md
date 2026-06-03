@@ -7,7 +7,8 @@ _Running context and state. Updated by `/sync` at end of each session._
 ## What This Project Is
 
 Hands-on coding exercises for the **CCA-F (Claude Certified Architect Foundations)** exam.
-Target exam date: **2026-05-27**.
+Attempt 1: **2026-05-26 — FAILED. 670/1000. Passing threshold: 720/1000.**
+Retake eligible: **2026-11-21.**
 
 Each domain maps to a folder of standalone Python scripts (and config/reference files).
 Exercises are written for Windows + Git Bash; all Python files include the UTF-8 stdout fix.
@@ -16,7 +17,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 
 ---
 
-## Current State (as of 2026-05-26)
+## Current State (as of 2026-06-03)
 
 ### Domain Progress
 
@@ -67,7 +68,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 | Mixed drill #3 (in-chat) | 2026-05-26 | **100% (10/10)** | — | — | — | — | — |
 | Exam 3 (Udemy) | 2026-05-26 | **93% (56/60) — PASSED** | 100% | 82% | 92% | 100% | 89% |
 | Miss-pattern drill (in-chat) | 2026-05-26 | **100% (5/5)** — Read+Write, stratified sampling, -p/--print | — | — | — | — | — |
-| **CCA-F Real Exam** | **2026-05-26** | **Taken — awaiting results (7–10 days)** | — | — | — | — | — |
+| **CCA-F Real Exam** | **2026-05-26** | **FAILED — 670/1000 (67%)** | 75% | 67% | 54% | 33% ("Other") | 75% |
 
 ---
 
@@ -150,6 +151,7 @@ _Updated by `/sync` at end of each session._
 - 2026-05-26: **REAL EXAM TODAY (afternoon).** Confirmed passing threshold: 720/1000 (72%). Colleagues passing at 749, 780, 791 — "90% required" framing was incorrect.
 - 2026-05-26: Key miss patterns from mock runs — PostToolUse hook beats wrapper tools for normalization (centralized, one place, covers third-party); tool misrouting → fix descriptions first; prose failing → examples not more instructions; coordinator = centralized visibility + error handling + info control
 - 2026-05-26: Anthropic support emailed re: lost mock scores — Skilljar platform bug on both attempts
+- 2026-06-03: Cleanup sync — committed pending 2026-05-27 post-exam changes (failed result 670/1000, retake planning, honesty rule added to CLAUDE.md). No new prep work this session.
 - 2026-05-25: Co-worker post-exam intel — "why not how" exam; Anthropic worldview is the answer key; watch outcome keywords ("effective," "reduces," "what type of change"); human-interaction Qs default to Anthropic oversight/transparency/escalation philosophy; light on mechanistic/config questions; DO NOT use Sparq machine (IT blocks proctoring app)
 - 2026-05-25: Sparq study site (https://sparq-study.alemadlei.tech/) — quiz runner built by coworker; user loaded this repo's question bank into it; no standalone question bank, it drills whatever JSON you load
 - 2026-05-20: Exam schedule revised — target sit date moved to Tuesday May 26; Anthropic Official Mock on Monday May 25; Udemy Exam 3 if time permits Monday

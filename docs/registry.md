@@ -138,4 +138,4 @@ Used explicitly in `.claude/settings.json` hook commands.
 
 ---
 
-_Last updated: 2026-05-26_
+_Last updated: 2026-06-03_

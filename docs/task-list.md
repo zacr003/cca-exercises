@@ -64,13 +64,29 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-## Post-Exam Cleanup
+## Post-Exam / Retake Prep
 
-- [ ] Await CCA-F results — expected 7–10 days from 2026-05-26
+### Immediate
+- [x] Receive exam results — **FAILED. 670/1000. Passing: 720/1000.**
+- [x] Add no-sycophancy rule to CLAUDE.md and memory — done 2026-05-27
+- [ ] Follow up with Anthropic support re: lost official mock scores (ticket open)
+- [ ] Ask Anthropic support what the "Other" domain covers
+- [ ] Ask Zain what he remembers about "Conversational AI Patterns" questions specifically
+
+### Retake Research (do before resuming study)
+- [ ] Identify what "Other" / "Conversational AI Patterns" actually covers — community forums, Zain, Anthropic support
+- [ ] Find recent test-taker accounts of D3 real exam wording (54% despite 92% practice = wording gap)
+- [ ] Locate any prep material for "Conversational AI Patterns" content
+
+### Retake Prep (start when ready — retake eligible 2026-11-21)
+- [ ] D3 deep dive — 54% on real exam; needs real-exam-wording-aligned drill
+- [ ] D2 targeted drill — 67% on real exam; consistently weakest domain
+- [ ] "Other" / Conversational AI Patterns — once content is identified
 - [ ] Archive domain-1/ and domain-2/ exercise notes into Ramsey-Brain wiki
 - [ ] Tag any reusable patterns (agentic loop skeleton, hook templates) for future reference
 - [ ] Lint check: confirm no literal secrets in any exercise files
+- [ ] Sit rested — non-negotiable; do not schedule exam after travel or minimal sleep
 
 ---
 
-_Last updated: 2026-05-26 (post-exam)_
+_Last updated: 2026-06-03 (cleanup sync; no new work)_

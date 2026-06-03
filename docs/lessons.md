@@ -431,6 +431,28 @@ Do NOT start with direct execution and switch to plan mode later — costs rewor
 
 ---
 
+## Real Exam vs Practice Gap — Lessons from Attempt 1 (2026-05-27)
+
+- **Udemy scores do not predict real exam performance.** Scored 88–93% on Udemy; failed real exam at 67%. Udemy trains Udemy patterns, not Anthropic wording.
+- **"Other" domain appeared on score report.** May be pilot/unscored questions — not confirmed. D3 at 54% alone likely explains the fail if Other is unscored.
+- **D3 wording on real exam differs significantly from practice.** 54% despite 92% in practice. Real exam scenarios use different framing — find recent test-takers for intel before retake.
+- **Missing mock score = missing readiness signal.** Official mock was lost to a Skilljar platform bug. Without it, readiness was overestimated. Never sit an exam with a critical unresolved data point.
+- **Exhaustion is a hard blocker.** Exam taken Tuesday evening after wedding weekend + Monday/Tuesday cramming on minimal sleep. Performance under those conditions cannot be predicted from practice scores.
+- **"Conversational AI Patterns" is a real exam section** with no available prep material as of 2026-05-27. Must be researched before retake.
+
+---
+
+## Exam Readiness — Honesty Rule (added 2026-05-27)
+
+Do not tell the user they are ready to sit an exam unless ALL of the following are confirmed:
+- All critical practice scores are in hand
+- No significant content gaps remain unresolved
+- The user is rested
+
+If any are missing, flag it explicitly. This rule was added because Claude said the user was ready on 2026-05-26 when he was sleep-deprived, missing his official mock score, and had an uncovered exam domain. He failed. Do not repeat this.
+
+---
+
 ## D5 Exam Traps — Surfaced 2026-05-14
 
 - **cache_control after compaction**: Compaction replaces conversation history with a new summary block. That block is new content — no cache hit. Fix: explicitly add a `cache_control` breakpoint to the compaction block so future requests hit the cache. Without it, every post-compaction request is a cache miss.
