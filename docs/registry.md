@@ -108,6 +108,16 @@ cca-exercises/
 
 ---
 
+## External Practice Resources
+
+_Independent third-party prep sites — useful as **weak-spot finders, NOT readiness signals** (see lessons.md: Udemy scores did not predict real-exam performance). Verify answer keys against the domain wiki; do not absorb blindly. The official Anthropic practice exam remains the only trusted readiness proxy._
+
+| Resource | URL | Notes |
+|----------|-----|-------|
+| CCA Practice Platforms — Readiness Diagnostic | https://www.claudecertifiedarchitects.com/diagnostic/ | Shared in Slack 2026-07-07. Free, no account, 10 scenario Qs across all 5 domains (~5 min). **Verified accurate** vs. official v0.2 guide: domains, weights (27/20/20/18/15), passing score (720/1000), 60-Q format all correct; clearly disclaims Anthropic affiliation. Answer-key quality **unverified** (paid $49 upsell for a 400-Q platform). Use as a diagnostic only. |
+
+---
+
 ## Tools & Dependencies
 
 | Tool | Purpose |
@@ -138,4 +148,4 @@ Used explicitly in `.claude/settings.json` hook commands.
 
 ---
 
-_Last updated: 2026-06-03_
+_Last updated: 2026-07-07 (added External Practice Resources — CCA readiness diagnostic)_
