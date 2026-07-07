@@ -8,7 +8,7 @@ _Running context and state. Updated by `/sync` at end of each session._
 
 Hands-on coding exercises for the **CCA-F (Claude Certified Architect Foundations)** exam.
 Attempt 1: **2026-05-26 — FAILED. 670/1000. Passing threshold: 720/1000.**
-Retake eligible: **2026-11-21.**
+Retake: **early retake available now** — the platform migration (confirmed 2026-07-01) waived the 6-month wait. Target window: **July 21 – Aug 1, 2026.** Cert validity once passed: **12 months** from award date. (The original 6-month-wait eligibility of 2026-11-21 is now superseded.)
 
 Each domain maps to a folder of standalone Python scripts (and config/reference files).
 Exercises are written for Windows + Git Bash; all Python files include the UTF-8 stdout fix.
@@ -17,7 +17,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 
 ---
 
-## Current State (as of 2026-06-03)
+## Current State (as of 2026-07-07)
 
 ### Domain Progress
 
@@ -103,6 +103,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 
 _Updated by `/sync` at end of each session._
 
+- 2026-07-07: **Timeline sync from Ramsey-Brain** (auditing/cleanup only — no study work yet). Reconciled stale status across all docs: Attempt 1 failed 670/1000; **early retake now available** (platform migration waived the 6-month wait), target window **July 21 – Aug 1, 2026** (was 2026-11-21). **"Other" / "Conversational AI Patterns" resolved = D4** (v0.2 exam guide; score-report mislabel, no mystery domain) — closed the related research tasks in task-list and corrected lessons.md. Confirmed 12-month cert validity. Study resumes 7/8 or 7/9, D4/D3 priority. Note: Ramsey-Brain now has 47 recall cards seeded (run "quiz me cca" there).
 - 2026-05-13: D4 HTML quiz 11/14 (79%); misses: any vs auto tool_choice, conflict_detected overconfidence, batch recovery resubmit only failed custom_ids
 - 2026-05-13: D1 HTML quiz 12/12 (100%) — D1 fully mastered
 - 2026-05-13: D4 Q21–Q50 drill complete — 27/30 (90%); misses: enum+detail field pattern (Q32), retry-with-feedback vs blind retry (Q46)

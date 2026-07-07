@@ -4,7 +4,7 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-## Active Sprint — CCA-F Exam (Sitting 2026-05-26 afternoon)
+## Exercise Sprint — Attempt 1 FAILED (670/1000, 2026-05-26) · Retake window: July 21 – Aug 1, 2026
 
 ### Domain 1 — Agentic Architecture (27%) — COMPLETE
 - [x] ex1: Basic agentic loop — check `stop_reason`, append `tool_result` blocks, handle `max_tokens`
@@ -70,18 +70,20 @@ _Current exercise backlog. Updated by `/sync`._
 - [x] Receive exam results — **FAILED. 670/1000. Passing: 720/1000.**
 - [x] Add no-sycophancy rule to CLAUDE.md and memory — done 2026-05-27
 - [ ] Follow up with Anthropic support re: lost official mock scores (ticket open)
-- [ ] Ask Anthropic support what the "Other" domain covers
-- [ ] Ask Zain what he remembers about "Conversational AI Patterns" questions specifically
+- [ ] **Register on the new platform + lock in a retake date** (target July 21 – Aug 1, 2026)
+- [ ] Get the **official Anthropic practice exam** from the new platform and complete it before sitting (closest proxy to real-exam wording)
+- [x] Ask Anthropic support what the "Other" domain covers — **RESOLVED 2026-07-01**: v0.2 exam guide confirms "Other" = D4 (Prompt Engineering & Structured Output); score report mislabeled it. No mystery domain.
+- [ ] (Optional) Ask Zain about "Conversational AI Patterns" **wording** — content resolved to D4; only real-exam wording intel still useful
 
 ### Retake Research (do before resuming study)
-- [ ] Identify what "Other" / "Conversational AI Patterns" actually covers — community forums, Zain, Anthropic support
+- [x] Identify what "Other" / "Conversational AI Patterns" actually covers — **RESOLVED 2026-07-01**: it IS D4 (score-report mislabel), per v0.2 guide.
 - [ ] Find recent test-taker accounts of D3 real exam wording (54% despite 92% practice = wording gap)
-- [ ] Locate any prep material for "Conversational AI Patterns" content
+- [x] ~~Locate any prep material for "Conversational AI Patterns" content~~ — no longer needed; resolved to D4.
 
-### Retake Prep (start when ready — retake eligible 2026-11-21)
+### Retake Prep (early retake available now; target window July 21 – Aug 1, 2026)
 - [ ] D3 deep dive — 54% on real exam; needs real-exam-wording-aligned drill
 - [ ] D2 targeted drill — 67% on real exam; consistently weakest domain
-- [ ] "Other" / Conversational AI Patterns — once content is identified
+- [x] ~~"Other" / Conversational AI Patterns deep dive~~ — moot; resolved to D4. Folded into the D4 deep dive above.
 - [ ] Archive domain-1/ and domain-2/ exercise notes into Ramsey-Brain wiki
 - [ ] Tag any reusable patterns (agentic loop skeleton, hook templates) for future reference
 - [ ] Lint check: confirm no literal secrets in any exercise files
@@ -89,4 +91,4 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-_Last updated: 2026-06-03 (cleanup sync; no new work)_
+_Last updated: 2026-07-07 (timeline sync from Ramsey-Brain — retake window July 21–Aug 1; "Other" = D4 resolution)_

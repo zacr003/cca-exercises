@@ -207,7 +207,7 @@ Source: official exam guide v0.1 (Feb 2025). Sample questions: `~/Desktop/Ramsey
 `~/Desktop/Ramsey-Brain/raw/cca_f_question_bank_v3.0.0.json` — 242 curated questions, tiered 58/115/69. Filter by `curated_tier` (1/2/3). Use v2.0.0 (`cca_f_question_bank_v2.0.0.json`) for broad subdomain drilling.
 
 ### Drift scenarios (rotation hedge — not in official 6)
-- Conversational AI Patterns (appeared on n=1 form)
+- ~~Conversational AI Patterns (appeared on n=1 form)~~ — RESOLVED: this was D4 mislabeled as "Other" on the score report (v0.2 guide, 2026-07-01), not a real drift scenario
 - Long Document Processing
 - Agent Skills (Enterprise KM / Developer Tooling / Code Execution)
 - Claude for Operations / Agentic Tool Design
@@ -434,11 +434,11 @@ Do NOT start with direct execution and switch to plan mode later — costs rewor
 ## Real Exam vs Practice Gap — Lessons from Attempt 1 (2026-05-27)
 
 - **Udemy scores do not predict real exam performance.** Scored 88–93% on Udemy; failed real exam at 67%. Udemy trains Udemy patterns, not Anthropic wording.
-- **"Other" domain appeared on score report.** May be pilot/unscored questions — not confirmed. D3 at 54% alone likely explains the fail if Other is unscored.
+- **"Other" domain on score report = D4 (RESOLVED 2026-07-01).** The v0.2 exam guide confirms the score-report platform mislabeled D4 (Prompt Engineering & Structured Output) as "Other." It is NOT pilot/unscored questions and NOT a mystery domain. D4 at 33% is the real primary gap alongside D3 at 54%.
 - **D3 wording on real exam differs significantly from practice.** 54% despite 92% in practice. Real exam scenarios use different framing — find recent test-takers for intel before retake.
 - **Missing mock score = missing readiness signal.** Official mock was lost to a Skilljar platform bug. Without it, readiness was overestimated. Never sit an exam with a critical unresolved data point.
 - **Exhaustion is a hard blocker.** Exam taken Tuesday evening after wedding weekend + Monday/Tuesday cramming on minimal sleep. Performance under those conditions cannot be predicted from practice scores.
-- **"Conversational AI Patterns" is a real exam section** with no available prep material as of 2026-05-27. Must be researched before retake.
+- **"Conversational AI Patterns" = D4 mislabel (RESOLVED 2026-07-01).** Not a separate section — the v0.2 guide confirms it maps to D4, so no separate prep material is needed. The coworker "n=1" sightings were mislabeled D4 questions. Retake focus for D4: explicit criteria, few-shot, tool_use + JSON schema + `strict:true`, validation-retry loops, Batch API, multi-instance review.
 
 ---
 
