@@ -4,6 +4,11 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
+## ▶ Next Session (study kickoff — 7/8 or 7/9)
+- [ ] **Warm up with `quiz me cca` in Ramsey-Brain** (47 recall cards, D3/D4-heavy) to surface weak spots, then drill the matching `domain-3/` and `domain-4/` exercises here. D4 (33%) and D3 (54%) are the retake priority.
+
+---
+
 ## Exercise Sprint — Attempt 1 FAILED (670/1000, 2026-05-26) · Retake window: July 21 – Aug 1, 2026
 
 ### Domain 1 — Agentic Architecture (27%) — COMPLETE
