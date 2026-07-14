@@ -121,6 +121,29 @@ get_order_by_id:
         <div class="kv-row"><span class="kv-key">Fix both tools</span><span class="kv-val">One unfixed tool still creates ambiguity — must fix both</span></div>
       </div>
 
+      <h3>Every Description Answers Three Questions</h3>
+      <div class="concept-box">
+        <p>A complete tool description answers all three: <strong>what it does</strong> · <strong>when to use it</strong> · <strong>what it does NOT do</strong>. The third is the disambiguator people omit — an explicit "Do NOT use this for X" is what actually prevents misrouting.</p>
+        <p style="margin-top:8px;"><strong>Corollary — split signal:</strong> a <code>mode</code> / <code>action</code> parameter that switches the tool between <em>fundamentally different behaviors</em> (search vs. create vs. delete) is a signal to <strong>SPLIT the tool</strong> into purpose-specific tools — not a feature to keep. One tool, one job.</p>
+      </div>
+
+      <h3>When It's NOT the Description — System-Prompt Keyword Sensitivity</h3>
+      <div class="concept-box">
+        <p>A distinct diagnosis the exam tests: the tool descriptions are <strong>genuinely well-written and non-overlapping</strong>, yet whenever a user message contains a specific <strong>keyword</strong>, routing systematically skews to the wrong tool. The root cause is <strong>not</strong> the descriptions — it's <strong>keyword-sensitive instructions in the system prompt</strong>. The fix lives in the system prompt, not the tool layer.</p>
+        <p style="margin-top:8px;">The tell in the stem: it explicitly rules out description problems ("descriptions are fine / non-overlapping") and points at a <em>specific token</em> in user input. If you reach for "rewrite the descriptions" or "add few-shot examples" here, you're fighting the premise.</p>
+      </div>
+
+      <h3>Diagnostic Decision Table — "Why is it misrouting?"</h3>
+      <table>
+        <thead><tr><th>Symptom</th><th>Root cause</th><th>Fix (which layer)</th></tr></thead>
+        <tbody>
+          <tr><td>Two tools overlap; either could plausibly fit</td><td>Vague / overlapping descriptions</td><td class="td-correct">Rewrite BOTH descriptions</td></tr>
+          <tr><td>Descriptions are fine, but a specific keyword biases routing</td><td class="td-trap">System-prompt keyword sensitivity</td><td class="td-correct">Fix the system prompt</td></tr>
+          <tr><td>Routing is fine, but you need a call <em>guaranteed</em></td><td>No forced invocation</td><td class="td-correct"><code>tool_choice: "any"</code> or a named tool</td></tr>
+          <tr><td>Tool loads but is ignored for Bash/grep</td><td>Thin description (lost the selection competition)</td><td class="td-correct">Enrich the description</td></tr>
+        </tbody>
+      </table>
+
       <h3>Exam Trap Table — 2.1</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
@@ -129,6 +152,8 @@ get_order_by_id:
           <tr><td class="td-trap">Add few-shot routing examples before fixing descriptions</td><td>Descriptions are the primary signal — fix those first; examples add overhead without fixing root cause</td></tr>
           <tr><td class="td-trap">Add a routing classifier / pre-processing layer</td><td>Over-engineered; Claude already routes by description — use that</td></tr>
           <tr><td class="td-trap">tool_choice: "auto" + stronger prompts to force a specific tool</td><td>"auto" can still return text; use tool_choice: "any" or forced selection</td></tr>
+          <tr><td class="td-trap">Descriptions are already good but a keyword misroutes → rewrite descriptions again</td><td>That's system-prompt keyword sensitivity — fix the system prompt, not the tool descriptions or a classifier</td></tr>
+          <tr><td class="td-trap">Keep one tool with a mode/action param switching between fundamentally different behaviors</td><td>Split into purpose-specific tools — a mode switch across different behaviors is a split signal, not a feature</td></tr>
         </tbody>
       </table>
     </div>
@@ -148,13 +173,32 @@ get_order_by_id:
         <tbody>
           <tr><td><code>isError</code></td><td>true</td><td>Access or execution FAILED — absent for success (even empty results)</td></tr>
           <tr><td><code>errorCategory</code></td><td>"transient"</td><td>Network/service issue — retry with same params may work</td></tr>
-          <tr><td></td><td>"validation"</td><td>Bad input or policy violation — same params will fail again</td></tr>
-          <tr><td></td><td>"permission"</td><td>Access denied — not retryable</td></tr>
+          <tr><td></td><td>"validation"</td><td>Bad or malformed input — fix the input; same params will fail again</td></tr>
+          <tr><td></td><td>"business"</td><td>Action blocked by a business rule/policy — explain the policy, do NOT retry</td></tr>
+          <tr><td></td><td>"permission"</td><td>Access denied / insufficient privilege — escalate; not retryable</td></tr>
           <tr><td><code>isRetryable</code></td><td>true</td><td>Agent can retry with same parameters</td></tr>
           <tr><td></td><td>false</td><td>Agent must change approach or escalate</td></tr>
           <tr><td><code>description</code></td><td>string</td><td>Customer-safe — NEVER echo raw input or PII back</td></tr>
         </tbody>
       </table>
+
+      <h3>The Four Categories → Recovery Action</h3>
+      <div class="concept-box">
+        <p>The exam-tested taxonomy is <strong>exactly four</strong>: <code>transient</code> / <code>validation</code> / <code>business</code> / <code>permission</code>. Each maps to a <strong>different</strong> correct recovery — memorize the mapping, because the tempting wrong answer usually swaps the recovery verb (e.g. "escalate" a business rule instead of "explain and stop").</p>
+      </div>
+      <table>
+        <thead><tr><th>errorCategory</th><th>isRetryable</th><th>Correct recovery</th></tr></thead>
+        <tbody>
+          <tr><td><code>transient</code></td><td class="td-correct">true</td><td>Retry the call (optionally after <code>retryAfterMs</code>)</td></tr>
+          <tr><td><code>validation</code></td><td class="td-trap">false</td><td>Ask the user to correct the input, then resubmit</td></tr>
+          <tr><td><code>business</code></td><td class="td-trap">false</td><td><strong>Explain the policy; do NOT retry.</strong> The rule blocks the action.</td></tr>
+          <tr><td><code>permission</code></td><td class="td-trap">false</td><td><strong>Escalate</strong> to a human or higher-privilege flow</td></tr>
+        </tbody>
+      </table>
+      <div class="trap-box">
+        <div class="trap-title">business vs. permission — the classic swap</div>
+        <p><strong>business</strong> = the action is disallowed <em>by rule</em> ("refunds over $10k need approval") → explain the policy and stop. <strong>permission</strong> = the <em>caller lacks rights</em> that a higher-privilege actor has → escalate. A "requires manager approval" stem <em>sounds</em> like escalation but is a business rule — the tool's job is to report the block, not route the approval. If a distractor offers escalate for a policy block, it's bait.</p>
+      </div>
 
       <h3>The Critical Distinction</h3>
       <div class="grid-2">
@@ -182,14 +226,15 @@ get_order_by_id:
         <p>Returning <code>{}</code> or <code>[]</code> for a failure → agent thinks the call succeeded → won't retry → won't try alternative → user gets wrong answer. Always return structured <code>isError: true</code> for actual failures.</p>
       </div>
 
-      <h3>Three Scenarios Compared</h3>
+      <h3>Scenarios Compared</h3>
       <table>
-        <thead><tr><th>Scenario</th><th>isError</th><th>errorCategory</th><th>isRetryable</th></tr></thead>
+        <thead><tr><th>Scenario</th><th>isError</th><th>errorCategory</th><th>isRetryable</th><th>Recovery</th></tr></thead>
         <tbody>
-          <tr><td>Database timeout</td><td class="td-trap">true</td><td>transient</td><td class="td-correct">true</td></tr>
-          <tr><td>Invalid promo code</td><td class="td-trap">true</td><td>validation</td><td class="td-trap">false</td></tr>
-          <tr><td>Permission denied (403)</td><td class="td-trap">true</td><td>permission</td><td class="td-trap">false</td></tr>
-          <tr><td>Query returns 0 results</td><td class="td-correct">absent</td><td>—</td><td>—</td></tr>
+          <tr><td>Database timeout</td><td class="td-trap">true</td><td>transient</td><td class="td-correct">true</td><td>Retry</td></tr>
+          <tr><td>Invalid promo code (malformed)</td><td class="td-trap">true</td><td>validation</td><td class="td-trap">false</td><td>Fix input</td></tr>
+          <tr><td>Refund exceeds policy limit (needs manager approval)</td><td class="td-trap">true</td><td>business</td><td class="td-trap">false</td><td>Explain policy, stop</td></tr>
+          <tr><td>Permission denied (403)</td><td class="td-trap">true</td><td>permission</td><td class="td-trap">false</td><td>Escalate</td></tr>
+          <tr><td>Query returns 0 results</td><td class="td-correct">absent</td><td>—</td><td>—</td><td>Success (empty set)</td></tr>
         </tbody>
       </table>
 
@@ -202,6 +247,8 @@ get_order_by_id:
           <tr><td class="td-trap">Use a confidence score field instead of isRetryable</td><td>isRetryable is a boolean — clearly retryable or not. Confidence is vague.</td></tr>
           <tr><td class="td-trap">Terminate entire workflow on single tool failure</td><td>Return partial results + structured error; let coordinator decide recovery</td></tr>
           <tr><td class="td-trap">Echo raw input back in error description</td><td>Description is customer-safe — never echo raw values or PII</td></tr>
+          <tr><td class="td-trap">Escalate (or retry) a business-rule violation</td><td><code>business</code> → explain the policy and STOP. Escalate is the recovery for <code>permission</code>, not business.</td></tr>
+          <tr><td class="td-trap">Collapse all failures into "Operation failed"</td><td>Uniform string makes the agent retry non-retryables, escalate fixable input errors, and hide access problems. Return category + isRetryable + suggestedAction.</td></tr>
         </tbody>
       </table>
     </div>
@@ -264,6 +311,18 @@ def load_support_doc_impl(url):
         </ul>
       </div>
 
+      <h3>Scoped Cross-Role Tool — The Exception</h3>
+      <div class="concept-box">
+        <p>Sometimes a subagent frequently needs a <em>simple lookup</em> owned by another role (e.g. a synthesis subagent that repeatedly needs <code>verify_fact</code>). Rather than routing every lookup back through the coordinator, grant that subagent a <strong>scoped, narrow-purpose</strong> tool directly — this cuts latency for high-frequency simple operations without handing it broad access.</p>
+        <p style="margin-top:8px;"><strong>Decision rule — grant a cross-role tool ONLY when all three hold:</strong></p>
+        <ul style="margin-top:6px;">
+          <li>(a) the subagent <strong>frequently</strong> needs the lookup,</li>
+          <li>(b) the operation is <strong>read-only</strong>, and</li>
+          <li>(c) it does <strong>NOT change state</strong>.</li>
+        </ul>
+        <p style="margin-top:8px;">Keep state-changing tools (<code>process_refund</code>, <code>escalate_to_human</code>) <strong>coordinator-only</strong>.</p>
+      </div>
+
       <h3>Exam Trap Table — 2.3</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
@@ -271,6 +330,7 @@ def load_support_doc_impl(url):
           <tr><td class="td-trap">Generic tool + system prompt to restrict scope</td><td>Scope validation in the tool implementation — deterministic, not probabilistic</td></tr>
           <tr><td class="td-trap">6 overlapping order tools for fine-grained control</td><td>Consolidate to 3 focused tools with clear descriptions</td></tr>
           <tr><td class="td-trap">Give all subagents access to all tools</td><td>Each subagent gets only the tools for its role — scoped access</td></tr>
+          <tr><td class="td-trap">Grant a subagent a cross-role tool that modifies state (process_refund)</td><td>Cross-role grants are read-only, non-state-changing lookups only — keep state-changing tools coordinator-only</td></tr>
         </tbody>
       </table>
     </div>
@@ -307,23 +367,46 @@ def load_support_doc_impl(url):
 }</code></pre>
       <div class="trap-box">
         <div class="trap-title">Credential Pattern</div>
-        <p>Always use <code>${ENV_VAR}</code> expansion for credentials. Never put actual API keys, passwords, or tokens as literal strings in the config file. The config can be committed to git; secrets should not be.</p>
+        <p>Always use <code>${ENV_VAR}</code> expansion for credentials. Never put actual API keys, passwords, or tokens as literal strings in the config file. The config can be committed to git; secrets should not be. (Note: the <code>${VAR}</code> form is the exam-correct syntax — <code>env://VAR</code> is a common distractor.)</p>
       </div>
+
+      <h3>Transports — stdio vs. SSE</h3>
+      <table>
+        <thead><tr><th>Transport</th><th>How it connects</th><th>Lifetime / gotcha</th></tr></thead>
+        <tbody>
+          <tr><td><code>stdio</code></td><td>Claude launches the server as a <strong>local child process</strong> and talks over stdin/stdout</td><td>Lifetime = the session — started and torn down with Claude</td></tr>
+          <tr><td><code>SSE</code></td><td>Claude connects to an <strong>already-running HTTP server</strong> (Server-Sent Events)</td><td class="td-trap">Must be reachable <strong>at startup</strong> — if it isn't, the whole server silently drops its tools (no error; the tools just never appear)</td></tr>
+        </tbody>
+      </table>
 
       <h3>MCP Scopes</h3>
       <table>
         <thead><tr><th>Scope</th><th>Config file</th><th>Who it's for</th></tr></thead>
         <tbody>
           <tr><td>Project</td><td><code>.mcp.json</code> in project root</td><td>Team-wide MCP servers, version-controlled</td></tr>
-          <tr><td>User</td><td><code>~/.claude/mcp.json</code></td><td>Personal MCP servers, machine-local</td></tr>
+          <tr><td>User</td><td><code>~/.claude.json</code></td><td>Personal MCP servers, machine-local</td></tr>
         </tbody>
       </table>
+      <div class="trap-box">
+        <div class="trap-title">MCP config never lives in CLAUDE.md</div>
+        <p>MCP servers are configured only in <code>.mcp.json</code> (project) or <code>~/.claude.json</code> (user). Adding an <code>[mcp_servers]</code> section to CLAUDE.md has <strong>no effect</strong> — it's a wrong answer. For Bedrock access, set <code>CLAUDE_CODE_USE_BEDROCK=1</code> plus AWS credentials — <strong>not</strong> <code>ANTHROPIC_API_KEY</code>.</p>
+      </div>
 
       <h3>MCP Resources vs. Tools</h3>
       <div class="kv-list">
         <div class="kv-row"><span class="kv-key">MCP Tools</span><span class="kv-val">Functions the model can call — like API calls (execute_query, send_message)</span></div>
         <div class="kv-row"><span class="kv-key">MCP Resources</span><span class="kv-val">Data sources the model can read — like files, database tables, documentation</span></div>
         <div class="kv-row"><span class="kv-key">Key distinction</span><span class="kv-val">Tools = actions; Resources = data access. Both exposed via MCP server.</span></div>
+      </div>
+
+      <h3>Static Resource vs. Resource Template</h3>
+      <div class="concept-box">
+        <p>MCP resources come in <strong>two forms</strong>, both <strong>read-only context injection</strong> — never side-effecting actions (that's what tools are for):</p>
+        <div class="kv-list" style="margin-top:8px;">
+          <div class="kv-row"><span class="kv-key">Static resource</span><span class="kv-val">A <strong>fixed URI</strong> with a known MIME type — one concrete document (e.g. <code>docs://runbook</code>).</span></div>
+          <div class="kv-row"><span class="kv-key">Resource template</span><span class="kv-val">An <strong>RFC 6570 URI template</strong> (e.g. <code>customers://{id}/profile</code>) — ONE declaration covers an unbounded set without enumerating each URI. Claude resolves <code>{id}</code>→42 and fetches <code>customers://42/profile</code>.</span></div>
+        </div>
+        <p style="margin-top:8px;">The template is the <strong>read-side complement</strong> to exposing a catalog as a resource instead of making N iterative tool calls: parameterized access covers the whole family from a single declaration.</p>
       </div>
 
       <h3>Rate Limiting — Where It Belongs</h3>
@@ -374,6 +457,11 @@ def load_support_doc_impl(url):
           <tr><td class="td-trap"><code>"github__*"</code> in allowedTools</td><td><code>"mcp__github__*"</code> — the mcp__ prefix is required</td></tr>
           <tr><td class="td-trap">Build custom MCP server for Jira</td><td>Use community MCP server (already exists and is maintained)</td></tr>
           <tr><td class="td-trap">Agent ignores custom tool; check config</td><td>Enrich tool description — avoidance is a description problem not config</td></tr>
+          <tr><td class="td-trap">Declare one static resource per customer to expose all profiles</td><td>Use a resource template — <code>customers://{id}/profile</code> covers the unbounded set from one declaration</td></tr>
+          <tr><td class="td-trap">SSE server started after Claude launches; tools missing</td><td>An SSE server must be reachable at startup or it silently drops all its tools — start it first</td></tr>
+          <tr><td class="td-trap">Add an <code>[mcp_servers]</code> section to CLAUDE.md</td><td>MCP servers live in <code>.mcp.json</code> or <code>~/.claude.json</code> — a CLAUDE.md section has no effect</td></tr>
+          <tr><td class="td-trap">Use <code>ANTHROPIC_API_KEY</code> for Bedrock access</td><td>Set <code>CLAUDE_CODE_USE_BEDROCK=1</code> + AWS credentials</td></tr>
+          <tr><td class="td-trap">Exponential backoff or parallelization to fix N iterative catalog calls</td><td>Both still make N requests — expose the data as an MCP resource; one read replaces N calls</td></tr>
         </tbody>
       </table>
 
@@ -383,7 +471,7 @@ def load_support_doc_impl(url):
         <tbody>
           <tr><td><strong>What they are</strong></td><td>Callable functions — the model invokes them like API calls</td><td>Data sources the model can read — files, tables, docs</td></tr>
           <tr><td><strong>Examples</strong></td><td>execute_query, send_message, create_ticket</td><td>Product catalog, issue summaries, schema definitions</td></tr>
-          <tr><td><strong>When to use resources</strong></td><td colspan="2">When an agent calls the same tool N times in a loop to build up a dataset → <strong>expose that data as an MCP resource instead</strong>. One read replaces N iterative tool calls.</td></tr>
+          <tr><td><strong>When to use resources</strong></td><td colspan="2">When an agent calls the same tool N times in a loop to build up a dataset → <strong>expose that data as an MCP resource instead</strong>. One read replaces N iterative tool calls. Also expose <strong>policy indexes and knowledge-base catalogs</strong> as resources so the agent sees what data exists <strong>without making exploratory discovery calls</strong>.</td></tr>
         </tbody>
       </table>
     </div>
@@ -395,6 +483,26 @@ def load_support_doc_impl(url):
       <div class="card-title">Tool Output Design <span class="sub-tag">2.5</span></div>
       <div class="concept-box">
         <p>Tool output shape determines context quality. Verbose outputs accumulate across tool calls and degrade agent reasoning. Return only what Claude needs to answer the question — not everything from the backend.</p>
+      </div>
+
+      <h3>Built-In Tool Selection — The Funnel</h3>
+      <div class="concept-box">
+        <p>The built-in tools form a narrowing funnel: <strong>Glob</strong> (find files by name) → <strong>Grep</strong> (find a symbol in file contents) → <strong>Read</strong> (<code>offset</code>/<code>limit</code>, not the whole file) → <strong>Edit</strong> (smallest change). Use absolute paths, and <strong>Read must precede Edit</strong>.</p>
+      </div>
+      <table>
+        <thead><tr><th>Task</th><th class="td-correct">Correct tool</th><th class="td-trap">Wrong tool</th></tr></thead>
+        <tbody>
+          <tr><td>Find files by <strong>name / path pattern</strong> (<code>**/*.ts</code>)</td><td class="td-correct">Glob</td><td class="td-trap">Grep, Bash find, Read on a directory</td></tr>
+          <tr><td>Search file <strong>contents</strong> (imports, callers, class names)</td><td class="td-correct">Grep</td><td class="td-trap">Glob (matches names, not contents)</td></tr>
+          <tr><td>Read an existing file</td><td class="td-correct">Read (with <code>offset</code>/<code>limit</code>)</td><td class="td-trap">Bash cat; reading the whole file blindly</td></tr>
+          <tr><td><strong>Targeted</strong> change at a unique anchor</td><td class="td-correct">Edit</td><td class="td-trap">Write (overwrites the whole file)</td></tr>
+          <tr><td><strong>Create a new file</strong> or full rewrite</td><td class="td-correct">Write</td><td class="td-trap">Edit (only for targeted changes)</td></tr>
+          <tr><td>Edit fails — anchor not unique</td><td class="td-correct">Read → modify → Write</td><td class="td-trap">Retry Edit with a slightly different string</td></tr>
+          <tr><td>Long-running command + parallel work</td><td class="td-correct">Bash with <code>run_in_background: true</code></td><td class="td-trap">Blocking Bash (halts all other work)</td></tr>
+        </tbody>
+      </table>
+      <div class="concept-box">
+        <p><strong>Large-repo understanding (500+ files):</strong> Glob for candidates → Read the few that matter → Grep for patterns across the rest. Never Read every file upfront — it blows the context window. When tracing an export renamed through wrapper modules (<code>Logger</code>→<code>sysLog</code>→<code>appLogger</code>), Grep each name in the chain separately; searching only the original name misses downstream callsites.</p>
       </div>
 
       <h3>Verbose vs. Trimmed Output</h3>
@@ -443,6 +551,16 @@ def load_support_doc_impl(url):
         <p style="margin-top:8px;">Agent fetches subsequent pages only if the task requires them — avoids flooding context in a single call.</p>
       </div>
 
+      <h3>Two Routing Gotchas</h3>
+      <div class="trap-box">
+        <div class="trap-title">PostToolUse fires on tool calls only</div>
+        <p>A PostToolUse hook triggers <strong>only when a tool is invoked</strong> — never on plain model text completions. You <strong>cannot</strong> use it to "check every response against a brand guide"; there's no tool call to hook.</p>
+      </div>
+      <div class="trap-box">
+        <div class="trap-title">Temperature is not a tool-selection lever</div>
+        <p>Raising temperature makes tool selection <strong>less</strong> reliable, not more "exploratory." It's an explicit wrong answer in routing questions — fix routing with descriptions and <code>tool_choice</code>, not temperature.</p>
+      </div>
+
       <h3>Exam Trap Table — 2.5</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
@@ -452,6 +570,11 @@ def load_support_doc_impl(url):
           <tr><td class="td-trap">Edit tool on non-unique string (appears 3 times)</td><td>Edit fails — fall back to Read + modify all + Write</td></tr>
           <tr><td class="td-trap">Rate limiting via PreToolUse hook sleep delay</td><td>Token bucket in MCP server — server-side, deterministic</td></tr>
           <tr><td class="td-trap">Return all 100K results in single tool response</td><td>Paginate — first page + total + next_page_token</td></tr>
+          <tr><td class="td-trap">Glob to search file contents</td><td>Glob matches names/paths only — use Grep for contents</td></tr>
+          <tr><td class="td-trap">Grep to find a file by name</td><td>Grep searches contents — use Glob for names/paths</td></tr>
+          <tr><td class="td-trap">Edit to create a new file</td><td>Use Write for new files; Edit needs an existing unique anchor and Read must precede it</td></tr>
+          <tr><td class="td-trap">PostToolUse hook to check every response against a brand guide</td><td>PostToolUse fires on tool calls only — not on text completions</td></tr>
+          <tr><td class="td-trap">Raise temperature to make tool selection more exploratory</td><td>Temperature is not a selection lever — higher temp reduces routing reliability</td></tr>
         </tbody>
       </table>
     </div>
@@ -470,7 +593,7 @@ def load_support_doc_impl(url):
           <span style="font-weight:700; color:#fff;">Tool Descriptions and Selection</span>
         </div>
         <div class="concept-box" style="margin-bottom:10px;">
-          <p>Descriptions are the <strong>primary signal</strong> for tool selection — vague or overlapping descriptions cause misrouting. Fix BOTH tools when two overlap; adding examples or routing layers is over-engineered.</p>
+          <p>Descriptions are the <strong>primary signal</strong> for tool selection — vague or overlapping descriptions cause misrouting. Every good description answers three questions: what it does / when to use / what it does NOT do. Fix BOTH tools when two overlap; adding examples or routing layers is over-engineered. <strong>But if descriptions are already good and a specific keyword misroutes, the cause is the system prompt</strong> — a distinct diagnosis. A <code>mode</code>/<code>action</code> param across fundamentally different behaviors is a signal to SPLIT the tool.</p>
         </div>
         <table>
           <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
@@ -479,6 +602,8 @@ def load_support_doc_impl(url):
             <tr><td class="td-trap">Add few-shot examples before fixing descriptions</td><td>Fix descriptions first — examples add overhead without fixing root cause</td></tr>
             <tr><td class="td-trap">Add routing classifier layer</td><td>Over-engineered — Claude already routes by description</td></tr>
             <tr><td class="td-trap">tool_choice: "auto" + stronger prompts</td><td>Use tool_choice: "any" or forced selection for guaranteed invocation</td></tr>
+            <tr><td class="td-trap">Good descriptions but a keyword misroutes → rewrite descriptions</td><td>System-prompt keyword sensitivity — fix the system prompt, not the tool layer</td></tr>
+            <tr><td class="td-trap">Keep a mode/action param that switches between different behaviors</td><td>Split into purpose-specific tools — a mode switch is a split signal</td></tr>
           </tbody>
         </table>
       </div>
@@ -490,7 +615,7 @@ def load_support_doc_impl(url):
           <span style="font-weight:700; color:#fff;">Tool Error Handling</span>
         </div>
         <div class="concept-box" style="margin-bottom:10px;">
-          <p>Return <code>isError: true</code> with structured metadata for failures. "0 results" is a <strong>success</strong>, not an error. Never silently suppress failures or terminate workflows on a single tool error.</p>
+          <p>Return <code>isError: true</code> with structured metadata for failures. Four categories — <code>transient</code> (retry) / <code>validation</code> (fix input) / <code>business</code> (explain policy, stop) / <code>permission</code> (escalate). "0 results" is a <strong>success</strong>, not an error. Never silently suppress failures or terminate workflows on a single tool error.</p>
         </div>
         <table>
           <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
@@ -498,6 +623,8 @@ def load_support_doc_impl(url):
             <tr><td class="td-trap">Return {} or [] for a service failure</td><td>isError: true — silent suppression prevents recovery</td></tr>
             <tr><td class="td-trap">0 results → isError: true</td><td>0 results is success — status: "success", results: []</td></tr>
             <tr><td class="td-trap">Retry with same params on validation error</td><td>isRetryable: false — must change approach or escalate</td></tr>
+            <tr><td class="td-trap">Escalate or retry a business-rule violation</td><td>business → explain the policy and STOP; escalate is for permission</td></tr>
+            <tr><td class="td-trap">Collapse all failures into "Operation failed"</td><td>Return category + isRetryable + suggestedAction so recovery can branch</td></tr>
             <tr><td class="td-trap">Echo raw promo code in error description</td><td>Descriptions must be customer-safe — never echo raw input or PII</td></tr>
           </tbody>
         </table>
@@ -510,7 +637,7 @@ def load_support_doc_impl(url):
           <span style="font-weight:700; color:#fff;">Tool Scope and Constraints</span>
         </div>
         <div class="concept-box" style="margin-bottom:10px;">
-          <p>Constraints belong in the <strong>tool implementation</strong> — not the system prompt. System prompt constraints are probabilistic; tool-level validation is deterministic. Each subagent gets only its role's tools.</p>
+          <p>Constraints belong in the <strong>tool implementation</strong> — not the system prompt. System prompt constraints are probabilistic; tool-level validation is deterministic. Tool-count targets: specialized subagent <strong>2–4</strong>, general agent <strong>4–6</strong>; ~15 tools degrades selection — fix by consolidate/split, not numbered-prefix renames. Each subagent gets only its role's tools, with one exception: a scoped cross-role tool for frequent, read-only, non-state-changing lookups.</p>
         </div>
         <table>
           <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
@@ -518,6 +645,7 @@ def load_support_doc_impl(url):
             <tr><td class="td-trap">Generic tool + system prompt constraint</td><td>Scope validation inside the tool implementation — deterministic</td></tr>
             <tr><td class="td-trap">6 overlapping tools for fine-grained control</td><td>Consolidate to 3 focused tools with clear descriptions</td></tr>
             <tr><td class="td-trap">All subagents get all tools</td><td>Each subagent gets only the tools scoped to its role</td></tr>
+            <tr><td class="td-trap">Cross-role tool that modifies state (process_refund)</td><td>Cross-role grants are read-only, non-state-changing lookups only</td></tr>
           </tbody>
         </table>
       </div>
@@ -529,7 +657,7 @@ def load_support_doc_impl(url):
           <span style="font-weight:700; color:#fff;">MCP Configuration</span>
         </div>
         <div class="concept-box" style="margin-bottom:10px;">
-          <p>Credentials always use <code>${ENV_VAR}</code> expansion. The <code>mcp__</code> prefix is required in allowedTools. Use community servers for standard integrations. If an agent avoids a custom MCP tool, it's a description problem — not config.</p>
+          <p>Credentials always use <code>${ENV_VAR}</code> expansion. Scopes: <code>.mcp.json</code> (project) vs. <code>~/.claude.json</code> (user) — never CLAUDE.md. The <code>mcp__</code> prefix is required in allowedTools. Use community servers for standard integrations. Transports: <strong>stdio</strong> (local child process) vs. <strong>SSE</strong> (must be reachable at startup or it silently drops its tools). Resources are read-only and come in two forms — <strong>static</strong> (fixed URI) vs. <strong>resource template</strong> (RFC 6570, e.g. <code>customers://{id}/profile</code>, covers an unbounded set from one declaration). If an agent avoids a custom MCP tool, it's a description problem — not config.</p>
         </div>
         <table>
           <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
@@ -539,6 +667,9 @@ def load_support_doc_impl(url):
             <tr><td class="td-trap">Build custom MCP server for Jira</td><td>Use community MCP server — already exists and maintained</td></tr>
             <tr><td class="td-trap">Agent ignores custom tool → check config</td><td>Enrich tool description — avoidance is a description problem, not config</td></tr>
             <tr><td class="td-trap">Rate limiting via system prompt</td><td>Token bucket in MCP server — server-side, deterministic</td></tr>
+            <tr><td class="td-trap">One static resource per customer for all profiles</td><td>Resource template — <code>customers://{id}/profile</code> covers the unbounded set</td></tr>
+            <tr><td class="td-trap">Backoff/parallelization to fix N iterative catalog calls</td><td>Expose as an MCP resource — one read replaces N calls</td></tr>
+            <tr><td class="td-trap">User-scope MCP at ~/.claude/mcp.json or config in CLAUDE.md</td><td>User scope is ~/.claude.json; CLAUDE.md holds no MCP config</td></tr>
           </tbody>
         </table>
       </div>
@@ -550,14 +681,17 @@ def load_support_doc_impl(url):
           <span style="font-weight:700; color:#fff;">Tool Output Design</span>
         </div>
         <div class="concept-box" style="margin-bottom:10px;">
-          <p>Return only business-relevant fields — verbose outputs accumulate and degrade context. Paginate large result sets. PostToolUse hooks should return the trimmed version only, never both summary and raw.</p>
+          <p>Built-in funnel: Glob (files by name) → Grep (contents) → Read (offset/limit) → Edit (smallest change); Read must precede Edit, use Write for new files. Return only business-relevant fields — verbose outputs accumulate and degrade context. Paginate large result sets. PostToolUse fires on tool calls only (not text) and should return the trimmed version only, never both summary and raw. Temperature is not a tool-selection lever.</p>
         </div>
         <table>
           <thead><tr><th>Trap</th><th>Correct</th></tr></thead>
           <tbody>
+            <tr><td class="td-trap">Glob to search contents / Grep to find files by name</td><td>Glob = names/paths; Grep = contents</td></tr>
             <tr><td class="td-trap">Return full backend response, let Claude ignore noise</td><td>Trim at source — only business-relevant fields</td></tr>
             <tr><td class="td-trap">PostToolUse hook returns summary AND raw output</td><td>Return ONLY the trimmed version — not both</td></tr>
-            <tr><td class="td-trap">Edit on non-unique string</td><td>Edit fails — Read + modify all + Write</td></tr>
+            <tr><td class="td-trap">PostToolUse to check every text response against a brand guide</td><td>PostToolUse fires on tool calls only — not on text completions</td></tr>
+            <tr><td class="td-trap">Edit on non-unique string / Edit to create a new file</td><td>Read + modify all + Write; use Write for new files</td></tr>
+            <tr><td class="td-trap">Raise temperature for more exploratory tool selection</td><td>Temperature is not a selection lever — it reduces routing reliability</td></tr>
             <tr><td class="td-trap">Return all 100K results in one response</td><td>Paginate — first page + total + next_page_token</td></tr>
           </tbody>
         </table>
@@ -568,12 +702,12 @@ def load_support_doc_impl(url):
   <!-- QUIZ -->
   <div id="quiz" class="tab-panel">
     <div class="card" style="margin-bottom:24px;">
-      <div class="card-title">Domain 2 Quiz — 12 Questions</div>
+      <div class="card-title">Domain 2 Quiz — 17 Questions</div>
       <p style="color:var(--muted); font-size:0.88rem;">Select an answer to see immediate feedback.</p>
     </div>
 
     <div class="quiz-q" id="q1">
-      <div class="q-num">Question 1 of 12</div>
+      <div class="q-num">Question 1 of 17</div>
       <div class="q-text">Two tools (<code>find_orders</code> and <code>get_order</code>) have similar descriptions and Claude keeps misrouting. What is the correct fix?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q1',false)">A. Rename and rewrite only <code>find_orders</code> — the better description will clarify the distinction.</div>
@@ -585,7 +719,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q2">
-      <div class="q-num">Question 2 of 12</div>
+      <div class="q-num">Question 2 of 17</div>
       <div class="q-text">A product search returns 0 results. How should the tool respond?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q2',false)">A. <code>{"isError": true, "errorCategory": "transient", "description": "No data returned"}</code></div>
@@ -597,7 +731,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q3">
-      <div class="q-num">Question 3 of 12</div>
+      <div class="q-num">Question 3 of 17</div>
       <div class="q-text">A tool returns <code>{"isError": true, "errorCategory": "validation", "isRetryable": false}</code>. What should the agent do?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q3',false)">A. Retry with the same parameters after a brief delay.</div>
@@ -605,11 +739,11 @@ def load_support_doc_impl(url):
         <div class="opt" onclick="answer(this,'q3',false)">C. Retry once, then escalate if it fails again.</div>
         <div class="opt" onclick="answer(this,'q3',false)">D. Ignore the error and return an empty response to the user.</div>
       </div>
-      <div class="explanation" id="exp-q3">isRetryable: false means same parameters will always fail. This is a validation or permission error — the input is wrong or access is denied. The agent must change approach (fix input, try alternative, or escalate). Retrying is wasteful.</div>
+      <div class="explanation" id="exp-q3">isRetryable: false means the same parameters will always fail. It's one of the three non-retryable categories — <code>validation</code> (bad input → fix it), <code>business</code> (policy blocks it → explain and stop), or <code>permission</code> (access denied → escalate). The agent must change approach, not retry. Only <code>transient</code> is retryable.</div>
     </div>
 
     <div class="quiz-q" id="q4">
-      <div class="q-num">Question 4 of 12</div>
+      <div class="q-num">Question 4 of 17</div>
       <div class="q-text">A tool has a URL parameter but should only fetch from <code>support.example.com</code>. Where should this constraint be enforced?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q4',false)">A. System prompt: "Only use support.example.com URLs."</div>
@@ -621,7 +755,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q5">
-      <div class="q-num">Question 5 of 12</div>
+      <div class="q-num">Question 5 of 17</div>
       <div class="q-text">An MCP config file needs a database password. How should it be stored?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q5',false)">A. As a literal string: <code>"DB_PASSWORD": "my_secret_password"</code></div>
@@ -633,7 +767,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q6">
-      <div class="q-num">Question 6 of 12</div>
+      <div class="q-num">Question 6 of 17</div>
       <div class="q-text">A PostToolUse hook returns both a formatted summary and the raw tool output. What's the problem?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q6',false)">A. The hook runs too slowly, delaying the agent's response.</div>
@@ -645,7 +779,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q7">
-      <div class="q-num">Question 7 of 12</div>
+      <div class="q-num">Question 7 of 17</div>
       <div class="q-text">An agent has 18 tools for various order operations, most with overlapping names. Selection reliability has degraded. What's the fix?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q7',false)">A. Add version numbers to tool names (order_lookup_v2).</div>
@@ -657,7 +791,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q8">
-      <div class="q-num">Question 8 of 12</div>
+      <div class="q-num">Question 8 of 17</div>
       <div class="q-text">The Edit tool fails with "match is not unique." What is the fallback procedure?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q8',false)">A. Use Grep to find the unique occurrence, then Edit with more context.</div>
@@ -669,7 +803,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q9">
-      <div class="q-num">Question 9 of 12</div>
+      <div class="q-num">Question 9 of 17</div>
       <div class="q-text">A tool description says "Retrieve information about an order." Why is this problematic?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q9',false)">A. It's too short — descriptions need to be at least 100 words.</div>
@@ -681,7 +815,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q10">
-      <div class="q-num">Question 10 of 12</div>
+      <div class="q-num">Question 10 of 17</div>
       <div class="q-text">A tool returns an error description that includes the user's submitted promo code: "Invalid promo code: SUMMER25." What's wrong?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q10',false)">A. Nothing — echoing input helps the model understand the error context.</div>
@@ -693,7 +827,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q11">
-      <div class="q-num">Question 11 of 12</div>
+      <div class="q-num">Question 11 of 17</div>
       <div class="q-text">An inventory tool could return 50,000 product records. What output design handles this correctly?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q11',false)">A. Return all 50,000 records — let Claude sort through them.</div>
@@ -705,7 +839,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q12">
-      <div class="q-num">Question 12 of 12</div>
+      <div class="q-num">Question 12 of 17</div>
       <div class="q-text">An MCP server needs to enforce rate limiting (max 10 calls per second). Where should this be implemented?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q12',false)">A. System prompt: "Wait 100ms between tool calls."</div>
@@ -716,9 +850,69 @@ def load_support_doc_impl(url):
       <div class="explanation" id="exp-q12">Rate limiting belongs in the MCP server — token bucket or similar server-side mechanism. System prompts and descriptions are probabilistic. PreToolUse hooks can be bypassed or inconsistent. Server-side enforcement is deterministic.</div>
     </div>
 
+    <div class="quiz-q" id="q13">
+      <div class="q-num">Question 13 of 17</div>
+      <div class="q-text">An MCP server must expose read access to every customer's profile, and the customer set grows constantly. What's the right design?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q13',false)">A. Declare a separate static resource with a fixed URI for each customer profile.</div>
+        <div class="opt" onclick="answer(this,'q13',true)">B. Define a resource template — <code>customers://{id}/profile</code> — one declaration covering the unbounded set; Claude resolves <code>{id}</code> at read time.</div>
+        <div class="opt" onclick="answer(this,'q13',false)">C. Expose a <code>get_customer_profile</code> tool and call it once per customer in a loop.</div>
+        <div class="opt" onclick="answer(this,'q13',false)">D. Add each profile URI to <code>allowedTools</code> as new customers are created.</div>
+      </div>
+      <div class="explanation" id="exp-q13">A resource template uses an RFC 6570 URI template so one declaration parameterizes access to an unbounded set — Claude resolves <code>{id}</code>→42 and fetches <code>customers://42/profile</code>. A static resource is a single fixed URI (good for one known document). Resources are read-only context injection, not side-effecting tools, so a per-customer tool loop is the wrong shape.</div>
+    </div>
+
+    <div class="quiz-q" id="q14">
+      <div class="q-num">Question 14 of 17</div>
+      <div class="q-text">An MCP server configured with the SSE transport shows none of its tools when Claude starts — but no error appears. Most likely cause?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q14',false)">A. The <code>mcp__</code> prefix is missing from <code>allowedTools</code>.</div>
+        <div class="opt" onclick="answer(this,'q14',true)">B. SSE connects to an already-running HTTP server — if it isn't reachable at startup, the server silently drops all its tools. Start it first.</div>
+        <div class="opt" onclick="answer(this,'q14',false)">C. SSE requires credentials to be stored as literal strings, not <code>${VAR}</code>.</div>
+        <div class="opt" onclick="answer(this,'q14',false)">D. SSE is invalid — only stdio can expose tools to Claude.</div>
+      </div>
+      <div class="explanation" id="exp-q14"><code>stdio</code> launches the server as a local child process (lifetime = session). <code>SSE</code> connects to an already-running HTTP server and must be reachable at startup, or it silently drops its tools — no error, the tools just never appear. The <code>mcp__</code> prefix affects permissions, not whether tools load.</div>
+    </div>
+
+    <div class="quiz-q" id="q15">
+      <div class="q-num">Question 15 of 17</div>
+      <div class="q-text">You need to find every file that imports the <code>auth</code> module across a large repo. Which built-in tool?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q15',false)">A. <code>Glob</code> with <code>**/*.ts</code>.</div>
+        <div class="opt" onclick="answer(this,'q15',true)">B. <code>Grep</code> for the import string across file contents.</div>
+        <div class="opt" onclick="answer(this,'q15',false)">C. <code>Read</code> each file and scan for the import.</div>
+        <div class="opt" onclick="answer(this,'q15',false)">D. <code>Bash find</code> for the module name.</div>
+      </div>
+      <div class="explanation" id="exp-q15">Grep searches file contents (imports, callers, strings). Glob matches file names/paths only and can't see contents. Reading every file blows the context window; Bash find duplicates Glob and still can't match contents.</div>
+    </div>
+
+    <div class="quiz-q" id="q16">
+      <div class="q-num">Question 16 of 17</div>
+      <div class="q-text">A synthesis subagent constantly needs a simple read-only <code>verify_fact</code> lookup owned by another role. Routing each one through the coordinator adds latency. Correct move?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q16',false)">A. Give the subagent the full coordinator tool set so it's self-sufficient.</div>
+        <div class="opt" onclick="answer(this,'q16',true)">B. Grant the subagent a scoped <code>verify_fact</code> tool directly — it's a frequent, read-only, non-state-changing lookup.</div>
+        <div class="opt" onclick="answer(this,'q16',false)">C. Grant it <code>verify_fact</code> and <code>process_refund</code> together for flexibility.</div>
+        <div class="opt" onclick="answer(this,'q16',false)">D. Keep routing everything through the coordinator — subagents never get cross-role tools.</div>
+      </div>
+      <div class="explanation" id="exp-q16">Grant a cross-role tool only when it is (a) frequent, (b) read-only, and (c) non-state-changing. <code>verify_fact</code> qualifies. State-changing tools like <code>process_refund</code> stay coordinator-only, and granting the full set over-privileges the subagent.</div>
+    </div>
+
+    <div class="quiz-q" id="q17">
+      <div class="q-num">Question 17 of 17</div>
+      <div class="q-text">A single tool takes a <code>mode</code> parameter that switches it between "search", "create", and "delete" behaviors, and routing is unreliable. Best fix?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q17',false)">A. Add few-shot examples showing each mode in the system prompt.</div>
+        <div class="opt" onclick="answer(this,'q17',true)">B. Split it into purpose-specific tools — a mode/action param switching between fundamentally different behaviors is a split signal.</div>
+        <div class="opt" onclick="answer(this,'q17',false)">C. Raise temperature so Claude explores the modes more freely.</div>
+        <div class="opt" onclick="answer(this,'q17',false)">D. Document the modes more thoroughly in the single tool's description.</div>
+      </div>
+      <div class="explanation" id="exp-q17">A mode/action parameter that switches a tool between fundamentally different behaviors is a signal to SPLIT into purpose-specific tools, each answering what-it-does / when-to-use / what-it-does-NOT-do. Examples and longer docs don't fix the structural overlap; raising temperature harms routing reliability.</div>
+    </div>
+
     <button id="quiz-btn" onclick="showScore()">Show My Score</button>
     <div class="quiz-score" id="quiz-score">
-      <div class="score-num" id="score-display">0/12</div>
+      <div class="score-num" id="score-display">0/17</div>
       <p id="score-msg" style="color:var(--muted); margin-top:8px;"></p>
     </div>
   </div>
@@ -747,8 +941,8 @@ def load_support_doc_impl(url):
   }
   function showScore() {
     const got = Object.values(scores).filter(Boolean).length;
-    document.getElementById('score-display').textContent = got + '/12';
-    const pct = Math.round(got / 12 * 100);
+    document.getElementById('score-display').textContent = got + '/17';
+    const pct = Math.round(got / 17 * 100);
     const msg = pct >= 90 ? 'Excellent — Domain 2 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the subdomain tabs again.';
     document.getElementById('score-msg').textContent = pct + '% — ' + msg;
     document.getElementById('quiz-score').classList.add('show');

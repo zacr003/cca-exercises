@@ -153,6 +153,12 @@
 messages.append({"role": "user", "content": tool_results})  # ONE message</code></pre>
       </div>
 
+      <h3>Crash Recovery Mid-Tool-Call</h3>
+      <div class="trap-box">
+        <div class="trap-title">Missing tool_result = 400 Error</div>
+        <p>Every <code>tool_use</code> block requires a matching <code>tool_result</code> in the next user message — a <strong>missing <code>tool_result</code> for a <code>tool_use</code> returns a 400 error</strong>. After a crash mid-tool-call, you must still supply a <code>tool_result</code> (a retry result <em>or</em> an error result) for the pending <code>tool_use</code> before continuing. Each result also needs the matching <code>tool_use_id</code> — without it the model can't connect output to its call and repeats the lookup.</p>
+      </div>
+
       <h3>Exam Trap Table — 1.1</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
@@ -162,6 +168,7 @@ messages.append({"role": "user", "content": tool_results})  # ONE message</code>
           <tr><td class="td-trap">Send one tool_result per message for parallel calls</td><td>All tool_results in ONE user message</td></tr>
           <tr><td class="td-trap">Execute only the first tool_use block per turn</td><td>Execute ALL tool_use blocks in the response</td></tr>
           <tr><td class="td-trap">tool_result blocks mixed with text blocks arbitrarily</td><td>tool_result blocks must appear FIRST in the content array</td></tr>
+          <tr><td class="td-trap">Skip the pending tool_result after a mid-call crash</td><td>Supply a tool_result (retry or error) for the pending tool_use — a missing one is a 400 error</td></tr>
         </tbody>
       </table>
     </div>
@@ -173,6 +180,10 @@ messages.append({"role": "user", "content": tool_results})  # ONE message</code>
       <div class="card-title">Multi-Agent Coordinator / Subagent Architecture <span class="sub-tag">1.2</span></div>
       <div class="concept-box">
         <p>Subagents do <strong>NOT inherit coordinator context</strong>. Every subagent starts fresh. Pass everything it needs explicitly via system prompt + task message. The coordinator's full conversation history is invisible to subagents.</p>
+      </div>
+
+      <div class="concept-box">
+        <p><strong>Naming note — <code>Agent</code> vs <code>Task</code>:</strong> the subagent-spawning tool is now <code>Agent</code> in current Claude Agent SDK releases; <code>Task</code> is the legacy name. Both are accepted on the exam — the mechanic is identical, so apply the same coordinator-subagent rules whichever name appears.</p>
       </div>
 
       <h3>Coordinator Pattern (4 Steps)</h3>
@@ -209,6 +220,36 @@ messages.append({"role": "user", "content": tool_results})  # ONE message</code>
         </div>
       </div>
 
+      <h3>Dynamic Subagent Selection</h3>
+      <div class="concept-box">
+        <p>The coordinator should analyze what the query actually needs and invoke <strong>only the subagents required</strong> — NOT always route through the full pipeline. A simple request (e.g., resend a tracking link) should not trigger every specialist subagent.</p>
+      </div>
+
+      <h3>Coordinator Dispatch Beats Nested Spawning</h3>
+      <div class="good-box">
+        <div class="good-title">Correct — Flat Hub-and-Spoke Dispatch</div>
+        <p>When a task needs parallel work (e.g., reviewing legal citations across documents), the coordinator dispatching multiple subagents directly <strong>outperforms</strong> giving one subagent the authority to spawn its own nested subagents. Flat dispatch preserves the three hub properties: <strong>observability</strong>, <strong>consistent error handling</strong>, and <strong>controlled information flow</strong>.</p>
+      </div>
+      <div class="bad-box">
+        <div class="bad-title">Wrong — Nested Subagent Spawning</div>
+        <p>Letting a subagent spawn its own subagents breaks the hub role — you lose observability, consistent error handling, and controlled information flow.</p>
+      </div>
+
+      <h3>Cross-Role Tool Delegation — Read-Only Only</h3>
+      <div class="concept-box">
+        <p>Delegate a cross-role tool to a subagent <strong>only</strong> when it is (a) <strong>frequently needed</strong>, (b) <strong>read-only</strong>, and (c) <strong>changes no state</strong>. Example: grant a refund-policy subagent scoped access to <code>lookup_order</code> so it can read delivery dates without a coordinator round trip. Keep state-changing tools like <code>process_refund</code> and <code>escalate_to_human</code> coordinator-only.</p>
+      </div>
+      <div class="trap-box">
+        <div class="trap-title">"Keep ALL tools coordinator-only" Trap</div>
+        <p>Keeping every tool coordinator-only sounds safe, but it adds unnecessary latency for high-frequency read-only lookups. The correct move is to delegate the read-only lookup and retain only the state-changing tools at the coordinator.</p>
+      </div>
+
+      <h3>max_turns Circuit Breaker</h3>
+      <div class="trap-box">
+        <div class="trap-title">Most Common Anti-Pattern</div>
+        <p>An agentic loop without a <code>max_turns</code> guard is the most common anti-pattern. Iteration caps are <strong>safety nets, not the primary control signal</strong> (<code>stop_reason</code> remains primary) — but omitting the turn-count exit entirely is a design flaw. Always include one.</p>
+      </div>
+
       <h3>Exam Trap Table — 1.2</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
@@ -219,6 +260,10 @@ messages.append({"role": "user", "content": tool_results})  # ONE message</code>
           <tr><td class="td-trap">Hold independent agents until unrelated dependencies clear</td><td>Start independent agents immediately — only serialize at actual dependency edges</td></tr>
           <tr><td class="td-trap">Give coordinator step-by-step execution instructions</td><td>Coordinator specifies goals + quality criteria; agents determine how</td></tr>
           <tr><td class="td-trap">Subagents communicate directly with each other</td><td>All inter-agent communication routes through the coordinator</td></tr>
+          <tr><td class="td-trap">Let one subagent spawn its own nested subagents</td><td>Coordinator dispatches directly — preserves observability, error handling, controlled information flow</td></tr>
+          <tr><td class="td-trap">Always route every query through the full subagent pipeline</td><td>Dynamic selection — invoke only the subagents the query actually needs</td></tr>
+          <tr><td class="td-trap">Keep ALL tools coordinator-only to be safe</td><td>Delegate frequent read-only lookups (e.g. lookup_order); keep state-changing tools coordinator-only</td></tr>
+          <tr><td class="td-trap">Run agentic loops with no max_turns guard</td><td>Always include a turn-count exit — its absence is the most common anti-pattern</td></tr>
         </tbody>
       </table>
     </div>
@@ -238,6 +283,12 @@ messages.append({"role": "user", "content": tool_results})  # ONE message</code>
         <div class="kv-row"><span class="kv-key">What NOT to pass</span><span class="kv-val">Conversational prose summaries — paraphrasing loses specificity</span></div>
         <div class="kv-row"><span class="kv-key">Include</span><span class="kv-val">Source attribution (URLs, doc names, page numbers) in structured format</span></div>
         <div class="kv-row"><span class="kv-key">Scope</span><span class="kv-val">Each subagent gets only tools relevant to its role — no cross-specialization access</span></div>
+        <div class="kv-row"><span class="kv-key">Decision criteria</span><span class="kv-val">The quality expectations the subagent needs to judge its own output — not just raw facts</span></div>
+      </div>
+
+      <div class="trap-box">
+        <div class="trap-title">Pass Criteria, Not Only Facts</div>
+        <p>A subagent task prompt must include the <strong>decision criteria / quality expectations</strong> the subagent needs to evaluate its own output — verified facts, relevant tool outputs, and prior findings, <em>plus</em> the standard it should judge against. Passing only raw facts and omitting the criteria is a named trap: the subagent can't tell good output from bad.</p>
       </div>
 
       <h3>Why Structure Beats Prose</h3>
@@ -260,6 +311,7 @@ messages.append({"role": "user", "content": tool_results})  # ONE message</code>
           <tr><td class="td-trap">Pass prose summary to subagent for efficiency</td><td>Pass structured JSON — exact values survive handoffs, paraphrasing doesn't</td></tr>
           <tr><td class="td-trap">All subagents share a common tool pool</td><td>Scoped per role — web subagent gets search tools only, report subagent gets write tools only</td></tr>
           <tr><td class="td-trap">Subagent receives coordinator's system prompt automatically</td><td>Nothing is inherited — inject system prompt explicitly per subagent</td></tr>
+          <tr><td class="td-trap">Pass only raw facts to the subagent</td><td>Also pass the decision criteria / quality expectations it needs to judge its own output</td></tr>
         </tbody>
       </table>
     </div>
@@ -308,6 +360,28 @@ messages.append({"role": "user", "content": tool_results})  # ONE message</code>
         <p>Description: "Process a refund for a verified customer. Requires prior successful verify_customer call — will fail with error if unverified."</p>
       </div>
 
+      <h3>tool_choice Forced Selection</h3>
+      <div class="concept-box">
+        <p>A third deterministic mechanism: <code>tool_choice: {"type":"tool","name":"X"}</code> on the first turn <strong>guarantees a specific tool runs FIRST</strong>, then you switch back to <code>"auto"</code> for subsequent turns. Use it when you need a specific tool to run first without blocking the rest of the workflow — a complement to PreToolUse hooks, not a replacement.</p>
+      </div>
+      <pre><code># First turn — force verify_customer to run before anything else
+tool_choice = {"type": "tool", "name": "verify_customer"}
+# ...after it runs, switch back so the model chooses freely
+tool_choice = {"type": "auto"}</code></pre>
+      <div class="trap-box">
+        <div class="trap-title">Forced Selection vs PreToolUse Hook</div>
+        <p>Don't confuse the two. <strong>Forced selection = run this tool FIRST.</strong> <strong>A hook = don't run this tool until prerequisites are allowed.</strong> Forced selection guarantees a tool is invoked; a PreToolUse hook blocks a tool from running until conditions are met.</p>
+      </div>
+
+      <h3>Stem-Keyword Heuristic — "must / always / guarantee / before"</h3>
+      <div class="concept-box">
+        <p>High-yield exam tell: when a question stem contains <strong>must</strong>, <strong>always</strong>, <strong>guarantee</strong>, or <strong>before</strong> (as in "verify before the model sees / before the financial action"), those words <strong>rule out a system-prompt answer</strong> — a prompt is probabilistic with a non-zero failure rate. The answer is <strong>deterministic enforcement</strong>: a PreToolUse hook, a programmatic prerequisite gate, or <code>tool_choice</code> forced selection.</p>
+      </div>
+      <div class="trap-box">
+        <div class="trap-title">Stem-Keyword Trap</div>
+        <p>Example: a user "claims an emergency to skip MFA." The stem says verification <em>must always</em> happen — so "strengthen the system-prompt language" is wrong. Deterministic hook enforcement is the answer whenever these keywords appear.</p>
+      </div>
+
       <h3>Exam Trap Table — 1.4</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
@@ -316,6 +390,8 @@ messages.append({"role": "user", "content": tool_results})  # ONE message</code>
           <tr><td class="td-trap">Add a routing classifier to manage tool selection order</td><td>Write precise tool descriptions — model selects naturally based on intent</td></tr>
           <tr><td class="td-trap">Read-only operations (balance lookup) require identity verification</td><td>Only financial operations need verification — good descriptions distinguish this</td></tr>
           <tr><td class="td-trap">Shared state for prerequisite tracking requires a database</td><td>In-memory flag, temp file, or session store all work — just persist across tool calls</td></tr>
+          <tr><td class="td-trap">Confuse tool_choice forced selection with a PreToolUse hook</td><td>Forced selection = run this FIRST; a hook = don't run until allowed</td></tr>
+          <tr><td class="td-trap">Stem says "must / always / guarantee / before" → strengthen the system prompt</td><td>Those keywords rule out a prompt answer — use deterministic enforcement (hook, gate, or forced selection)</td></tr>
         </tbody>
       </table>
     </div>
@@ -411,6 +487,37 @@ sys.exit(0)</code></pre>
         <p style="margin-top:8px;">Example: block <code>process_refund</code> above $500 AND return "Refund exceeds $500 limit — call <code>escalate_to_human</code> instead." This enforces policy AND correct workflow in one step rather than leaving the agent stuck.</p>
       </div>
 
+      <h3>Only Two Hook Events Exist</h3>
+      <div class="trap-box">
+        <div class="trap-title">Fabricated Hook Names Are Recurring Distractors</div>
+        <p>The only valid hook events are <code>PreToolUse</code> and <code>PostToolUse</code>. Names like <code>PreToolCall</code> and <code>OnToolReturn</code> <strong>do not exist</strong> — they are fabricated exam distractors and will never be a correct answer.</p>
+      </div>
+
+      <h3>No Dedicated Delete Tool</h3>
+      <div class="trap-box">
+        <div class="trap-title">File Deletion = Bash + rm</div>
+        <p>There is <strong>no dedicated Delete tool</strong>. A "Delete" or "RemoveFile" tool does not exist — file deletion is done through the <code>Bash</code> tool with <code>rm</code>. The built-in tools are <code>Read</code>, <code>Write</code>, <code>Edit</code>, <code>Bash</code>, <code>Grep</code>, and <code>Glob</code>.</p>
+      </div>
+
+      <h3>Why Deterministic — the 12% Number</h3>
+      <div class="concept-box">
+        <p>The canonical framing: a <strong>well-crafted system prompt can still fail ~12% of the time</strong>. At financial/compliance scale that failure rate is unacceptable — which is exactly why deterministic enforcement (hooks / gates) is the correct tool for rules that must always hold.</p>
+      </div>
+
+      <h3>Prerequisite-Gate Pattern with a State File</h3>
+      <div class="good-box">
+        <div class="good-title">Correct — PostToolUse Writes, PreToolUse Reads</div>
+        <p>A hook-based prerequisite gate using a shared state file: <code>PostToolUse</code> on <code>get_customer</code> writes <code>{"verified": true}</code>; <code>PreToolUse</code> on <code>process_refund</code> reads it and <strong>denies if the flag is missing</strong> or not <code>true</code>. This enforces the sequence deterministically, independent of the model.</p>
+      </div>
+      <pre><code># PostToolUse on get_customer — record that verification happened
+state_path = Path(os.environ.get("TEMP", "C:/Windows/Temp")) / "refund_state.json"
+state_path.write_text(json.dumps({"verified": True}))
+
+# PreToolUse on process_refund — deny unless the state file confirms verification
+state = json.loads(state_path.read_text()) if state_path.exists() else {}
+if not state.get("verified"):
+    # emit permissionDecision: "deny" and exit 2</code></pre>
+
       <h3>Exam Trap Table — 1.5</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
@@ -421,6 +528,8 @@ sys.exit(0)</code></pre>
           <tr><td class="td-trap">PostToolUse PII hook keeps full conversation history clean</td><td>Only current result is annotated — sanitize at tool source for true hygiene</td></tr>
           <tr><td class="td-trap">Hook denial message only blocks — doesn't guide</td><td>Redirect-to-alternative: block AND tell agent what to call instead</td></tr>
           <tr><td class="td-trap">Hooks are optional quality improvements</td><td>For business rules that MUST hold (identity gates, production writes), hooks are the required approach</td></tr>
+          <tr><td class="td-trap">Select <code>PreToolCall</code> or <code>OnToolReturn</code> as a hook event</td><td>Only <code>PreToolUse</code> and <code>PostToolUse</code> exist — the others are fabricated distractors</td></tr>
+          <tr><td class="td-trap">Use a "Delete" / "RemoveFile" tool to remove a file</td><td>No such tool exists — delete via Bash + <code>rm</code></td></tr>
         </tbody>
       </table>
     </div>
@@ -467,6 +576,12 @@ sys.exit(0)</code></pre>
 # Per-file review of order_service.py alone misses it
 # Only the cross-file integration pass catches it</code></pre>
 
+      <h3>Granularity Heuristic — How Finely to Decompose</h3>
+      <div class="concept-box">
+        <p>Decompose to the level where each subtask can be <strong>clearly specified AND independently verified</strong>. Finer granularity buys parallelism but adds coordination overhead, more API calls, and more failure points; coarser risks context limits and makes retry harder.</p>
+        <p style="margin-top:8px;"><strong>Merge two subtasks into one step</strong> when they always run back-to-back with no branching between them (or when one's output is needed to validate the other — then sequence them explicitly).</p>
+      </div>
+
       <h3>Exam Trap Table — 1.6</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
@@ -475,6 +590,7 @@ sys.exit(0)</code></pre>
           <tr><td class="td-trap">Adaptive decomposition for structured, predictable tasks</td><td>Adaptive adds complexity for known-scope tasks — use prompt chaining</td></tr>
           <tr><td class="td-trap">Prompt chaining for open-ended security investigations</td><td>Adaptive decomposition — steps can't be written before triage runs</td></tr>
           <tr><td class="td-trap">Coordinator provides step-by-step execution instructions</td><td>Coordinator specifies goals + quality criteria; agents determine HOW</td></tr>
+          <tr><td class="td-trap">Split every subtask as finely as possible for max parallelism</td><td>Decompose to where each subtask is clearly specified AND independently verifiable; merge back-to-back steps with no branching</td></tr>
         </tbody>
       </table>
     </div>
@@ -526,6 +642,27 @@ sys.exit(0)</code></pre>
         <p>Programmatically loadable JSON at a fixed path. Coordinator reads it, determines what's done vs. remaining, injects only relevant state into new prompts.</p>
       </div>
 
+      <h3>Where to Inject a Resume Summary</h3>
+      <div class="good-box">
+        <div class="good-title">Correct — System Prompt or First User Turn</div>
+        <p>Inject a resume summary in the <strong>system prompt</strong> or the <strong>first user turn</strong>, with a clear label. Prefer explicit structured summaries authored at decision checkpoints over relying on auto-compaction (which optimizes for token efficiency, not task fidelity).</p>
+      </div>
+      <div class="bad-box">
+        <div class="bad-title">Wrong — As an Assistant Turn</div>
+        <p><strong>Never</strong> inject the summary as an assistant turn. The model treats authored context as its own prior words, causing self-referential errors — it "remembers" doing work it never did.</p>
+      </div>
+
+      <h3>fork_session Cannot Clear Stale Evidence</h3>
+      <div class="trap-box">
+        <div class="trap-title">Fork ≠ Fresh Data</div>
+        <p><code>fork_session</code> copies the baseline context — <strong>old tool results remain in the forked context</strong>, so it cannot clear stale evidence. When data has changed since prior work, the correct move is <strong>resume + targeted revalidation</strong> of the changed items, not fork (and not a confidence score as a validation proxy).</p>
+      </div>
+
+      <h3>Explore Subagent</h3>
+      <div class="concept-box">
+        <p>The read-only <strong>Explore</strong> subagent isolates verbose discovery output and returns summaries to the main session — keeping the coordinator's context clean during broad investigation.</p>
+      </div>
+
       <h3>Exam Trap Table — 1.7</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
@@ -534,6 +671,8 @@ sys.exit(0)</code></pre>
           <tr><td class="td-trap">Resume a session when files have changed significantly</td><td>Fresh start + injected summary of what changed — stale tool results mislead the model</td></tr>
           <tr><td class="td-trap">Freeform prose scratchpad is reliable for crash recovery</td><td>Machine-readable JSON manifest at a fixed path — coordinator determines done vs. remaining</td></tr>
           <tr><td class="td-trap">fork_session for continuing a named investigation</td><td>fork_session = divergent exploration from same baseline; --resume = continue a named session</td></tr>
+          <tr><td class="td-trap">fork_session to escape stale tool results</td><td>Fork keeps old results in context — resume + targeted revalidation instead</td></tr>
+          <tr><td class="td-trap">Inject the resume summary as an assistant turn</td><td>System prompt or first user turn — an assistant turn causes self-referential errors</td></tr>
         </tbody>
       </table>
     </div>
@@ -688,12 +827,12 @@ sys.exit(0)</code></pre>
   <!-- QUIZ -->
   <div id="quiz" class="tab-panel">
     <div class="card" style="margin-bottom:24px;">
-      <div class="card-title">Domain 1 Quiz — 12 Questions</div>
+      <div class="card-title">Domain 1 Quiz — 18 Questions</div>
       <p style="color:var(--muted); font-size:0.88rem;">Select an answer to see immediate feedback.</p>
     </div>
 
     <div class="quiz-q" id="q1">
-      <div class="q-num">Question 1 of 12</div>
+      <div class="q-num">Question 1 of 18</div>
       <div class="q-text">The model returns <code>stop_reason: "max_tokens"</code>. What should the agentic loop do?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q1',false)">A. Treat it as <code>end_turn</code> — the model is done.</div>
@@ -705,7 +844,7 @@ sys.exit(0)</code></pre>
     </div>
 
     <div class="quiz-q" id="q2">
-      <div class="q-num">Question 2 of 12</div>
+      <div class="q-num">Question 2 of 18</div>
       <div class="q-text">The model returns a response with 3 tool_use blocks. How should the loop handle them?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q2',true)">A. Execute all 3, collect all results, then return all 3 tool_results in ONE user message.</div>
@@ -717,7 +856,7 @@ sys.exit(0)</code></pre>
     </div>
 
     <div class="quiz-q" id="q3">
-      <div class="q-num">Question 3 of 12</div>
+      <div class="q-num">Question 3 of 18</div>
       <div class="q-text">A coordinator dispatches a subagent with the task: "Analyze what we discussed earlier about microservices." The subagent returns generic output. Why?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q3',false)">A. The subagent model is less capable than the coordinator model.</div>
@@ -729,7 +868,7 @@ sys.exit(0)</code></pre>
     </div>
 
     <div class="quiz-q" id="q4">
-      <div class="q-num">Question 4 of 12</div>
+      <div class="q-num">Question 4 of 18</div>
       <div class="q-text">Which enforcement approach guarantees that identity verification happens before a financial operation?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q4',false)">A. System prompt instruction: "Always verify identity before processing refunds."</div>
@@ -741,7 +880,7 @@ sys.exit(0)</code></pre>
     </div>
 
     <div class="quiz-q" id="q5">
-      <div class="q-num">Question 5 of 12</div>
+      <div class="q-num">Question 5 of 18</div>
       <div class="q-text">A PostToolUse hook strips email addresses from tool results. A customer's email appeared in turn 3 of a 10-turn conversation. Is turn 3's email now redacted?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q5',false)">A. Yes — PostToolUse hooks retroactively clean conversation history.</div>
@@ -753,7 +892,7 @@ sys.exit(0)</code></pre>
     </div>
 
     <div class="quiz-q" id="q6">
-      <div class="q-num">Question 6 of 12</div>
+      <div class="q-num">Question 6 of 18</div>
       <div class="q-text">A security audit of an unknown codebase has an open-ended scope. Which decomposition strategy is correct?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q6',false)">A. Prompt chaining — define fixed steps: scan → analyze → report.</div>
@@ -765,7 +904,7 @@ sys.exit(0)</code></pre>
     </div>
 
     <div class="quiz-q" id="q7">
-      <div class="q-num">Question 7 of 12</div>
+      <div class="q-num">Question 7 of 18</div>
       <div class="q-text">A code review of a 15-file codebase is done in a single pass. What specific problem does this cause?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q7',true)">A. Attention dilutes across files; local and cross-file issues blur together; cross-file bugs that require seeing multiple files are missed.</div>
@@ -777,7 +916,7 @@ sys.exit(0)</code></pre>
     </div>
 
     <div class="quiz-q" id="q8">
-      <div class="q-num">Question 8 of 12</div>
+      <div class="q-num">Question 8 of 18</div>
       <div class="q-text">A coordinator receives structured JSON from two subagents and needs to produce a final answer. What should it do?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q8',false)">A. Concatenate the two outputs and return them directly to the user.</div>
@@ -789,7 +928,7 @@ sys.exit(0)</code></pre>
     </div>
 
     <div class="quiz-q" id="q9">
-      <div class="q-num">Question 9 of 12</div>
+      <div class="q-num">Question 9 of 18</div>
       <div class="q-text">What is the correct way to determine if the agentic loop should stop?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q9',false)">A. Check if the response text contains "I have completed" or "Done."</div>
@@ -801,7 +940,7 @@ sys.exit(0)</code></pre>
     </div>
 
     <div class="quiz-q" id="q10">
-      <div class="q-num">Question 10 of 12</div>
+      <div class="q-num">Question 10 of 18</div>
       <div class="q-text">A PreToolUse hook should block a file write and prompt the user for approval. Which exit code achieves this?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q10',false)">A. exit 0 — allow</div>
@@ -813,7 +952,7 @@ sys.exit(0)</code></pre>
     </div>
 
     <div class="quiz-q" id="q11">
-      <div class="q-num">Question 11 of 12</div>
+      <div class="q-num">Question 11 of 18</div>
       <div class="q-text">A structured code review pipeline has fixed steps: per-file analysis → cross-file integration → severity ranking. Which decomposition strategy is this?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q11',true)">A. Prompt chaining — steps are known upfront; each output feeds the next.</div>
@@ -825,7 +964,7 @@ sys.exit(0)</code></pre>
     </div>
 
     <div class="quiz-q" id="q12">
-      <div class="q-num">Question 12 of 12</div>
+      <div class="q-num">Question 12 of 18</div>
       <div class="q-text">A tool called <code>process_refund</code> keeps being called without prior identity verification, despite a system prompt instruction. What is the correct fix?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q12',false)">A. Make the system prompt instruction more explicit and detailed.</div>
@@ -836,9 +975,81 @@ sys.exit(0)</code></pre>
       <div class="explanation" id="exp-q12">Prompt instructions = probabilistic. Hard compliance requires a programmatic gate inside the tool. The gate fires regardless of what the model does — it's deterministic. tool_choice: "any" guarantees some tool is called, but not which one or in what order.</div>
     </div>
 
+    <div class="quiz-q" id="q13">
+      <div class="q-num">Question 13 of 18</div>
+      <div class="q-text">You need the agent to run <code>verify_customer</code> FIRST on the opening turn, then choose tools freely afterward — without permanently blocking any other tool. What is the correct mechanism?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q13',true)">A. Set <code>tool_choice: {"type":"tool","name":"verify_customer"}</code> on the first turn, then switch to <code>"auto"</code>.</div>
+        <div class="opt" onclick="answer(this,'q13',false)">B. Add a PreToolUse hook on <code>verify_customer</code> that denies until it runs.</div>
+        <div class="opt" onclick="answer(this,'q13',false)">C. Set <code>tool_choice: "any"</code> for the whole conversation.</div>
+        <div class="opt" onclick="answer(this,'q13',false)">D. Put "call verify_customer first" in the system prompt.</div>
+      </div>
+      <div class="explanation" id="exp-q13">Forced selection (<code>{"type":"tool","name":"X"}</code>) guarantees a specific tool runs FIRST; you then switch to <code>"auto"</code>. A PreToolUse hook does the opposite job — it blocks a tool until prerequisites are met (don't-run-until-allowed), not run-this-first. <code>"any"</code> forces some tool but not which one; the system prompt is only probabilistic.</div>
+    </div>
+
+    <div class="quiz-q" id="q14">
+      <div class="q-num">Question 14 of 18</div>
+      <div class="q-text">A stem reads: "The system <strong>must always</strong> verify identity <strong>before</strong> any financial action, even when a user claims an emergency." Which answer does this wording point to?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q14',false)">A. Rewrite the system prompt with stronger, more explicit language.</div>
+        <div class="opt" onclick="answer(this,'q14',false)">B. Add a few-shot example of the correct verify-then-act sequence.</div>
+        <div class="opt" onclick="answer(this,'q14',true)">C. Deterministic enforcement — a PreToolUse hook, programmatic gate, or tool_choice forced selection.</div>
+        <div class="opt" onclick="answer(this,'q14',false)">D. Lower the model temperature to make it follow instructions more reliably.</div>
+      </div>
+      <div class="explanation" id="exp-q14">Keywords like "must", "always", "guarantee", and "before" rule out any system-prompt answer — prompts have a non-zero failure rate. When the stem demands a guarantee, the answer is always deterministic enforcement: a hook, a programmatic gate, or forced selection.</div>
+    </div>
+
+    <div class="quiz-q" id="q15">
+      <div class="q-num">Question 15 of 18</div>
+      <div class="q-text">A refund-policy subagent frequently needs delivery dates from <code>lookup_order</code> (a read-only tool owned by another role), and routing every lookup through the coordinator adds latency. What is the best design?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q15',false)">A. Keep ALL tools coordinator-only — never delegate across roles.</div>
+        <div class="opt" onclick="answer(this,'q15',true)">B. Grant the subagent scoped access to <code>lookup_order</code> (read-only, frequent, no state change); keep <code>process_refund</code> coordinator-only.</div>
+        <div class="opt" onclick="answer(this,'q15',false)">C. Grant the subagent all order tools, including <code>process_refund</code>, so it never needs the coordinator.</div>
+        <div class="opt" onclick="answer(this,'q15',false)">D. Let the subagent message the order subagent directly for each lookup.</div>
+      </div>
+      <div class="explanation" id="exp-q15">Delegate a cross-role tool only when it is (a) frequently needed, (b) read-only, and (c) changes no state — <code>lookup_order</code> qualifies. State-changing tools like <code>process_refund</code> and <code>escalate_to_human</code> stay coordinator-only. "Keep ALL tools coordinator-only" is wrong here because it adds latency for high-frequency read-only lookups; direct subagent-to-subagent messaging breaks the hub.</div>
+    </div>
+
+    <div class="quiz-q" id="q16">
+      <div class="q-num">Question 16 of 18</div>
+      <div class="q-text">A task requires reviewing legal citations across many documents in parallel. Which architecture is best?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q16',true)">A. The coordinator dispatches multiple subagents directly (flat hub-and-spoke).</div>
+        <div class="opt" onclick="answer(this,'q16',false)">B. Give one subagent authority to spawn its own nested subagents.</div>
+        <div class="opt" onclick="answer(this,'q16',false)">C. Run one subagent sequentially over every document to keep it simple.</div>
+        <div class="opt" onclick="answer(this,'q16',false)">D. Have the subagents message each other to divide the documents.</div>
+      </div>
+      <div class="explanation" id="exp-q16">Flat dispatch from the coordinator outperforms nested spawning because it preserves the three hub properties — observability, consistent error handling, and controlled information flow. Letting a subagent spawn nested subagents breaks the hub role; direct subagent-to-subagent messaging is also disallowed.</div>
+    </div>
+
+    <div class="quiz-q" id="q17">
+      <div class="q-num">Question 17 of 18</div>
+      <div class="q-text">You're resuming a long-running investigation and want to give the model a structured summary of prior findings. Where should the summary go?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q17',false)">A. As an assistant turn, so the model treats it as its own prior reasoning.</div>
+        <div class="opt" onclick="answer(this,'q17',true)">B. In the system prompt or the first user turn, clearly labeled.</div>
+        <div class="opt" onclick="answer(this,'q17',false)">C. Rely on auto-compaction to carry the summary forward automatically.</div>
+        <div class="opt" onclick="answer(this,'q17',false)">D. Split it across several assistant turns to mimic a natural history.</div>
+      </div>
+      <div class="explanation" id="exp-q17">Inject the summary in the system prompt or first user turn. Placing it in an assistant turn makes the model treat authored context as its own prior words, causing self-referential errors ("remembering" work it never did). Prefer explicit checkpoint summaries over auto-compaction, which optimizes for tokens, not task fidelity.</div>
+    </div>
+
+    <div class="quiz-q" id="q18">
+      <div class="q-num">Question 18 of 18</div>
+      <div class="q-text">Which of the following is a REAL, valid choice you can rely on in Claude Code?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q18',false)">A. An <code>OnToolReturn</code> hook event to post-process results.</div>
+        <div class="opt" onclick="answer(this,'q18',false)">B. A <code>PreToolCall</code> hook event to gate execution.</div>
+        <div class="opt" onclick="answer(this,'q18',false)">C. A dedicated <code>Delete</code> tool for removing files.</div>
+        <div class="opt" onclick="answer(this,'q18',true)">D. Deleting a file via the <code>Bash</code> tool with <code>rm</code>.</div>
+      </div>
+      <div class="explanation" id="exp-q18"><code>PreToolCall</code> and <code>OnToolReturn</code> are fabricated distractors — the only hook events are <code>PreToolUse</code> and <code>PostToolUse</code>. There is no dedicated Delete/RemoveFile tool; file deletion goes through <code>Bash</code> + <code>rm</code>. The built-in tools are Read, Write, Edit, Bash, Grep, Glob.</div>
+    </div>
+
     <button id="quiz-btn" onclick="showScore()">Show My Score</button>
     <div class="quiz-score" id="quiz-score">
-      <div class="score-num" id="score-display">0/12</div>
+      <div class="score-num" id="score-display">0/18</div>
       <p id="score-msg" style="color:var(--muted); margin-top:8px;"></p>
     </div>
   </div>
@@ -867,8 +1078,8 @@ sys.exit(0)</code></pre>
   }
   function showScore() {
     const got = Object.values(scores).filter(Boolean).length;
-    document.getElementById('score-display').textContent = got + '/12';
-    const pct = Math.round(got / 12 * 100);
+    document.getElementById('score-display').textContent = got + '/18';
+    const pct = Math.round(got / 18 * 100);
     const msg = pct >= 90 ? 'Excellent — Domain 1 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the subdomain tabs again.';
     document.getElementById('score-msg').textContent = pct + '% — ' + msg;
     document.getElementById('quiz-score').classList.add('show');

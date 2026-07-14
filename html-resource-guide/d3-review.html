@@ -131,7 +131,11 @@
         <div class="kv-row"><span class="kv-key">Same-scope conflict</span><span class="kv-val">Claude picks arbitrarily — eliminate them at source</span></div>
         <div class="kv-row"><span class="kv-key">Load timing</span><span class="kv-val">Re-read fresh each session — not cached</span></div>
         <div class="kv-row"><span class="kv-key">Size target</span><span class="kv-val">Under 200 lines — split into .claude/rules/ with @import</span></div>
-        <div class="kv-row"><span class="kv-key">Diagnose loaded files</span><span class="kv-val">Ask Claude directly: "Which CLAUDE.md files are you currently loading?" — <code>/memory</code> opens the file for editing, not a list</span></div>
+        <div class="kv-row"><span class="kv-key">Diagnose loaded files</span><span class="kv-val"><code>/memory</code> LISTS all loaded memory files (CLAUDE.md + rules) — the diagnostic for hierarchy issues ("why isn't my rule applying?")</span></div>
+        <div class="kv-row"><span class="kv-key">@import scope</span><span class="kv-val">Imported files are ALWAYS-loaded (expanded at launch) — <code>@import</code> does NOT make content conditional. For conditional loading, use <code>.claude/rules/</code> with a <code>paths:</code> glob</span></div>
+        <div class="kv-row"><span class="kv-key">/init on existing file</span><span class="kv-val">SUGGESTS improvements rather than overwriting — keep it as a base, add project conventions, commit</span></div>
+        <div class="kv-row"><span class="kv-key">claudeMdExcludes</span><span class="kv-val">Skips files by path/glob AND doubles as a DIAGNOSTIC — if a subdir CLAUDE.md is ignored despite existing, check for syntax errors or a claudeMdExcludes entry</span></div>
+        <div class="kv-row"><span class="kv-key">Project vs user precedence</span><span class="kv-val">Project <code>./CLAUDE.md</code> beats user-level ONLY when you're working in that project — not everywhere</span></div>
       </div>
 
       <h3>Exam Trap Table — 3.1</h3>
@@ -146,6 +150,10 @@
           <tr><td class="td-trap"><code>.claude/config.yaml</code> maps file patterns to sections</td><td>This file does not exist</td></tr>
           <tr><td class="td-trap">Same-scope conflicts resolve predictably</td><td>Claude picks arbitrarily — eliminate conflicts</td></tr>
           <tr><td class="td-trap">600-line CLAUDE.md is fine</td><td>Target under 200 lines — split into .claude/rules/ with @import</td></tr>
+          <tr><td class="td-trap"><code>@import</code> makes content load conditionally / on-demand</td><td>Imported content is ALWAYS-loaded (expanded at launch) — use <code>.claude/rules/</code> with <code>paths:</code> for conditional loading</td></tr>
+          <tr><td class="td-trap"><code>/init</code> overwrites an existing CLAUDE.md</td><td>It SUGGESTS improvements — keep the file as a base, don't regenerate and merge repeatedly</td></tr>
+          <tr><td class="td-trap">Project <code>./CLAUDE.md</code> beats user-level everywhere</td><td>Only when you're working IN that project</td></tr>
+          <tr><td class="td-trap"><code>/memory</code> opens a file for editing / can't list loaded files</td><td><code>/memory</code> LISTS all loaded memory files — it's the hierarchy diagnostic</td></tr>
         </tbody>
       </table>
     </div>
@@ -182,6 +190,11 @@
         </div>
       </div>
 
+      <div class="concept-box">
+        <p><strong>The single most-tested D3 distinction:</strong> slash commands do <strong>NOT</strong> support <code>argument-hint</code>, <code>allowed-tools</code>, or <code>context: fork</code> — those are <strong>SKILL.md-only</strong>. Slash commands support <code>$ARGUMENTS</code> substitution <strong>only</strong>. If you need parameter prompting or tool restriction, use a Skill, not a command.</p>
+        <p style="margin-top:8px;"><strong>Command body text enforces nothing.</strong> Writing "only use Read and Write" inside a command's instructions is just prose — the command remains free to call any tool. Only <code>allowed-tools</code> in SKILL.md frontmatter actually restricts which tools can be invoked.</p>
+      </div>
+
       <h3>SKILL.md Frontmatter Fields (know all three cold)</h3>
       <pre><code>---
 context: fork          # run in isolated sub-agent (default: inline)
@@ -202,6 +215,10 @@ argument-hint: "Path to the module to analyze"   # prompts for input when invoke
       <div class="trap-box">
         <div class="trap-title">Exam Trap</div>
         <p><code>model: haiku</code> is <strong>NOT</strong> a documented SKILL.md frontmatter field. Only <code>context</code>, <code>allowed-tools</code>, and <code>argument-hint</code> are valid.</p>
+      </div>
+      <div class="trap-box">
+        <div class="trap-title">Wrong Layer — Skill Behavior</div>
+        <p>A skill floods later turns with verbose discovery output → the fix is <code>context: fork</code> in SKILL.md frontmatter, <strong>NOT</strong> a PreToolUse/PostToolUse hook. Hooks are the wrong layer for skill UX/behavior problems — check documented frontmatter fields first. And <code>agent:</code> frontmatter is <strong>inert without <code>context: fork</code></strong> — it is not a standalone isolation mechanism.</p>
       </div>
 
       <h3>Personal Skill Customization</h3>
@@ -237,6 +254,10 @@ argument-hint: "Path to the module to analyze"   # prompts for input when invoke
           <tr><td class="td-trap">User-scoped commands shared via git pull</td><td><code>~/.claude/commands/</code> is machine-local — use <code>.claude/commands/</code> for team commands</td></tr>
           <tr><td class="td-trap">Skills for always-on convention enforcement</td><td>That's CLAUDE.md or .claude/rules/ — skills are on-demand</td></tr>
           <tr><td class="td-trap"><code>context: fork</code> is just "quiet mode"</td><td>It runs the skill in an isolated sub-agent — verbose output never enters the main session</td></tr>
+          <tr><td class="td-trap">Slash command with <code>argument-hint</code>, <code>allowed-tools</code>, or <code>context: fork</code></td><td>Those are SKILL.md-only — slash commands support <code>$ARGUMENTS</code> substitution only</td></tr>
+          <tr><td class="td-trap">"Document only use Read/Write in the command body" to restrict tools</td><td>Command body text enforces nothing — only <code>allowed-tools</code> in SKILL.md frontmatter restricts tools</td></tr>
+          <tr><td class="td-trap">Use a PreToolUse/PostToolUse hook to quiet a verbose skill</td><td>Wrong layer — use <code>context: fork</code> in SKILL.md frontmatter</td></tr>
+          <tr><td class="td-trap"><code>agent:</code> frontmatter isolates a skill on its own</td><td>Inert without <code>context: fork</code></td></tr>
         </tbody>
       </table>
 
@@ -296,7 +317,7 @@ Grep("isError", glob="**/*.json")
       <table>
         <thead><tr><th>Command</th><th>What it does</th><th>Exam relevance</th></tr></thead>
         <tbody>
-          <tr><td><code>/memory</code></td><td>Opens CLAUDE.md for editing — does NOT list loaded files. To diagnose which files are active, ask Claude: "Which CLAUDE.md files are you currently loading?"</td><td>Primary diagnostic for "why isn't my rule applying?"</td></tr>
+          <tr><td><code>/memory</code></td><td>LISTS all loaded memory files (CLAUDE.md + rules) — the diagnostic for hierarchy issues</td><td>Primary diagnostic for "why isn't my rule applying?"</td></tr>
           <tr><td><code>/compact</code></td><td>Summarizes conversation to reclaim token budget; project CLAUDE.md is re-read from disk after compacting</td><td>Fix for context degradation in long sessions (D5.4)</td></tr>
           <tr><td><code>/init</code></td><td>Generates a starter CLAUDE.md by analyzing the current project</td><td>Correct command — NOT /setup or /config init</td></tr>
           <tr><td><code>/clear</code></td><td>Clears conversation history entirely (fresh start)</td><td>Use when prior tool results are stale — not just long</td></tr>
@@ -380,7 +401,12 @@ paths:
         <div class="kv-row"><span class="kv-key">Rules with paths:</span><span class="kv-val">Conditional — load only when editing a matching file</span></div>
         <div class="kv-row"><span class="kv-key">Override behavior</span><span class="kv-val">None — all matching sources are concatenated, not overridden</span></div>
         <div class="kv-row"><span class="kv-key">Token benefit</span><span class="kv-val">Only loads when relevant — saves tokens when working in unrelated areas</span></div>
-        <div class="kv-row"><span class="kv-key">Diagnose</span><span class="kv-val">Ask Claude directly: "Which CLAUDE.md files are you currently loading?"</span></div>
+        <div class="kv-row"><span class="kv-key">Diagnose</span><span class="kv-val"><code>/memory</code> LISTS all loaded memory files — use it to confirm which rules actually matched</span></div>
+      </div>
+
+      <h3>Rules Can't Run Procedural Workflows</h3>
+      <div class="concept-box">
+        <p>Path-scoped rules activate on <strong>file-glob matches, not task type</strong>. They <strong>CANNOT run procedural workflows</strong> like "do a PR review," "run a deployment," or "run a migration" — those need <strong>Skills</strong>. Use <code>.claude/rules/</code> for "apply these conventions when editing <code>*.test.tsx</code>"; use a Skill for a multi-step task.</p>
       </div>
 
       <h3>Exam Trap Table — 3.3</h3>
@@ -392,6 +418,7 @@ paths:
           <tr><td class="td-trap">Path-scoped rules override directory CLAUDE.md</td><td>All matching sources are concatenated</td></tr>
           <tr><td class="td-trap">Rules in .claude/rules/ without paths: frontmatter</td><td>They load at launch alongside CLAUDE.md — not conditional</td></tr>
           <tr><td class="td-trap">Relying on Claude to infer which section applies</td><td>Use explicit glob matching — don't expect inference</td></tr>
+          <tr><td class="td-trap">Use <code>.claude/rules/</code> for a PR-review or deploy workflow</td><td>Rules match file globs, not task type — procedural workflows need Skills</td></tr>
         </tbody>
       </table>
     </div>
@@ -419,7 +446,10 @@ paths:
         </tbody>
       </table>
       <div class="concept-box" style="margin-top:4px;">
-        <p><strong>Quick test:</strong> "Do I know exactly what to change and where?" → Direct execution. "Do I need to explore first?" → Plan mode.</p>
+        <p><strong>Quick test (heuristic only):</strong> "Do I know exactly what to change and where, <em>and</em> is it isolated and low-risk?" → Direct execution. Any cross-cutting concern, real risk, hard-to-reverse change, or ambiguity → Plan mode. File count alone never decides — see the aggregate-judgment note below.</p>
+      </div>
+      <div class="concept-box">
+        <p><strong>Mode choice is an AGGREGATE judgment</strong> across: files affected, cross-cutting concerns, risk, codebase familiarity, reversibility, and ambiguity. <strong>No single factor forces a mode.</strong> A change touching only <strong>2 files but altering the authentication schema is STILL Plan Mode</strong> — cross-cutting + hard-to-reverse + high-risk outweighs the low file count. Direct execution is reserved for isolated, low-risk, mechanical single-file edits.</p>
       </div>
 
       <h3>The Iterative Refinement Pattern</h3>
@@ -442,6 +472,30 @@ paths:
         <p>Reading 30 files fills your main conversation context. The <strong>Explore subagent</strong> handles verbose discovery in a sub-agent and returns only a concise summary to the main session — keeping context clean.</p>
         <p style="margin-top:6px;">Same principle as <code>context: fork</code> for skills: isolate verbose output from the session doing real work.</p>
       </div>
+      <div class="concept-box">
+        <p><strong>Explore → Plan → Execute.</strong> In <strong>unfamiliar code</strong>, the read-only Explore subagent <strong>precedes</strong> Plan Mode — it maps call sites, dependency graphs, and hidden consumers first, so the plan isn't built on incomplete knowledge. <strong>Skipping Explore in unfamiliar code is a top cause of incomplete plans</strong> (missed call sites). Explore is optional in code you know well, required in code you don't.</p>
+      </div>
+
+      <h3>Named-Session Resume + Targeted Revalidation</h3>
+      <div class="concept-box">
+        <p>Sessions can be named (e.g. <code>refund-escalation-tuning</code>). When files change <em>after</em> a session already produced useful analysis, the correct approach is: <strong>resume the named session → identify which files changed → request targeted revalidation</strong> of those files before acting on prior conclusions.</p>
+      </div>
+      <div class="bad-box">
+        <div class="bad-title">Wrong Approaches</div>
+        <ul>
+          <li><strong>Start fresh</strong> — discards all prior analysis that is still valid.</li>
+          <li><strong>Reuse the prior plan unchanged</strong> — conclusions about changed files may now be stale.</li>
+          <li><strong>Ask for a single confidence score and proceed if above threshold</strong> — confidence is an unreliable validation proxy.</li>
+        </ul>
+        <p style="margin-top:4px; color:var(--muted);">The middle path is selective invalidation of changed artifacts — not wholesale discard, not blind trust.</p>
+      </div>
+
+      <h3>Plan Mode Mechanics</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Enter plan mode</span><span class="kv-val"><code>Shift+Tab</code> enters plan mode</span></div>
+        <div class="kv-row"><span class="kv-key">Approving a plan</span><span class="kv-val">Gates the APPROACH, not execution correctness — keep reviewing individual edits during execution</span></div>
+        <div class="kv-row"><span class="kv-key">Known-bad plan</span><span class="kv-val">Don't accept it expecting execution-time hooks to catch problems — refine it in plan mode first</span></div>
+      </div>
 
       <h3>Exam Trap Table — 3.4</h3>
       <table>
@@ -452,6 +506,11 @@ paths:
           <tr><td class="td-trap">Direct execution for complex multi-file changes</td><td>Use plan mode — risks costly rework</td></tr>
           <tr><td class="td-trap">Plan mode for a single-file bug fix</td><td>Direct execution — plan mode overhead isn't justified</td></tr>
           <tr><td class="td-trap">"Plan mode pauses before each file edit"</td><td>Plan mode does not touch source files at all; it only reads and writes a plan</td></tr>
+          <tr><td class="td-trap">A 2-file change is small, so use direct execution</td><td>Mode is an aggregate judgment — a 2-file change touching the auth schema is still Plan Mode</td></tr>
+          <tr><td class="td-trap">Jump straight to a plan in unfamiliar code</td><td>Run the Explore subagent first — skipping it causes incomplete plans (missed call sites)</td></tr>
+          <tr><td class="td-trap">After files change, start a fresh session or reuse the old plan unchanged</td><td>Resume the named session, identify changed files, request targeted revalidation</td></tr>
+          <tr><td class="td-trap">Use a confidence score above a threshold as the validation proxy</td><td>Confidence is unreliable — do targeted revalidation of the changed files</td></tr>
+          <tr><td class="td-trap">Approving a plan guarantees correct execution</td><td>It gates the approach only — keep reviewing individual edits during execution</td></tr>
         </tbody>
       </table>
     </div>
@@ -510,6 +569,7 @@ paths:
         <tbody>
           <tr><td><code>-p</code> / <code>--print</code></td><td>Non-interactive mode — runs prompt, prints result, exits</td><td><strong>Required for all CI/CD pipelines</strong></td></tr>
           <tr><td><code>--output-format json</code></td><td>Wraps response in structured JSON envelope</td><td>When pipeline needs to parse the output</td></tr>
+          <tr><td><code>--json-schema</code></td><td>Validates JSON output against a schema (with <code>--output-format json</code>)</td><td>Machine-parseable output for PR-comment posting</td></tr>
           <tr><td><code>--bare</code></td><td>Skips ALL auto-discovery: hooks, skills, MCP, CLAUDE.md</td><td>Reproducible isolated CI execution</td></tr>
           <tr><td><code>--append-system-prompt</code></td><td>Appends text to system prompt for that invocation only</td><td>Ephemeral per-run instructions</td></tr>
         </tbody>
@@ -520,6 +580,18 @@ paths:
         <div class="kv-row"><span class="kv-key">1. .claude/settings.local.json</span><span class="kv-val">Local overrides — usually gitignored</span></div>
         <div class="kv-row"><span class="kv-key">2. .claude/settings.json</span><span class="kv-val">Project settings — version-controlled</span></div>
         <div class="kv-row"><span class="kv-key">3. ~/.claude/settings.json</span><span class="kv-val">User settings</span></div>
+      </div>
+
+      <h3>The CI Recipe</h3>
+      <div class="concept-box">
+        <p>Standard CI invocation: <code>-p</code> + <code>--output-format json</code> + <code>--json-schema</code>. Each invocation is <strong>stateless</strong> — no memory carries between runs, so pass required context every time. Always <strong>check exit codes</strong> (<code>set -e</code>) so a failed Claude step fails the pipeline instead of silently passing.</p>
+        <p style="margin-top:8px;">Control which config loads with <code>--setting-sources user,project,local</code> (CLI, comma-separated) or <code>setting_sources=['project']</code> (Python SDK, <code>ClaudeAgentOptions</code>). There is no <code>config_path</code> parameter.</p>
+      </div>
+
+      <h3>Semantic Validation of CI Findings (Pattern 10)</h3>
+      <div class="concept-box">
+        <p>CI review output can pass <strong>JSON parsing AND required-field checks</strong> yet still cite line numbers <strong>outside the diff</strong>, misclassify test issues as production blockers, or self-contradict. Schema enforces <strong>syntax only</strong> — the fix is <strong>application-layer SEMANTIC validation before publishing</strong>: check findings against diff metadata, severity rules, and cross-field consistency.</p>
+        <p style="margin-top:8px;">Wrong answers: <em>"make every field required"</em> (still just schema — can't catch contradictions between fields) and <em>"lower temperature and double-check"</em> (probabilistic, not deterministic).</p>
       </div>
 
       <h3>--bare vs Default</h3>
@@ -592,6 +664,8 @@ claude -p "Review these tests" &lt; tests.py   # fresh invocation
           <tr><td class="td-trap">Review tests in the same session that generated them</td><td>Self-review bias — use an independent fresh invocation for review</td></tr>
           <tr><td class="td-trap"><code>--no-config</code> or <code>--skip-config</code> for stripped execution</td><td>These flags don't exist — use <code>--bare</code></td></tr>
           <tr><td class="td-trap"><code>--bare</code> is just "quiet mode"</td><td>--bare actively skips hooks, skills, MCP, CLAUDE.md — it's a full strip</td></tr>
+          <tr><td class="td-trap">CI findings cite out-of-diff lines / self-contradict → make every field required</td><td>Still just schema — add application-layer semantic validation before publishing (Pattern 10)</td></tr>
+          <tr><td class="td-trap">Fix bad CI findings by lowering temperature and asking Claude to double-check</td><td>Probabilistic, not deterministic — use semantic validation against diff metadata and consistency rules</td></tr>
         </tbody>
       </table>
     </div>
@@ -730,13 +804,13 @@ claude -p "Review these tests" &lt; tests.py   # fresh invocation
   <!-- ===== QUIZ ===== -->
   <div id="quiz" class="tab-panel">
     <div class="card" style="margin-bottom:24px;">
-      <div class="card-title">Domain 3 Quiz — 12 Questions</div>
+      <div class="card-title">Domain 3 Quiz — 18 Questions</div>
       <p style="color:var(--muted); font-size:0.88rem;">Select an answer to see immediate feedback. Complete all questions, then check your score.</p>
     </div>
 
     <!-- Q1 -->
     <div class="quiz-q" id="q1">
-      <div class="q-num">Question 1 of 12</div>
+      <div class="q-num">Question 1 of 18</div>
       <div class="q-text">A developer writes team-wide coding standards in <code>~/.claude/CLAUDE.md</code>. After teammates pull the repo, they don't see the standards. Why?</div>
       <div class="options">
         <div class="opt" onclick="answer(this, 'q1', false)">A. The file requires <code>/init</code> to activate.</div>
@@ -749,7 +823,7 @@ claude -p "Review these tests" &lt; tests.py   # fresh invocation
 
     <!-- Q2 -->
     <div class="quiz-q" id="q2">
-      <div class="q-num">Question 2 of 12</div>
+      <div class="q-num">Question 2 of 18</div>
       <div class="q-text">Which command shows exactly which CLAUDE.md and rules files are currently loaded?</div>
       <div class="options">
         <div class="opt" onclick="answer(this, 'q2', false)">A. <code>/config</code></div>
@@ -757,12 +831,12 @@ claude -p "Review these tests" &lt; tests.py   # fresh invocation
         <div class="opt" onclick="answer(this, 'q2', true)">C. <code>/memory</code></div>
         <div class="opt" onclick="answer(this, 'q2', false)">D. <code>/debug</code></div>
       </div>
-      <div class="explanation" id="exp-q2"><code>/memory</code> opens your CLAUDE.md for editing — it does <strong>not</strong> list loaded files. To see which CLAUDE.md and rules files are currently active, ask Claude directly: "Which CLAUDE.md files are you currently loading?" Among the four options, C is correct by elimination — /config, /status, and /debug are not real Claude Code commands.</div>
+      <div class="explanation" id="exp-q2"><code>/memory</code> LISTS all loaded memory files (CLAUDE.md + rules) — it is the diagnostic for hierarchy issues ("why isn't my rule applying?"). <code>/config</code>, <code>/status</code>, and <code>/debug</code> are not real Claude Code commands.</div>
     </div>
 
     <!-- Q3 -->
     <div class="quiz-q" id="q3">
-      <div class="q-num">Question 3 of 12</div>
+      <div class="q-num">Question 3 of 18</div>
       <div class="q-text">Which fields are valid in SKILL.md frontmatter? (Select the correct set)</div>
       <div class="options">
         <div class="opt" onclick="answer(this, 'q3', false)">A. <code>context</code>, <code>allowed-tools</code>, <code>model</code></div>
@@ -775,7 +849,7 @@ claude -p "Review these tests" &lt; tests.py   # fresh invocation
 
     <!-- Q4 -->
     <div class="quiz-q" id="q4">
-      <div class="q-num">Question 4 of 12</div>
+      <div class="q-num">Question 4 of 18</div>
       <div class="q-text">A developer wants their analysis skill to not fill the main conversation context with verbose file exploration output. Which frontmatter setting achieves this?</div>
       <div class="options">
         <div class="opt" onclick="answer(this, 'q4', true)">A. <code>context: fork</code></div>
@@ -788,7 +862,7 @@ claude -p "Review these tests" &lt; tests.py   # fresh invocation
 
     <!-- Q5 -->
     <div class="quiz-q" id="q5">
-      <div class="q-num">Question 5 of 12</div>
+      <div class="q-num">Question 5 of 18</div>
       <div class="q-text">Test files are scattered throughout a codebase (<code>Button.test.tsx</code>, <code>api.test.ts</code>, <code>utils.spec.py</code> in different directories). What is the correct way to enforce test file conventions?</div>
       <div class="options">
         <div class="opt" onclick="answer(this, 'q5', false)">A. Create a <code>CLAUDE.md</code> in the root with a "Test Files" section.</div>
@@ -801,7 +875,7 @@ claude -p "Review these tests" &lt; tests.py   # fresh invocation
 
     <!-- Q6 -->
     <div class="quiz-q" id="q6">
-      <div class="q-num">Question 6 of 12</div>
+      <div class="q-num">Question 6 of 18</div>
       <div class="q-text">A project CLAUDE.md says "use 4 spaces for indentation." A user's <code>~/.claude/CLAUDE.md</code> says "use tabs." Which wins?</div>
       <div class="options">
         <div class="opt" onclick="answer(this, 'q6', false)">A. User-level wins because it's loaded first.</div>
@@ -814,7 +888,7 @@ claude -p "Review these tests" &lt; tests.py   # fresh invocation
 
     <!-- Q7 -->
     <div class="quiz-q" id="q7">
-      <div class="q-num">Question 7 of 12</div>
+      <div class="q-num">Question 7 of 18</div>
       <div class="q-text">A CI pipeline invokes Claude Code and hangs indefinitely, waiting for input. What is the fix?</div>
       <div class="options">
         <div class="opt" onclick="answer(this, 'q7', false)">A. Set <code>CLAUDE_HEADLESS=true</code> environment variable.</div>
@@ -827,7 +901,7 @@ claude -p "Review these tests" &lt; tests.py   # fresh invocation
 
     <!-- Q8 -->
     <div class="quiz-q" id="q8">
-      <div class="q-num">Question 8 of 12</div>
+      <div class="q-num">Question 8 of 18</div>
       <div class="q-text">A CI pipeline needs to parse Claude Code's output programmatically to post it as a PR comment. Which flag enables this?</div>
       <div class="options">
         <div class="opt" onclick="answer(this, 'q8', false)">A. <code>--structured</code></div>
@@ -840,7 +914,7 @@ claude -p "Review these tests" &lt; tests.py   # fresh invocation
 
     <!-- Q9 -->
     <div class="quiz-q" id="q9">
-      <div class="q-num">Question 9 of 12</div>
+      <div class="q-num">Question 9 of 18</div>
       <div class="q-text">A team wants Claude Code in CI to execute without any hooks, skills, or CLAUDE.md loading for a reproducible build. Which flag achieves this?</div>
       <div class="options">
         <div class="opt" onclick="answer(this, 'q9', false)">A. <code>--no-config</code></div>
@@ -853,7 +927,7 @@ claude -p "Review these tests" &lt; tests.py   # fresh invocation
 
     <!-- Q10 -->
     <div class="quiz-q" id="q10">
-      <div class="q-num">Question 10 of 12</div>
+      <div class="q-num">Question 10 of 18</div>
       <div class="q-text">A developer wants to use plan mode to pause and approve each individual file edit before Claude makes it. Is this how plan mode works?</div>
       <div class="options">
         <div class="opt" onclick="answer(this, 'q10', false)">A. Yes — plan mode pauses before each file modification.</div>
@@ -866,7 +940,7 @@ claude -p "Review these tests" &lt; tests.py   # fresh invocation
 
     <!-- Q11 -->
     <div class="quiz-q" id="q11">
-      <div class="q-num">Question 11 of 12</div>
+      <div class="q-num">Question 11 of 18</div>
       <div class="q-text">A CI pipeline generates tests in Step 1 and then has Claude Code review them in Step 2, all in the same session. What problem does this create?</div>
       <div class="options">
         <div class="opt" onclick="answer(this, 'q11', false)">A. The second call will fail because Claude doesn't accept piped input.</div>
@@ -879,7 +953,7 @@ claude -p "Review these tests" &lt; tests.py   # fresh invocation
 
     <!-- Q12 -->
     <div class="quiz-q" id="q12">
-      <div class="q-num">Question 12 of 12</div>
+      <div class="q-num">Question 12 of 18</div>
       <div class="q-text">A developer wants to customize the team's <code>/analyze</code> skill with additional verbosity options, just for themselves, without changing the shared skill. What is the correct approach?</div>
       <div class="options">
         <div class="opt" onclick="answer(this, 'q12', false)">A. Add <code>override: true</code> to their local copy of <code>.claude/skills/analyze/SKILL.md</code>.</div>
@@ -890,10 +964,88 @@ claude -p "Review these tests" &lt; tests.py   # fresh invocation
       <div class="explanation" id="exp-q12">Create a personal variant with a <strong>different name</strong> in <code>~/.claude/skills/</code>. The different name means both coexist without conflict. <code>override: true</code> doesn't exist. Option D would create conflicts since both would be named <code>/analyze</code>.</div>
     </div>
 
+    <!-- Q13 -->
+    <div class="quiz-q" id="q13">
+      <div class="q-num">Question 13 of 18</div>
+      <div class="q-text">A developer creates a slash command in <code>.claude/commands/refactor.md</code> and adds a note in the instructions: "only use the Read and Write tools." During execution, Claude uses Bash and Edit anyway. Why?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q13', false)">A. The note must be placed in the command's YAML frontmatter, not the body.</div>
+        <div class="opt" onclick="answer(this, 'q13', true)">B. Command body text enforces nothing — only <code>allowed-tools</code> in SKILL.md frontmatter actually restricts tools.</div>
+        <div class="opt" onclick="answer(this, 'q13', false)">C. Slash commands ignore tool restrictions unless <code>context: fork</code> is set.</div>
+        <div class="opt" onclick="answer(this, 'q13', false)">D. The command needs <code>allowed-tools</code> in its own frontmatter to take effect.</div>
+      </div>
+      <div class="explanation" id="exp-q13">Prose in a command body is just text — it enforces no restriction. Tool restriction is a <strong>Skill</strong> capability: <code>allowed-tools</code> in SKILL.md frontmatter is the only mechanism that actually limits which tools can be invoked. Slash commands support <code>$ARGUMENTS</code> substitution only; they don't support <code>allowed-tools</code> at all (ruling out D).</div>
+    </div>
+
+    <!-- Q14 -->
+    <div class="quiz-q" id="q14">
+      <div class="q-num">Question 14 of 18</div>
+      <div class="q-text">A team wants Claude Code to run a full PR-review workflow (read the diff, check conventions, summarize findings) whenever they ask for it. Should this be a path-scoped rule in <code>.claude/rules/</code>?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q14', false)">A. Yes — add <code>paths: ["**/*"]</code> so the rule fires on any file.</div>
+        <div class="opt" onclick="answer(this, 'q14', true)">B. No — rules activate on file-glob matches, not task type; a procedural workflow needs a Skill.</div>
+        <div class="opt" onclick="answer(this, 'q14', false)">C. Yes — rules can run procedural workflows if they omit the <code>paths:</code> key.</div>
+        <div class="opt" onclick="answer(this, 'q14', false)">D. No — use a directory-level CLAUDE.md in <code>.github/</code> instead.</div>
+      </div>
+      <div class="explanation" id="exp-q14">Path-scoped rules activate on <strong>file-glob matches, not task type</strong>. They inject conventions when editing matching files — they can't <em>run</em> a multi-step procedure like PR review or deployment. Those are Skills. Broadening the glob (A) still doesn't give a rule procedural behavior.</div>
+    </div>
+
+    <!-- Q15 -->
+    <div class="quiz-q" id="q15">
+      <div class="q-num">Question 15 of 18</div>
+      <div class="q-text">A named session produced useful analysis of a refund flow. Afterward, several of the analyzed files were changed. What's the correct way to act on the prior analysis?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q15', false)">A. Start a fresh session and re-analyze everything from scratch.</div>
+        <div class="opt" onclick="answer(this, 'q15', false)">B. Reuse the prior plan unchanged — the analysis was already validated.</div>
+        <div class="opt" onclick="answer(this, 'q15', true)">C. Resume the named session, identify which files changed, and request targeted revalidation of those files.</div>
+        <div class="opt" onclick="answer(this, 'q15', false)">D. Ask Claude for a single confidence score and proceed if it's above a threshold.</div>
+      </div>
+      <div class="explanation" id="exp-q15">The middle path is selective invalidation: resume the named session to keep still-valid analysis, then revalidate only the changed files. Starting fresh (A) discards valid work; reusing unchanged (B) trusts possibly-stale conclusions; a confidence score (D) is an unreliable validation proxy.</div>
+    </div>
+
+    <!-- Q16 -->
+    <div class="quiz-q" id="q16">
+      <div class="q-num">Question 16 of 18</div>
+      <div class="q-text">A task modifies only 2 files, but one of them alters the authentication schema. A developer picks direct execution because "it's just 2 files." Is that the right call?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q16', false)">A. Yes — file count is the primary factor, and 2 files is small.</div>
+        <div class="opt" onclick="answer(this, 'q16', true)">B. No — mode is an aggregate judgment; a cross-cutting, high-risk auth-schema change is still Plan Mode.</div>
+        <div class="opt" onclick="answer(this, 'q16', false)">C. Yes — Plan Mode is only for changes spanning 20+ files.</div>
+        <div class="opt" onclick="answer(this, 'q16', false)">D. No — but only because auth changes require the <code>--secure</code> flag.</div>
+      </div>
+      <div class="explanation" id="exp-q16">Mode choice is an <strong>aggregate judgment</strong> across files affected, cross-cutting concerns, risk, familiarity, reversibility, and ambiguity — no single factor (like file count) forces a mode. An auth-schema change is cross-cutting, high-risk, and hard to reverse, so it's Plan Mode despite touching only 2 files. There is no <code>--secure</code> flag (D).</div>
+    </div>
+
+    <!-- Q17 -->
+    <div class="quiz-q" id="q17">
+      <div class="q-num">Question 17 of 18</div>
+      <div class="q-text">A CI review step returns valid JSON that passes all required-field checks, but some findings cite line numbers outside the diff and one finding contradicts its own remediation. What actually fixes this?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q17', false)">A. Make every field required so Claude can't omit uncertain values.</div>
+        <div class="opt" onclick="answer(this, 'q17', false)">B. Lower the temperature and instruct Claude to double-check its work.</div>
+        <div class="opt" onclick="answer(this, 'q17', true)">C. Add application-layer semantic validation before publishing — check findings against diff metadata, severity rules, and cross-field consistency.</div>
+        <div class="opt" onclick="answer(this, 'q17', false)">D. Add a stricter JSON schema with regex-constrained fields.</div>
+      </div>
+      <div class="explanation" id="exp-q17">Schema (A, D) enforces <strong>syntax only</strong> — it can't catch out-of-diff references or cross-field contradictions. Lowering temperature (B) is probabilistic, not deterministic. The fix is application-layer <strong>semantic validation</strong> before posting (Pattern 10: schema = syntax; semantics need their own check).</div>
+    </div>
+
+    <!-- Q18 -->
+    <div class="quiz-q" id="q18">
+      <div class="q-num">Question 18 of 18</div>
+      <div class="q-text">A rule you wrote in a subdirectory CLAUDE.md doesn't seem to be applying. Which command lets you diagnose exactly which memory files are currently loaded?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this, 'q18', true)">A. <code>/memory</code> — it lists all loaded memory files.</div>
+        <div class="opt" onclick="answer(this, 'q18', false)">B. <code>/memory</code> — it opens the file for editing so you can inspect it.</div>
+        <div class="opt" onclick="answer(this, 'q18', false)">C. <code>/context</code> — it prints the active configuration tree.</div>
+        <div class="opt" onclick="answer(this, 'q18', false)">D. There is no command; you must ask Claude which files it loaded.</div>
+      </div>
+      <div class="explanation" id="exp-q18"><code>/memory</code> <strong>LISTS</strong> all loaded memory files (CLAUDE.md + rules) — it's the diagnostic for hierarchy issues. It does not open a file for editing (B is the common misconception). <code>/context</code> (C) is not the memory-listing command, and you don't need to ask Claude manually (D).</div>
+    </div>
+
     <button id="quiz-btn" onclick="showScore()">Show My Score</button>
 
     <div class="quiz-score" id="quiz-score">
-      <div class="score-num" id="score-display">0/12</div>
+      <div class="score-num" id="score-display">0/18</div>
       <p id="score-msg" style="color:var(--muted); margin-top:8px;"></p>
     </div>
   </div>
@@ -931,7 +1083,7 @@ claude -p "Review these tests" &lt; tests.py   # fresh invocation
   }
 
   function showScore() {
-    const total = 12;
+    const total = 18;
     const got = Object.values(scores).filter(Boolean).length;
     document.getElementById('score-display').textContent = got + '/' + total;
     const pct = Math.round(got / total * 100);

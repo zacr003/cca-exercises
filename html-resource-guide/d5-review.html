@@ -137,6 +137,12 @@
         <div class="kv-row"><span class="kv-key">Wrong fix</span><span class="kv-val">Increase max_tokens — doesn't address what's filling context, just makes the window bigger</span></div>
       </div>
 
+      <h3>Never Summarize a Summary</h3>
+      <div class="good-box">
+        <div class="good-title">Summarize Once, Carry Verbatim</div>
+        <p>Summarize the raw source <strong>ONCE</strong> into a durable structured artifact and carry it <strong>verbatim</strong> — each additional summarization pass loses numbers, dates, and edge-cases irreversibly. Restate critical constraints at the <strong>point of use</strong>; don't assume a fact 50k tokens back is recalled accurately.</p>
+      </div>
+
       <h3>Exam Trap Table — 5.1</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
@@ -205,11 +211,50 @@
         <p style="margin-top:6px;"><strong>Wrong:</strong> Select the most recent account via heuristic. <strong>Wrong:</strong> Select the highest-value account. Both risk acting on the wrong account.</p>
       </div>
 
+      <h3>Conflicting Preferences Over Turns</h3>
+      <div class="concept-box">
+        <p>A user states a preference early ("I have <strong>low risk tolerance</strong>"), then later requests something contradictory ("recommend <strong>aggressive crypto</strong> strategies").</p>
+        <p style="margin-top:6px;"><strong>Correct:</strong> structured preference tracking — maintain a running preferences block updated each turn, surface the contradiction explicitly, and ask which takes precedence.</p>
+      </div>
+      <div class="trap-box">
+        <div class="trap-title">Both of These Are Wrong</div>
+        <p><strong>Wrong A:</strong> Always escalate on any contradiction.<br>
+        <strong>Wrong B:</strong> Always assume the latest preference wins and silently override the earlier one.</p>
+      </div>
+
+      <h3>Avoiding Hard Truths Is NOT a Trigger</h3>
+      <div class="bad-box">
+        <div class="bad-title">Don't Escalate to Dodge a Difficult Conversation</div>
+        <p>When verifiable evidence contradicts a customer's claim (e.g., tracking shows the package was <strong>delivered and signed for</strong>), <strong>present the evidence</strong>. Do NOT escalate just to avoid the difficult conversation — that is not a valid escalation trigger.</p>
+      </div>
+
+      <h3>Clarify vs. Assume Framework</h3>
+      <div class="concept-box">
+        <p>Weigh <strong>cost-of-wrong-assumption</strong> against <strong>friction-of-asking</strong>.</p>
+      </div>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">High cost + low friction</span><span class="kv-val">Always clarify — cheap to ask, expensive to be wrong</span></div>
+        <div class="kv-row"><span class="kv-key">Low cost + high friction</span><span class="kv-val">Reasonable to assume with transparency</span></div>
+      </div>
+
+      <h3>Structured Handoff Fields (by context type)</h3>
+      <table>
+        <thead><tr><th>Context</th><th>Required handoff fields</th></tr></thead>
+        <tbody>
+          <tr><td>Customer support</td><td class="td-correct">Customer ID · root cause · refund amount · recommended action</td></tr>
+          <tr><td>Research systems</td><td class="td-correct">Research topic · disputed claims · source citations · analysis performed · recommended reviewer decisions</td></tr>
+          <tr><td>Anti-pattern</td><td class="td-trap">Attach the raw transcript and expect the reviewer to reconstruct context — use a structured summary instead</td></tr>
+        </tbody>
+      </table>
+
       <h3>Exam Trap Table — 5.2</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
         <tbody>
           <tr><td class="td-trap">Customer is frustrated → escalate immediately</td><td>Acknowledge + offer resolution. Only escalate if they reiterate wanting a human.</td></tr>
+          <tr><td class="td-trap">User contradicts an earlier preference → assume latest wins (or always escalate)</td><td>Structured preference tracking — surface the contradiction, ask which takes precedence</td></tr>
+          <tr><td class="td-trap">Evidence contradicts the customer → escalate to avoid a hard conversation</td><td>Present the evidence; avoiding hard truths is not an escalation trigger</td></tr>
+          <tr><td class="td-trap">Hand off by attaching the raw transcript</td><td>Provide structured handoff fields (customer ID, root cause, recommended action, etc.)</td></tr>
           <tr><td class="td-trap">Multi-topic message → escalate due to complexity</td><td>Handle each topic with the appropriate tool. Complexity alone isn't a trigger.</td></tr>
           <tr><td class="td-trap">Add sentiment classifier to fix escalation calibration</td><td>Frustration ≠ complexity. Use explicit criteria + few-shot examples instead.</td></tr>
           <tr><td class="td-trap">Add confidence threshold auto-escalation</td><td>Self-reported confidence is unreliable. Explicit criteria are the correct fix.</td></tr>
@@ -299,11 +344,44 @@
         <div class="kv-row"><span class="kv-key">With annotations</span><span class="kv-val">Coordinator re-delegates supply_chain to fallback; notes international gap in report</span></div>
       </div>
 
+      <h3>Absent Source Document → HALT, Don't Retry</h3>
+      <div class="concept-box">
+        <p>When a required input document was structurally <strong>NOT included</strong> in the model input (e.g., an approval letter is referenced but was never uploaded), automated retries produce plausible <strong>hallucinations</strong>, not recovered data — the model fills in what it "expects" to see.</p>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Correct Response</div>
+        <ul>
+          <li>Detect the absence <strong>programmatically after validation</strong></li>
+          <li><strong>Stop automated retries</strong></li>
+          <li>Mark the extraction <strong>incomplete</strong></li>
+          <li><strong>Request the missing document</strong> from the user</li>
+        </ul>
+        <p style="margin-top:6px;">Distinct from a format error (may be fixable) and a timeout (retryable).</p>
+      </div>
+      <div class="trap-box">
+        <div class="trap-title">Two Wrong Responses</div>
+        <p><strong>Wrong A:</strong> Require the field and instruct Claude to infer it from nearby dates → produces hallucinated values.<br>
+        <strong>Wrong B:</strong> Retry with increasingly explicit prompts → same hallucination at higher token cost.</p>
+      </div>
+
+      <h3>Fail-Entire vs. Use-What-You-Have (Partial Results)</h3>
+      <table>
+        <thead><tr><th>Situation</th><th>Decision</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Missing subagents hold correctness-critical data (e.g., a financial total across accounts)</td><td class="td-correct">FAIL-ENTIRE</td><td>A 3-of-5 total presented as complete is worse than an error</td></tr>
+          <tr><td>Failing subagents are supplementary / additive enrichment</td><td class="td-correct">USE-WHAT-YOU-HAVE + annotate what's missing</td><td>Never present partial data as if complete</td></tr>
+          <tr><td>Any fan-out failure</td><td class="td-trap">Do NOT short-circuit on the first error</td><td>Collect ALL failures before deciding</td></tr>
+        </tbody>
+      </table>
+
       <h3>Anti-Patterns (Never Do These)</h3>
       <div class="bad-box">
         <div class="bad-title">Anti-Patterns</div>
         <ul>
           <li>Return <code>{}</code> or <code>[]</code> on failure (silent suppression) — coordinator can't recover</li>
+          <li>Retry when the source document is absent — produces hallucinations; detect absence and request the document instead</li>
+          <li>Present a partial aggregation (e.g., 3 of 5 accounts) as if it were complete</li>
+          <li>Short-circuit the fan-out on the first subagent error — collect ALL failures</li>
           <li>Terminate entire workflow on single subagent failure — disproportionate, loses partial progress</li>
           <li>Retry with identical parameters on non-transient errors — will fail again</li>
           <li>Discard partial results from timed-out subagents — return what you have + structured error</li>
@@ -348,11 +426,42 @@ content = (
     "Question: Which class for HTTP requests?"
 )</code></pre>
 
+      <h3>Attention Dilution vs. Token Budget — Diagnosis Order</h3>
+      <div class="concept-box">
+        <p>When an agent drifts or forgets after N turns and the context window was <strong>NOT full</strong>, the mechanism is <strong>attention dilution / recency bias</strong> — not token-budget exhaustion. <strong>Diagnose attention first, budget second.</strong> "Increase the context window" is almost never correct for a forgetting symptom.</p>
+      </div>
+      <table>
+        <thead><tr><th></th><th>Attention dilution</th><th>Token budget exhaustion</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Symptoms</strong></td><td>References "typical patterns" instead of specific entities found earlier; stops following custom conventions; rule adherence degrades over turns</td><td><code>stop_reason: max_tokens</code>; truncated responses; explicit "context full" signals</td></tr>
+          <tr><td><strong>Right fixes</strong></td><td class="td-correct">Convert rules to few-shot examples · scratchpad re-read at phase boundaries · periodic summary injection</td><td class="td-correct">Compact / trim / restructure the accumulated context</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Proactive Explore Subagent vs. Reactive /compact</h3>
+      <div class="grid-2">
+        <div class="good-box">
+          <div class="good-title">Explore Subagent (proactive)</div>
+          <p>Runs a verbose discovery phase in its <strong>isolated context</strong> and returns a <strong>compact summary</strong> to the main session — preserving main-session headroom for implementation. Use it when the verbose output <strong>hasn't been generated yet</strong>.</p>
+        </div>
+        <div class="trap-box">
+          <div class="trap-title">/compact (reactive)</div>
+          <p><code>/compact</code> runs <strong>AFTER</strong> context is already full. Using it instead of an Explore subagent when the verbose output hasn't been generated yet is the wrong tool for a proactive problem.</p>
+        </div>
+      </div>
+      <div class="bad-box">
+        <div class="bad-title">CLAUDE.md Is Not a Findings Store</div>
+        <p>CLAUDE.md captures <strong>policy/conventions</strong>, NOT live discovery findings. Relying on it for cross-session consistency in discovery work fails — spreading multi-phase work across sessions makes consistency harder.</p>
+      </div>
+
       <h3>Exam Trap Table — 5.4</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
         <tbody>
           <tr><td class="td-trap">Lower max_tokens to reduce context size</td><td>max_tokens = output length, not session size. Use scratchpad + /compact.</td></tr>
+          <tr><td class="td-trap">Forgetting after N turns (context not full) → increase the context window</td><td>Attention dilution — diagnose attention first; few-shot examples, scratchpad re-read, summary injection</td></tr>
+          <tr><td class="td-trap">Use /compact for a verbose discovery phase not yet run</td><td>/compact is reactive — use a proactive Explore subagent's isolated context</td></tr>
+          <tr><td class="td-trap">Rely on CLAUDE.md for cross-session discovery consistency</td><td>CLAUDE.md captures policy, not live findings</td></tr>
           <tr><td class="td-trap">Add more instructions when context is overloaded</td><td>More instructions into an overloaded context makes degradation worse</td></tr>
           <tr><td class="td-trap">/compact and /clear do the same thing</td><td>/compact summarizes + continues (CLAUDE.md re-read after). /clear wipes everything. Use /compact for long sessions; /clear when prior tool results are stale.</td></tr>
         </tbody>
@@ -409,6 +518,7 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
         <div class="trap-title">Exam Trap — Auto Memory Path</div>
         <p><strong>Wrong:</strong> Auto memory is in <code>.claude/memory/</code> (project-level, version-controlled).<br>
         <strong>Correct:</strong> Auto memory is in <code>~/.claude/projects/&lt;project&gt;/memory/</code> — user-level, NOT version-controlled. First 200 lines or 25KB loaded at session start.</p>
+        <p style="margin-top:8px;"><strong>Do separate git worktrees each get their own auto memory?</strong> No — all worktrees and subdirectories within the same git repository <strong>share ONE</strong> auto memory directory. It is not duplicated per worktree (and not shared across machines).</p>
       </div>
 
       <h3>Exam Trap Table — 5.5</h3>
@@ -419,6 +529,7 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
           <tr><td class="td-trap">Instruct Claude to "always preserve exact amounts"</td><td>Probabilistic — degrades over time. Case-facts block is deterministic.</td></tr>
           <tr><td class="td-trap">Auto memory is in .claude/memory/ (project-level)</td><td>Auto memory is in ~/.claude/projects/&lt;project&gt;/memory/ (user-level, NOT version-controlled). First 200 lines or 25KB loaded at session start.</td></tr>
           <tr><td class="td-trap">Semantic DB retrieval preserves exact transactional values</td><td>Miss-detection risk on exact values ($127.50 vs. "about $130"). Case-facts block is always included verbatim.</td></tr>
+          <tr><td class="td-trap">Separate worktrees each get their own auto memory</td><td>All worktrees/subdirs in one git repo share ONE auto memory directory</td></tr>
         </tbody>
       </table>
     </div>
@@ -484,11 +595,25 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
         <p>Structure synthesis output to <strong>distinguish well-established findings from contested ones</strong>, preserving the original source characterizations. Do not flatten contested data into a single authoritative-sounding claim.</p>
       </div>
 
+      <h3>Methodology Differences vs. Data Conflicts</h3>
+      <div class="concept-box">
+        <p>Two credible sources can report different statistics because they <strong>measure the same construct differently</strong> — not because one is wrong. Annotate conflicts with <strong>methodology context</strong>, not just source attribution. Without methodology, consumers can't tell "different data" from "different measurement."</p>
+      </div>
+
+      <h3>Provenance, Recency, and Uncertainty Properties</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Provenance is per-CLAIM</span><span class="kv-val">Not per-response — a "sources: [A,B,C]" header doesn't say which source backs which claim; every claim carries its own sources</span></div>
+        <div class="kv-row"><span class="kv-key">Recency is advisory</span><span class="kv-val">Not decisive — a 2019 peer-reviewed paper can outweigh yesterday's blog post</span></div>
+        <div class="kv-row"><span class="kv-key">Uncertainty propagates</span><span class="kv-val">A claim drawn from conflicting sources inherits lower confidence, regardless of how clean the prose reads</span></div>
+      </div>
+
       <h3>Exam Trap Table — 5.6</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
         <tbody>
           <tr><td class="td-trap">Auto-select the more recent or higher-authority value</td><td>Include both with source attribution; let the coordinator reconcile</td></tr>
+          <tr><td class="td-trap">Annotate a conflict with source attribution only</td><td>Add methodology context — distinguishes "different data" from "different measurement"</td></tr>
+          <tr><td class="td-trap">Attach provenance once per response</td><td>Provenance is per-claim; recency is advisory, not decisive</td></tr>
           <tr><td class="td-trap">Halt analysis and escalate immediately on conflict</td><td>Complete the analysis first, annotate the conflict, then pass to coordinator</td></tr>
           <tr><td class="td-trap">Include conflicting values without flagging them</td><td>Explicit annotation required — coordinator can't act on unknown conflicts</td></tr>
           <tr><td class="td-trap">Omit publication/collection dates from subagent outputs</td><td>Dates are required — a 2020 vs. 2024 difference is temporal, not contradictory</td></tr>
@@ -537,6 +662,25 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
         <div class="kv-row"><span class="kv-key">Self-reported confidence (wrong)</span><span class="kv-val">Model confidence is poorly calibrated — use labeled validation sets instead</span></div>
       </div>
 
+      <h3>The Calibration Gap</h3>
+      <div class="concept-box">
+        <p>A stated <strong>90% confidence</strong> may be only <strong>~70% correct</strong> in practice — confidence is the model's internal estimate, not a measured guarantee.</p>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Closing the Gap</div>
+        <ul>
+          <li>Measure <strong>stated-vs-observed accuracy</strong> against a labeled ground-truth set</li>
+          <li>Do it <strong>PER document type</strong> — a model calibrated on invoices may be overconfident on purchase orders</li>
+          <li>Feed <strong>reviewer corrections back</strong> so calibration improves over time</li>
+          <li>Set review thresholds <strong>per type</strong>, not one global threshold</li>
+        </ul>
+      </div>
+
+      <h3>Priority-Ordered Review Queue</h3>
+      <div class="concept-box">
+        <p>Order the human-review queue by <strong>lowest confidence × highest impact first</strong> — NOT FIFO. Reviewer attention goes where it changes outcomes most.</p>
+      </div>
+
       <h3>Before Reducing Human Review — Checklist</h3>
       <div class="good-box">
         <div class="good-title">Required Before Reducing Review</div>
@@ -557,6 +701,8 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
           <tr><td class="td-trap">Reduce review based on aggregate metrics without stratified analysis</td><td>Stratified random sampling across document types and fields is required</td></tr>
           <tr><td class="td-trap">Apply uniform confidence threshold across all fields</td><td>Use field-level calibrated scores — different fields have different error distributions</td></tr>
           <tr><td class="td-trap">Use model's self-reported confidence as the calibration source</td><td>Calibrate using labeled validation sets — self-reported confidence is unreliable</td></tr>
+          <tr><td class="td-trap">Treat a stated 90% confidence as 90% accurate</td><td>Calibration gap — 90% stated may be ~70% observed; measure stated-vs-observed per document type</td></tr>
+          <tr><td class="td-trap">Process the review queue FIFO</td><td>Priority-order it: lowest confidence × highest impact first</td></tr>
         </tbody>
       </table>
     </div>
@@ -712,12 +858,12 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
   <!-- QUIZ -->
   <div id="quiz" class="tab-panel">
     <div class="card" style="margin-bottom:24px;">
-      <div class="card-title">Domain 5 Quiz — 12 Questions</div>
+      <div class="card-title">Domain 5 Quiz — 18 Questions</div>
       <p style="color:var(--muted); font-size:0.88rem;">Select an answer to see immediate feedback.</p>
     </div>
 
     <div class="quiz-q" id="q1">
-      <div class="q-num">Question 1 of 12</div>
+      <div class="q-num">Question 1 of 18</div>
       <div class="q-text">A critical security alert appears in the middle of a long aggregated report. The model misses it in its summary. What is the correct fix?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q1',false)">A. Pre-summarize all inputs to 20K tokens so the model can process them as one chunk.</div>
@@ -729,7 +875,7 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
     </div>
 
     <div class="quiz-q" id="q2">
-      <div class="q-num">Question 2 of 12</div>
+      <div class="q-num">Question 2 of 18</div>
       <div class="q-text">A customer says: "I've been waiting 3 weeks for my refund, this is completely unacceptable!" What should the agent do?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q2',false)">A. Escalate immediately — strong emotion indicates a complex case.</div>
@@ -741,7 +887,7 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
     </div>
 
     <div class="quiz-q" id="q3">
-      <div class="q-num">Question 3 of 12</div>
+      <div class="q-num">Question 3 of 18</div>
       <div class="q-text">The Claude API is called twice in sequence. The second call asks about something mentioned in the first. Without any changes, does the model remember the first call?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q3',false)">A. Yes — the API maintains a session cache for recent calls.</div>
@@ -753,7 +899,7 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
     </div>
 
     <div class="quiz-q" id="q4">
-      <div class="q-num">Question 4 of 12</div>
+      <div class="q-num">Question 4 of 18</div>
       <div class="q-text">A subagent searches a database and finds no records matching the criteria. How should it report this?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q4',false)">A. <code>{"isError": true, "errorCategory": "transient", "description": "No data returned"}</code></div>
@@ -765,7 +911,7 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
     </div>
 
     <div class="quiz-q" id="q5">
-      <div class="q-num">Question 5 of 12</div>
+      <div class="q-num">Question 5 of 18</div>
       <div class="q-text">After 15 turns of analyzing modules, an agent is asked "which HTTP class should I use?" and answers with generic advice instead of the specific class it found earlier. What is this called and how do you fix it?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q5',false)">A. Model hallucination — increase temperature.</div>
@@ -777,7 +923,7 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
     </div>
 
     <div class="quiz-q" id="q6">
-      <div class="q-num">Question 6 of 12</div>
+      <div class="q-num">Question 6 of 18</div>
       <div class="q-text">A customer asks for a competitor price match. The support agent's policy covers own-site price adjustments only. What should the agent do?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q6',false)">A. Deny the request with a canned message.</div>
@@ -789,7 +935,7 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
     </div>
 
     <div class="quiz-q" id="q7">
-      <div class="q-num">Question 7 of 12</div>
+      <div class="q-num">Question 7 of 18</div>
       <div class="q-text">A synthesis subagent returns: "Here is the complete research report on Q1 performance." The coordinator marks the task as done. What's the problem?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q7',false)">A. The report is too long — should be summarized first.</div>
@@ -801,7 +947,7 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
     </div>
 
     <div class="quiz-q" id="q8">
-      <div class="q-num">Question 8 of 12</div>
+      <div class="q-num">Question 8 of 18</div>
       <div class="q-text">In a long customer support conversation, summarization condenses "Customer referenced promo code SUMMER25 for 20% discount" to "Customer mentioned promotional pricing." How do you prevent this?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q8',false)">A. Raise the summarization threshold to delay when summarization kicks in.</div>
@@ -813,7 +959,7 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
     </div>
 
     <div class="quiz-q" id="q9">
-      <div class="q-num">Question 9 of 12</div>
+      <div class="q-num">Question 9 of 18</div>
       <div class="q-text">A subagent gets a 403 Permission Denied when accessing a financial records table. What is the correct structured error response?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q9',false)">A. <code>{"results": [], "count": 0}</code> — empty result for empty access.</div>
@@ -825,7 +971,7 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
     </div>
 
     <div class="quiz-q" id="q10">
-      <div class="q-num">Question 10 of 12</div>
+      <div class="q-num">Question 10 of 18</div>
       <div class="q-text">Context is filling up with verbose tool outputs (80% of context = order lookups). What is the correct fix?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q10',false)">A. Increase max_tokens to accommodate the larger context.</div>
@@ -837,7 +983,7 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
     </div>
 
     <div class="quiz-q" id="q11">
-      <div class="q-num">Question 11 of 12</div>
+      <div class="q-num">Question 11 of 18</div>
       <div class="q-text">An agent encounters a database timeout. According to the 6-step error handling decision tree, what is the first action?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q11',true)">A. Retry locally with backoff — transient errors should be handled locally first.</div>
@@ -849,7 +995,7 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
     </div>
 
     <div class="quiz-q" id="q12">
-      <div class="q-num">Question 12 of 12</div>
+      <div class="q-num">Question 12 of 18</div>
       <div class="q-text">A customer says "I want to speak to a manager" mid-conversation while the agent is resolving a refund. What should the agent do?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q12',false)">A. Finish the refund first, then transfer to a manager.</div>
@@ -860,9 +1006,81 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
       <div class="explanation" id="exp-q12">Explicit human request = escalate IMMEDIATELY. No investigation first, no offer to resolve first, no asking why. This is the highest-priority escalation trigger. Finishing the task first or questioning the request both violate the rule.</div>
     </div>
 
+    <div class="quiz-q" id="q13">
+      <div class="q-num">Question 13 of 18</div>
+      <div class="q-text">6% of invoice extractions fail because a referenced approval letter was never uploaded — it is absent from the model input entirely. What is the correct handling?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q13',false)">A. Require the field and instruct Claude to infer the approval date from nearby dates in the document.</div>
+        <div class="opt" onclick="answer(this,'q13',false)">B. Retry the extraction with increasingly explicit prompts until the field is populated.</div>
+        <div class="opt" onclick="answer(this,'q13',true)">C. Detect the absence after validation, stop automated retries, mark the extraction incomplete, and request the missing document.</div>
+        <div class="opt" onclick="answer(this,'q13',false)">D. Mark the extraction as a transient failure and retry with exponential backoff.</div>
+      </div>
+      <div class="explanation" id="exp-q13">The document is structurally absent, so retries produce plausible hallucinations, not recovered data — the model fills in what it expects to see. Options A and B both generate hallucinated values (B just at higher token cost). This is not a timeout, so backoff (D) doesn't apply. Detect the absence and request the document.</div>
+    </div>
+
+    <div class="quiz-q" id="q14">
+      <div class="q-num">Question 14 of 18</div>
+      <div class="q-text">A coordinator fans out to 5 subagents to sum account balances into a financial total. 2 subagents can't access their accounts. What should the coordinator do?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q14',false)">A. Return the 3-account total as the complete answer — partial data is better than nothing.</div>
+        <div class="opt" onclick="answer(this,'q14',true)">B. Fail the entire operation — a correctness-critical total missing 2 of 5 accounts presented as complete is worse than an error.</div>
+        <div class="opt" onclick="answer(this,'q14',false)">C. Short-circuit on the first inaccessible account and return an error immediately.</div>
+        <div class="opt" onclick="answer(this,'q14',false)">D. Estimate the 2 missing balances from the 3 available accounts.</div>
+      </div>
+      <div class="explanation" id="exp-q14">Fail-entire applies when the missing subagents hold data that would materially change the answer — a correctness-critical aggregation like a financial total. A 3-of-5 total presented as complete (A) is worse than an error. Use-what-you-have is only for supplementary enrichment, and even then you annotate what's missing. Don't short-circuit on the first failure (C) — collect all failures. Estimating (D) fabricates data.</div>
+    </div>
+
+    <div class="quiz-q" id="q15">
+      <div class="q-num">Question 15 of 18</div>
+      <div class="q-text">After 20 turns — and the context window is NOT full — an agent starts referencing "typical patterns" instead of the specific classes it identified earlier. What should you diagnose first, and what fixes it?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q15',false)">A. Token-budget exhaustion — increase the context window.</div>
+        <div class="opt" onclick="answer(this,'q15',true)">B. Attention dilution / recency bias — convert rules to few-shot examples, re-read a scratchpad at phase boundaries, inject periodic summaries.</div>
+        <div class="opt" onclick="answer(this,'q15',false)">C. Model hallucination — lower the temperature.</div>
+        <div class="opt" onclick="answer(this,'q15',false)">D. Output truncation — raise max_tokens.</div>
+      </div>
+      <div class="explanation" id="exp-q15">When forgetting occurs and the window is NOT full, the mechanism is attention dilution / recency bias — diagnose attention first, budget second. "Increase the context window" is almost never correct for a forgetting symptom. Token-budget symptoms look different: stop_reason: max_tokens and truncated responses.</div>
+    </div>
+
+    <div class="quiz-q" id="q16">
+      <div class="q-num">Question 16 of 18</div>
+      <div class="q-text">Phase 1 of a task must discover all API call locations across 120 files — a verbose output that hasn't been generated yet. How do you keep the main session's context clean?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q16',false)">A. Run the discovery in the main session, then use /compact once the output fills the context.</div>
+        <div class="opt" onclick="answer(this,'q16',true)">B. Run the discovery in an Explore subagent's isolated context and return a compact summary to the main session.</div>
+        <div class="opt" onclick="answer(this,'q16',false)">C. Store the discovery findings in CLAUDE.md for cross-session consistency.</div>
+        <div class="opt" onclick="answer(this,'q16',false)">D. Increase max_tokens so the verbose output fits.</div>
+      </div>
+      <div class="explanation" id="exp-q16">An Explore subagent is the proactive choice: it absorbs the verbose output in its own isolated context and returns a compact summary, preserving main-session headroom. /compact (A) is reactive — it runs after context is already full. CLAUDE.md (C) captures policy, not live discovery findings.</div>
+    </div>
+
+    <div class="quiz-q" id="q17">
+      <div class="q-num">Question 17 of 18</div>
+      <div class="q-text">Early in a session a user says "I have low risk tolerance." Ten turns later they ask for "aggressive crypto plays." What is the correct response?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q17',false)">A. Assume the latest preference wins and recommend aggressive crypto strategies.</div>
+        <div class="opt" onclick="answer(this,'q17',false)">B. Escalate to a human — the contradiction can't be resolved by the agent.</div>
+        <div class="opt" onclick="answer(this,'q17',true)">C. Maintain a running preferences block, surface the contradiction explicitly, and ask which takes precedence.</div>
+        <div class="opt" onclick="answer(this,'q17',false)">D. Default to the earlier stated preference since it was expressed first.</div>
+      </div>
+      <div class="explanation" id="exp-q17">Structured preference tracking is the correct pattern: track preferences, surface the contradiction, and ask which takes precedence. Both "latest preference wins" (A) and "always escalate" (B) are wrong. Silently defaulting to the earlier preference (D) also assumes rather than clarifies.</div>
+    </div>
+
+    <div class="quiz-q" id="q18">
+      <div class="q-num">Question 18 of 18</div>
+      <div class="q-text">Two credible sources report different market-share numbers for the same metric. Beyond noting the source of each, what must the synthesis preserve?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q18',false)">A. Nothing more — source attribution on each value is sufficient.</div>
+        <div class="opt" onclick="answer(this,'q18',true)">B. Methodology context — two sources may measure the same construct differently, so consumers can tell "different data" from "different measurement."</div>
+        <div class="opt" onclick="answer(this,'q18',false)">C. Only the more authoritative value should be kept to avoid confusing the consumer.</div>
+        <div class="opt" onclick="answer(this,'q18',false)">D. A single averaged value with a confidence interval.</div>
+      </div>
+      <div class="explanation" id="exp-q18">Two credible sources can differ because they measure the construct differently, not because one is wrong. Annotate with methodology context, not just source attribution — without it, consumers can't distinguish different data from different measurement. Dropping a value (C) or averaging (D) discards information the coordinator needs.</div>
+    </div>
+
     <button id="quiz-btn" onclick="showScore()">Show My Score</button>
     <div class="quiz-score" id="quiz-score">
-      <div class="score-num" id="score-display">0/12</div>
+      <div class="score-num" id="score-display">0/18</div>
       <p id="score-msg" style="color:var(--muted); margin-top:8px;"></p>
     </div>
   </div>
@@ -891,8 +1109,8 @@ Previous Resolution Attempts: replacement shipped twice, both incorrect
   }
   function showScore() {
     const got = Object.values(scores).filter(Boolean).length;
-    document.getElementById('score-display').textContent = got + '/12';
-    const pct = Math.round(got / 12 * 100);
+    document.getElementById('score-display').textContent = got + '/18';
+    const pct = Math.round(got / 18 * 100);
     const msg = pct >= 90 ? 'Excellent — Domain 5 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the subdomain tabs again.';
     document.getElementById('score-msg').textContent = pct + '% — ' + msg;
     document.getElementById('quiz-score').classList.add('show');

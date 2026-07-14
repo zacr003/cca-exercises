@@ -155,6 +155,20 @@ Example 2: user_id = request.args.get('id'); db.execute(f"... {user_id}")  → C
         <p>Target <strong>2–4 examples per boundary</strong>, not 10–15. Contrastive means two similar-looking cases with different classifications + explanation of WHY they differ. Grouped examples (all CRITICALs then all HIGHs) don't teach the model how to discriminate.</p>
       </div>
 
+      <h3>Multi-Turn Instruction Degradation</h3>
+      <div class="concept-box">
+        <p><strong>Abstract rules degrade faster than concrete demonstrations as a conversation grows.</strong> In extended sessions (e.g., 12+ turns), a verbose rule-based system prompt loses adherence turn over turn, while few-shot examples stay anchored. <strong>Default fix</strong> whenever you see "verbose system prompt + instruction-adherence degrading over turns" → replace the rules with few-shot examples.</p>
+      </div>
+      <div class="trap-box">
+        <div class="trap-title">Adherence Decay Trap</div>
+        <p>When a long-running conversation stops following a verbose rule-based system prompt, the instinct is to <strong>add more or stronger rules</strong>. That feeds the failing mechanism — rules are exactly what degrades over turns. Swap the rules for 2–4 contrastive few-shot examples, which remain anchored as the session grows.</p>
+      </div>
+
+      <h3>Where to Place Examples</h3>
+      <div class="concept-box">
+        <p>Put few-shot examples at the <strong>END of the system prompt, immediately before the first user turn</strong>. Recency maximizes their pull on the model's first output; examples buried mid-prompt get partially overridden by the instructions that follow them. Wrap long examples in <strong>XML / delimiter tags</strong> so they are clearly distinguishable from directives.</p>
+      </div>
+
       <h3>Exam Trap Table — 4.2</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
@@ -163,6 +177,8 @@ Example 2: user_id = request.args.get('id'); db.execute(f"... {user_id}")  → C
           <tr><td class="td-trap">10–15 unambiguous examples</td><td>2–4 targeted contrastive examples that target the failure mode</td></tr>
           <tr><td class="td-trap">Grouped examples (all CRITICALs, then all HIGHs)</td><td>Adjacent contrastive pairs that show the boundary</td></tr>
           <tr><td class="td-trap">2–4 examples are too few</td><td>2–4 targeted outperform 15 unambiguous ones</td></tr>
+          <tr><td class="td-trap">Add more/stronger rules when a long session stops following the system prompt</td><td>Rules degrade over turns — replace them with few-shot examples, which stay anchored</td></tr>
+          <tr><td class="td-trap">Examples work anywhere in the prompt</td><td>Place them at the END, right before the first user turn (recency); wrap long ones in XML tags</td></tr>
         </tbody>
       </table>
     </div>
@@ -224,7 +240,7 @@ if currency == "other" and not currency_detail:
       <h3>stop_reason Warning</h3>
       <div class="trap-box">
         <div class="trap-title">Critical Exam Trap</div>
-        <p><code>stop_reason: "max_tokens"</code> does <strong>NOT</strong> guarantee schema compliance. Only <code>stop_reason: "tool_use"</code> (or "end_turn" with tool forced) means the schema was completed. If the response was truncated by max_tokens, the JSON may be incomplete.</p>
+        <p>Schema conformance is guaranteed <strong>only on <code>end_turn</code></strong> (or <code>"tool_use"</code> with the tool forced). BOTH <code>stop_reason: "max_tokens"</code> AND <code>stop_reason: "refusal"</code> can still yield <strong>non-conforming output</strong>: a <code>max_tokens</code> stop means the JSON may be truncated/incomplete, and a <code>refusal</code> stop means the model declined and never produced the structured object at all. Always check <code>stop_reason</code> before trusting the schema.</p>
       </div>
 
       <h3>Exam Trap Table — 4.3</h3>
@@ -234,6 +250,8 @@ if currency == "other" and not currency_detail:
           <tr><td class="td-trap"><code>strict: true</code> eliminates all errors</td><td>Only eliminates syntax errors — semantic errors still possible</td></tr>
           <tr><td class="td-trap">Required fields with "N/A" string for absent data</td><td>Use nullable: <code>"type": ["string", "null"]</code></td></tr>
           <tr><td class="td-trap"><code>stop_reason: "max_tokens"</code> guarantees schema compliance</td><td>It does NOT — truncated response may be incomplete JSON</td></tr>
+          <tr><td class="td-trap">A schema always produces conforming output</td><td>Only on <code>end_turn</code> — a <code>refusal</code> stop yields no valid object; check <code>stop_reason</code></td></tr>
+          <tr><td class="td-trap">A flat enum can bind two correlated fields</td><td>Use a discriminated union (<code>anyOf</code>/<code>oneOf</code> per type) or per-type tools</td></tr>
           <tr><td class="td-trap">Schema validates that totals add up correctly</td><td>That's semantic validation — must be done in application code</td></tr>
           <tr><td class="td-trap">Blind retry (same prompt) fixes extraction errors</td><td>No new signal — include doc + failed extraction + specific errors</td></tr>
           <tr><td class="td-trap">Retry fixes absent data</td><td>Absent data causes fabrication — accept null, route to human review</td></tr>
@@ -284,6 +302,54 @@ Please provide a corrected extraction that resolves these errors.</code></pre>
         </ul>
         <p style="margin-top:8px;">Analyze these across dismissed/false-positive findings to find <strong>systematic prompt weaknesses</strong> → targeted fix instead of guesswork.</p>
       </div>
+
+      <h3>Discriminated-Union Schema (Correlated Fields)</h3>
+      <div class="concept-box">
+        <p>A <strong>flat enum cannot bind two correlated fields.</strong> If a workout logger uses a flat <code>exercise_type</code> enum plus a shared metrics object, the model produces invalid combinations — e.g., a <em>cardio</em> metric (distance, pace) attached to a <em>strength</em> exercise (which needs sets/reps). The enum constrains one field but nothing forces the metrics to match it.</p>
+        <p style="margin-top:8px;"><strong>Fix:</strong> a <strong>discriminated-union JSON schema</strong> — separate <code>anyOf</code>/<code>oneOf</code> branches per type, each with its own required fields — OR separate per-type tools. Type-specific fields become required <em>only</em> when that type is selected, so invalid cross-type combinations are structurally impossible.</p>
+      </div>
+      <div class="good-box">
+        <div class="good-title">Discriminated Union (Correct)</div>
+        <pre style="margin:8px 0 0; background:transparent; border:none; padding:0;"><code>{
+  "oneOf": [
+    {
+      "properties": {
+        "type": { "const": "cardio" },
+        "distance_km": { "type": "number" },
+        "pace_min_per_km": { "type": "number" }
+      },
+      "required": ["type", "distance_km", "pace_min_per_km"]
+    },
+    {
+      "properties": {
+        "type": { "const": "strength" },
+        "sets": { "type": "integer" },
+        "reps": { "type": "integer" }
+      },
+      "required": ["type", "sets", "reps"]
+    }
+  ]
+}
+# A flat {"exercise_type": enum} + shared metrics object cannot
+# prevent cardio fields showing up on a strength exercise.</code></pre>
+      </div>
+
+      <h3>The Canonical "Guarantee Structured Output" Combo</h3>
+      <div class="concept-box">
+        <p>The single most-tested structured-output guarantee is a <strong>three-part combination</strong> — memorize all three together:</p>
+        <ul style="margin-top:8px;">
+          <li><code>tool_choice: {"type": "tool", "name": "X"}</code> — forces that specific tool (see 4.4), so the model can't return free text</li>
+          <li>a <strong>JSON schema</strong> on the tool definition — defines the required shape</li>
+          <li><code>strict: true</code> — hard-enforces the schema's syntax</li>
+        </ul>
+        <p style="margin-top:8px;">System-prompt format instructions are only probabilistic, and <code>tool_choice: "auto"</code> may return text. Only the forced-tool + schema + <code>strict</code> combo guarantees a schema-shaped result (subject to the <code>stop_reason</code> caveat above — the guarantee holds on <code>end_turn</code>).</p>
+      </div>
+
+      <h3>Strict Tools & Status Fields</h3>
+      <div class="kv-list">
+        <div class="kv-row"><span class="kv-key">Strict tools per request</span><span class="kv-val"><strong>20 maximum</strong>. Non-strict tools do NOT count against this limit.</span></div>
+        <div class="kv-row"><span class="kv-key">status enum</span><span class="kv-val"><code>status: ["success","no_data","error"]</code> + optional <code>errorMessage</code> — lets you distinguish an empty-but-valid result from an actual failure</span></div>
+      </div>
     </div>
   </div>
 
@@ -309,6 +375,10 @@ Please provide a corrected extraction that resolves these errors.</code></pre>
       <div class="trap-box">
         <div class="trap-title">Most Common Exam Trap</div>
         <p><strong>"tool_choice: 'any' forces a specific tool"</strong> — WRONG. <code>"any"</code> guarantees SOME tool is called; the model still chooses which one. To guarantee a specific tool, use <code>{"type": "tool", "name": "X"}</code>.</p>
+      </div>
+
+      <div class="concept-box">
+        <p><strong>The canonical structured-output guarantee combines this tab with 4.3.</strong> Forcing a tool here — <code>tool_choice: {"type": "tool", "name": "X"}</code> — is only one leg of the three-part answer. Pair it with a <strong>JSON schema</strong> and <code>strict: true</code> (see 4.3) to guarantee a schema-shaped result. Forced tool alone controls WHICH tool runs; the schema + <code>strict</code> control the SHAPE of what it returns.</p>
       </div>
 
       <h3>The Recommended Pattern: Force First, Auto After</h3>
@@ -379,10 +449,11 @@ Turn 2+: tool_choice = "auto"
       <h3>Key Facts (Memorize These)</h3>
       <div class="kv-list">
         <div class="kv-row"><span class="kv-key">Cost savings</span><span class="kv-val">50% vs real-time — NOT 90% (that's prompt caching)</span></div>
-        <div class="kv-row"><span class="kv-key">Processing time</span><span class="kv-val">Up to 24 hours — no guaranteed latency SLA</span></div>
+        <div class="kv-row"><span class="kv-key">Processing time</span><span class="kv-val">Up to 24h is the CEILING, not the typical time — most batches finish in UNDER 1 hour (best-effort, no guaranteed SLA)</span></div>
         <div class="kv-row"><span class="kv-key">Result order</span><span class="kv-val">Results come back OUT of order — always use custom_id to correlate</span></div>
         <div class="kv-row"><span class="kv-key">Failure recovery</span><span class="kv-val">Resubmit ONLY failed items using their custom_id</span></div>
-        <div class="kv-row"><span class="kv-key">Multi-turn tool calling</span><span class="kv-val">NOT supported — each request is single-turn</span></div>
+        <div class="kv-row"><span class="kv-key">Tool definitions</span><span class="kv-val">ALLOWED — you can declare tools in batch requests. Only mid-request INTERACTIVE tool execution is unsupported</span></div>
+        <div class="kv-row"><span class="kv-key">Multi-turn tool calling</span><span class="kv-val">NOT supported — a batch request can't pause mid-request to run a client-side tool and feed the result back</span></div>
         <div class="kv-row"><span class="kv-key">Max requests per batch</span><span class="kv-val">100,000 requests OR 256 MB per batch</span></div>
       </div>
 
@@ -404,6 +475,16 @@ Turn 2+: tool_choice = "auto"
           <li>30h SLA → submit every 6h ✓</li>
           <li>4h SLA → <strong>DO NOT USE BATCH</strong> (4 - 24 = negative)</li>
         </ul>
+        <p style="margin-top:10px;"><strong>With preprocessing</strong>, subtract that too → <code>submit_interval = SLA - 24h - preprocessing</code>.</p>
+        <ul style="margin-top:8px;">
+          <li>48h SLA with 6h preprocessing → 48 - 24 - 6 = <strong>submit every 18h</strong></li>
+        </ul>
+      </div>
+
+      <h3>Refine on a Sample First</h3>
+      <div class="good-box">
+        <div class="good-title">Sample-Then-Scale (Correct)</div>
+        <p>Before submitting the full batch, refine your prompts on a small <strong>sample set</strong>. This maximizes first-pass success and avoids costly iterative resubmission across tens of thousands of requests. Debugging a prompt at full scale is the expensive way to learn it was wrong.</p>
       </div>
 
       <h3>Failure Recovery Pattern</h3>
@@ -425,7 +506,11 @@ Turn 2+: tool_choice = "auto"
           <tr><td class="td-trap">Results come back in submission order</td><td>Results are OUT of order — always correlate via custom_id</td></tr>
           <tr><td class="td-trap">Resubmit entire batch on partial failure</td><td>Resubmit ONLY failed items — wastes cost otherwise</td></tr>
           <tr><td class="td-trap"><code>priority: critical</code> flag to expedite</td><td>This field does not exist in the Batch API</td></tr>
+          <tr><td class="td-trap"><code>/batch/{id}/expedite</code> endpoint speeds up a batch</td><td>This endpoint does not exist — it's a distractor</td></tr>
+          <tr><td class="td-trap">Batches always take close to the full 24 hours</td><td>24h is the ceiling — most batches finish in under 1 hour</td></tr>
+          <tr><td class="td-trap">Batch requests cannot declare tools</td><td>Tool DEFINITIONS are allowed — only mid-request interactive tool EXECUTION is unsupported</td></tr>
           <tr><td class="td-trap">Batch supports multi-turn tool calling</td><td>NOT supported — each batch request is single-turn only</td></tr>
+          <tr><td class="td-trap">Submit the full batch, then debug failures</td><td>Refine prompts on a small sample first — cheaper than resubmitting at scale</td></tr>
         </tbody>
       </table>
 
@@ -565,6 +650,30 @@ Identify new issues only.</code></pre>
         <p>Per-line review cannot catch integration issues — it lacks the cross-file context needed to see API contract mismatches or module boundary bugs. Always run a dedicated cross-file integration pass separately.</p>
       </div>
 
+      <h3>Multi-Pass Synthesis (Findings-Only)</h3>
+      <div class="concept-box">
+        <p>In a multi-pass pipeline, split reviewers by <strong>concern</strong> — one for security, one for performance, one for correctness — each scoped to explicitly IGNORE the others. The <strong>final synthesis instance works from the structured FINDINGS only</strong>: dedupe, group by severity, and prioritize. It must <strong>NOT re-read the source files.</strong></p>
+        <p style="margin-top:8px;">Mantra: <em>independent instances beat self-review, narrow scope beats omnibus, findings beat re-reading.</em></p>
+      </div>
+      <div class="trap-box">
+        <div class="trap-title">Re-Reading Trap</div>
+        <p>Letting the synthesis pass re-read the original source files inflates token cost and — worse — lets a <strong>less-focused general pass override the specialists' findings</strong>. The specialists already did the deep reading; synthesis should only organize what they found, not re-derive it.</p>
+      </div>
+
+      <h3>Self-Critique vs. Independent Review</h3>
+      <div class="concept-box">
+        <p>These are NOT the same tool. <strong>Self-critique is valid for a COMPLETENESS check</strong> — a single instance adding a step like "did I include policy context, timelines, and next steps?" genuinely catches omissions. What self-critique <strong>cannot</strong> do is catch <strong>design flaws already reasoned into the output</strong> — for that you need an independent instance with a fresh context window.</p>
+      </div>
+      <div class="trap-box">
+        <div class="trap-title">Conflation Trap</div>
+        <p>Treating self-critique and independent review as interchangeable. Use self-critique for completeness (what's missing); use an independent fresh instance for correctness and design bias (what's wrong that the generator already justified to itself).</p>
+      </div>
+
+      <h3>Confidence Metadata for Human Routing</h3>
+      <div class="concept-box">
+        <p>A verification pass may self-report confidence — but its job is to <strong>ROUTE calibrated human review</strong> (surface metadata so humans triage faster), NOT to pre-filter or suppress findings. Related: <strong>sentiment-based escalation is an unreliable proxy</strong> for case complexity, and <strong>few-shot examples generalize to novel patterns</strong> better than a static whitelist.</p>
+      </div>
+
       <h3>Exam Trap Table — 4.6</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
@@ -574,6 +683,9 @@ Identify new issues only.</code></pre>
           <tr><td class="td-trap">Pass the generation prompt to the reviewer for context</td><td>This reintroduces the generator's framing and bias. Pass only the output + review criteria.</td></tr>
           <tr><td class="td-trap">Per-line review is equivalent to a cross-file integration pass</td><td>Per-line fragments cross-file context. Integration issues require a dedicated multi-file pass.</td></tr>
           <tr><td class="td-trap">Stronger review instructions overcome self-review bias</td><td>Prompts are suggestions — they don't override the context the model already has. Fresh instance does.</td></tr>
+          <tr><td class="td-trap">The final synthesis pass should re-read the source files</td><td>It works from the FINDINGS only — re-reading inflates tokens and lets a general pass override specialists</td></tr>
+          <tr><td class="td-trap">Self-critique and independent review are the same thing</td><td>Self-critique catches completeness gaps; only an independent instance catches design flaws already reasoned in</td></tr>
+          <tr><td class="td-trap">A confidence-scoring pass should pre-filter/suppress findings</td><td>Confidence routes calibrated human review — it surfaces metadata, it doesn't suppress</td></tr>
           <tr><td class="td-trap">Ask Claude to explain its mistakes in natural language, then parse</td><td>Include specific machine-readable validation errors in the retry prompt</td></tr>
         </tbody>
       </table>
@@ -713,12 +825,12 @@ Identify new issues only.</code></pre>
   <!-- QUIZ -->
   <div id="quiz" class="tab-panel">
     <div class="card" style="margin-bottom:24px;">
-      <div class="card-title">Domain 4 Quiz — 14 Questions</div>
+      <div class="card-title">Domain 4 Quiz — 21 Questions</div>
       <p style="color:var(--muted); font-size:0.88rem;">Select an answer to see immediate feedback.</p>
     </div>
 
     <div class="quiz-q" id="q1">
-      <div class="q-num">Question 1 of 14</div>
+      <div class="q-num">Question 1 of 21</div>
       <div class="q-text">A classification system has high false positive rates in one category. What is the correct fix?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q1',false)">A. Switch to a more capable model.</div>
@@ -730,7 +842,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q2">
-      <div class="q-num">Question 2 of 14</div>
+      <div class="q-num">Question 2 of 21</div>
       <div class="q-text">What does <code>tool_choice: "any"</code> guarantee?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q2',false)">A. The model calls the first tool in the tools array.</div>
@@ -742,7 +854,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q3">
-      <div class="q-num">Question 3 of 14</div>
+      <div class="q-num">Question 3 of 21</div>
       <div class="q-text">A JSON schema requires <code>invoice_number</code> as a string. The invoice document has no invoice number. What happens?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q3',false)">A. The model returns an error because a required field is missing.</div>
@@ -754,7 +866,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q4">
-      <div class="q-num">Question 4 of 14</div>
+      <div class="q-num">Question 4 of 21</div>
       <div class="q-text">The Batch API response for a 5-request batch comes back with results for requests 5, 2, 4, 1, 3. How should you match results to requests?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q4',false)">A. Sort results by timestamp to restore original order.</div>
@@ -766,7 +878,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q5">
-      <div class="q-num">Question 5 of 14</div>
+      <div class="q-num">Question 5 of 21</div>
       <div class="q-text">A structured extraction passes JSON schema validation but the stated total ($200) doesn't match the sum of line items ($147.48). What catches this error?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q5',false)">A. The JSON schema — it enforces semantic correctness.</div>
@@ -778,7 +890,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q6">
-      <div class="q-num">Question 6 of 14</div>
+      <div class="q-num">Question 6 of 21</div>
       <div class="q-text">How much does the Batch API save compared to the real-time API?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q6',false)">A. 90% — same as prompt caching.</div>
@@ -790,7 +902,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q7">
-      <div class="q-num">Question 7 of 14</div>
+      <div class="q-num">Question 7 of 21</div>
       <div class="q-text">A multi-turn workflow extracts metadata in Turn 1 and then does follow-up analysis. What is the recommended <code>tool_choice</code> configuration?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q7',false)">A. <code>"any"</code> for all turns — guarantees tool use throughout.</div>
@@ -802,7 +914,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q8">
-      <div class="q-num">Question 8 of 14</div>
+      <div class="q-num">Question 8 of 21</div>
       <div class="q-text">An extraction returns null for a phone number field. When you retry with error feedback, the model fabricates a phone number. What went wrong?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q8',false)">A. The retry prompt didn't include the original document.</div>
@@ -814,7 +926,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q9">
-      <div class="q-num">Question 9 of 14</div>
+      <div class="q-num">Question 9 of 21</div>
       <div class="q-text">You have 3 document extraction tools (invoice, receipt, contract). The document type is unknown. What <code>tool_choice</code> lets the model pick the right schema?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q9',false)">A. <code>{"type": "tool", "name": "invoice"}</code> — default to most common type.</div>
@@ -826,7 +938,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q10">
-      <div class="q-num">Question 10 of 14</div>
+      <div class="q-num">Question 10 of 21</div>
       <div class="q-text">A batch of 1,000 extraction requests completes with 50 failures. What is the correct recovery?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q10',false)">A. Resubmit the entire original batch of 1,000 requests.</div>
@@ -838,7 +950,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q11">
-      <div class="q-num">Question 11 of 14</div>
+      <div class="q-num">Question 11 of 21</div>
       <div class="q-text">What is the purpose of the <code>detected_pattern</code> field in an extraction schema?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q11',false)">A. It stores the model's confidence score for the extraction.</div>
@@ -850,7 +962,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q12">
-      <div class="q-num">Question 12 of 14</div>
+      <div class="q-num">Question 12 of 21</div>
       <div class="q-text">A CI pipeline needs Claude to review code and post results to a PR comment. Should you use the Batch API?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q12',false)">A. Yes — it saves 50% and the PR comment doesn't need to be immediate.</div>
@@ -862,7 +974,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q13">
-      <div class="q-num">Question 13 of 14</div>
+      <div class="q-num">Question 13 of 21</div>
       <div class="q-text">A code review pipeline generates code with Claude, then asks the same session to review it. Reviewers keep approving bugs the generator introduced. What is the root cause and correct fix?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q13',false)">A. Enable extended thinking — the reviewer needs more reasoning time to catch subtle bugs.</div>
@@ -874,7 +986,7 @@ Identify new issues only.</code></pre>
     </div>
 
     <div class="quiz-q" id="q14">
-      <div class="q-num">Question 14 of 14</div>
+      <div class="q-num">Question 14 of 21</div>
       <div class="q-text">After implementing independent review instances, the reviewer re-flags issues that were already identified and fixed in the previous review pass. What is the correct fix?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q14',false)">A. Switch to per-line review so the reviewer has more granular context about what changed.</div>
@@ -885,9 +997,93 @@ Identify new issues only.</code></pre>
       <div class="explanation" id="exp-q14">Independent reviewers have no memory of prior passes — so they re-flag everything they see as an issue. Fix: inject the prior findings list into the reviewer's context with a note that those are resolved. Per-line review would fragment cross-file context and doesn't address the duplicate-comment problem. Running in the same session as the generator reintroduces self-review bias.</div>
     </div>
 
+    <div class="quiz-q" id="q15">
+      <div class="q-num">Question 15 of 21</div>
+      <div class="q-text">A workout logger uses a flat <code>exercise_type</code> enum plus a shared metrics object. The model keeps emitting invalid combos — a cardio metric (distance/pace) on a strength exercise. What schema pattern fixes this?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q15',false)">A. Add a validation instruction to the system prompt telling the model to match metrics to the exercise type.</div>
+        <div class="opt" onclick="answer(this,'q15',false)">B. Add more enum values so every exercise variant has its own entry.</div>
+        <div class="opt" onclick="answer(this,'q15',true)">C. Use a discriminated-union schema (<code>anyOf</code>/<code>oneOf</code> branches per type, each with its own required fields) or separate per-type tools.</div>
+        <div class="opt" onclick="answer(this,'q15',false)">D. Make all metric fields nullable so mismatched ones can be left empty.</div>
+      </div>
+      <div class="explanation" id="exp-q15">A flat enum constrains one field but cannot bind two correlated fields, so nothing forces the metrics to match the type. A discriminated union makes type-specific fields required only when that type is selected, making invalid cross-type combinations structurally impossible. Prompt instructions are probabilistic; more enum values and nullable fields don't enforce the correlation.</div>
+    </div>
+
+    <div class="quiz-q" id="q16">
+      <div class="q-num">Question 16 of 21</div>
+      <div class="q-text">In an extended 12+ turn conversation, a verbose rule-based system prompt is steadily losing instruction adherence. What is the correct fix?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q16',false)">A. Add more rules and stronger emphatic language to the system prompt.</div>
+        <div class="opt" onclick="answer(this,'q16',true)">B. Replace the rules with 2–4 contrastive few-shot examples, which stay anchored as the session grows.</div>
+        <div class="opt" onclick="answer(this,'q16',false)">C. Restate the full rule list at the start of every turn.</div>
+        <div class="opt" onclick="answer(this,'q16',false)">D. Switch to a larger model to hold the rules better.</div>
+      </div>
+      <div class="explanation" id="exp-q16">Abstract rules degrade faster than concrete demonstrations as a conversation grows. Adding more or stronger rules feeds the failing mechanism. Few-shot examples remain anchored over many turns, which is why they are the default fix for "verbose system prompt + adherence degrading over turns."</div>
+    </div>
+
+    <div class="quiz-q" id="q17">
+      <div class="q-num">Question 17 of 21</div>
+      <div class="q-text">Where should few-shot examples be placed for maximum effect?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q17',false)">A. At the very start of the system prompt, before any instructions.</div>
+        <div class="opt" onclick="answer(this,'q17',false)">B. Interleaved between the rules they illustrate.</div>
+        <div class="opt" onclick="answer(this,'q17',true)">C. At the END of the system prompt, immediately before the first user turn, wrapped in XML/delimiter tags.</div>
+        <div class="opt" onclick="answer(this,'q17',false)">D. In a separate assistant message after the first response.</div>
+      </div>
+      <div class="explanation" id="exp-q17">Recency maximizes the examples' pull on the model's first output. Examples buried earlier get partially overridden by the instructions that follow them. Wrapping long examples in XML tags keeps them distinguishable from directives.</div>
+    </div>
+
+    <div class="quiz-q" id="q18">
+      <div class="q-num">Question 18 of 21</div>
+      <div class="q-text">In a multi-pass review pipeline (separate security, performance, and correctness reviewers), what should the final synthesis instance do?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q18',false)">A. Re-read all the source files and independently re-verify each specialist's findings.</div>
+        <div class="opt" onclick="answer(this,'q18',true)">B. Work from the structured findings only — dedupe, group by severity, and prioritize — without re-reading the source files.</div>
+        <div class="opt" onclick="answer(this,'q18',false)">C. Discard low-confidence findings before presenting the rest.</div>
+        <div class="opt" onclick="answer(this,'q18',false)">D. Merge the three reviewers into one omnibus reviewer to save passes.</div>
+      </div>
+      <div class="explanation" id="exp-q18">The synthesis pass organizes findings; it must not re-read source files. Re-reading inflates tokens and lets a less-focused general pass override the specialists' work. Mantra: independent instances beat self-review, narrow scope beats omnibus, findings beat re-reading.</div>
+    </div>
+
+    <div class="quiz-q" id="q19">
+      <div class="q-num">Question 19 of 21</div>
+      <div class="q-text">A single-instance drafting step adds a self-critique that checks "did I include policy context, timelines, and next steps?" Is this a valid technique?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q19',false)">A. No — self-critique is always biased and never adds value; only an independent instance helps.</div>
+        <div class="opt" onclick="answer(this,'q19',true)">B. Yes for completeness — self-critique effectively catches omissions, though it does NOT catch design flaws already reasoned into the output.</div>
+        <div class="opt" onclick="answer(this,'q19',false)">C. Yes — self-critique fully replaces the need for any independent review, including correctness.</div>
+        <div class="opt" onclick="answer(this,'q19',false)">D. No — extended thinking should be used instead of a self-critique step.</div>
+      </div>
+      <div class="explanation" id="exp-q19">Self-critique and independent review are different tools. A self-critique completeness check genuinely catches missing elements. It cannot catch design flaws the model already justified to itself during generation — that requires an independent fresh instance. Treating the two as interchangeable is the trap.</div>
+    </div>
+
+    <div class="quiz-q" id="q20">
+      <div class="q-num">Question 20 of 21</div>
+      <div class="q-text">Which configuration is THE most-tested way to GUARANTEE schema-compliant structured output?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q20',false)">A. A detailed system-prompt instruction describing the exact JSON format to return.</div>
+        <div class="opt" onclick="answer(this,'q20',false)">B. <code>tool_choice: "auto"</code> plus a JSON schema on the tool.</div>
+        <div class="opt" onclick="answer(this,'q20',true)">C. <code>tool_choice: {"type":"tool","name":"X"}</code> + a JSON schema + <code>strict: true</code>.</div>
+        <div class="opt" onclick="answer(this,'q20',false)">D. <code>tool_choice: "any"</code> with a natural-language reminder to follow the schema.</div>
+      </div>
+      <div class="explanation" id="exp-q20">The three-part combo — forced specific tool + JSON schema + <code>strict: true</code> — is the canonical guarantee. System-prompt format instructions are probabilistic, and <code>"auto"</code> may return text. Forcing the tool controls WHICH tool runs; the schema + <code>strict</code> control the SHAPE of the output (guaranteed on <code>end_turn</code>).</div>
+    </div>
+
+    <div class="quiz-q" id="q21">
+      <div class="q-num">Question 21 of 21</div>
+      <div class="q-text">You forced a tool with a strict JSON schema, but the returned object is malformed. The response has <code>stop_reason: "refusal"</code>. What does this tell you?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q21',false)">A. The schema guarantee still holds — a refusal always returns a valid empty object.</div>
+        <div class="opt" onclick="answer(this,'q21',true)">B. Schema conformance is guaranteed only on <code>end_turn</code>; a <code>refusal</code> (like <code>max_tokens</code>) can yield non-conforming output, so you must check <code>stop_reason</code>.</div>
+        <div class="opt" onclick="answer(this,'q21',false)">C. The <code>strict: true</code> setting was ignored — remove it and retry.</div>
+        <div class="opt" onclick="answer(this,'q21',false)">D. Refusals only affect text responses, never tool calls.</div>
+      </div>
+      <div class="explanation" id="exp-q21">The schema guarantee holds only on <code>end_turn</code>. Both <code>refusal</code> and <code>max_tokens</code> stop reasons can produce non-conforming output — a refusal means the model declined and never produced the structured object. Always check <code>stop_reason</code> before trusting the schema.</div>
+    </div>
+
     <button id="quiz-btn" onclick="showScore()">Show My Score</button>
     <div class="quiz-score" id="quiz-score">
-      <div class="score-num" id="score-display">0/14</div>
+      <div class="score-num" id="score-display">0/21</div>
       <p id="score-msg" style="color:var(--muted); margin-top:8px;"></p>
     </div>
   </div>
@@ -916,8 +1112,8 @@ Identify new issues only.</code></pre>
   }
   function showScore() {
     const got = Object.values(scores).filter(Boolean).length;
-    document.getElementById('score-display').textContent = got + '/14';
-    const pct = Math.round(got / 14 * 100);
+    document.getElementById('score-display').textContent = got + '/21';
+    const pct = Math.round(got / 21 * 100);
     const msg = pct >= 90 ? 'Excellent — Domain 4 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the subdomain tabs again.';
     document.getElementById('score-msg').textContent = pct + '% — ' + msg;
     document.getElementById('quiz-score').classList.add('show');
