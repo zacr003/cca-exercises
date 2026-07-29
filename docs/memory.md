@@ -17,7 +17,15 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 
 ---
 
-## Current State (as of 2026-07-07)
+## Current State (as of 2026-07-29)
+
+**⚠️ Retake study sprint is tracked primarily in the companion wiki (`~/Desktop/Ramsey-Brain/`), not here.** This project's own docs/ fell behind (last touched 2026-07-07) while the actual retake grinding — recall-card system, mock exams, domain-page corrections — happened in Ramsey-Brain's `docs/` + `wiki/` + `log.md`. For the full day-by-day retake narrative, read Ramsey-Brain's `docs/memory.md` "Last Session Summary" and `log.md`. This file's job is narrower: track this project's own artifacts (exercises + `html-resource-guide/`).
+
+**Retake sprint status, briefly:** Attempt 1 failed 670/1000 (2026-05-26). Two claudecertificationguide.com mocks taken one day apart: 2026-07-28 = 714/1000 NOT PASSED (D2 20% the whole gap); **2026-07-29 = 720/1000 PASSED** (D2 jumped to 60%, D4 dipped to 67% — new drill target). This is the smaller 28-question "quick exam" variant; the stated readiness gate (56/60) targets the full 60-question version, not yet confirmed. Real CCA-F retake not yet booked — confidence-gated for Sat 2026-08-01 or Mon 2026-08-03.
+
+**`html-resource-guide/d2-review.html` fully audited + remediated 2026-07-29** (see Last Session Summary below) — was stale since the 2026-07-14 refresh, teaching an incomplete Edit-recovery fact that had already cost real mock-exam points.
+
+## Prior State (as of 2026-07-07)
 
 ### Domain Progress
 
@@ -103,6 +111,7 @@ The companion wiki lives at `~/Desktop/Ramsey-Brain/` (Obsidian vault).
 
 _Updated by `/sync` at end of each session._
 
+- 2026-07-29: **`d2-review.html` full audit + remediation, then real payoff on a mock exam.** Followed the established audit method (whole-file diff vs. the Ramsey-Brain wiki's `domain-2-mcp-tool-design.md`, not just the one known gap — per the "spot-fixing ≠ auditing" lesson from the 2026-07-14 D2 near-miss). Found and fixed: the Edit-recovery bug in 5 locations including the quiz's own graded answer key (Q8, now correctly rewards expand-context/`replace_all` as the first step, not Read+Write); a regression of the previously-caught `~/.claude/mcp.json`→`~/.claude.json` wrong path; missing `customerFriendlyMessage`/`suggestedAction` error fields; missing `tool_choice` force-then-revert-to-`auto` rule; missing "Coordinator" tool-count tier; missing API-level MCP Connector `authorization_token` section. Quiz expanded 17→21 questions (4 new, covering both of D2's flagged weak patterns). First drill on the fixed quiz: **18/21 (86%)** — 2 of 3 misses were genuine net-new content gaps (SSE-startup-reachability, rate-limiting-server-side), now carded on the wiki side. Then the user retook the **claudecertificationguide.com mock and passed: 720/1000** (up from 714 the prior day) — D2 jumped 20%→60%, direct payoff from this remediation. A live mistake from earlier in that Ramsey-Brain session (batch-vs-sequential feedback ordering) was also caught against the mock's own answer key and corrected on the wiki. Also fixed this project's own `docs/lessons.md`, which still taught the old incomplete Edit-recovery fact — same bug, different file, now corrected everywhere. Recall cards, source pages, and domain-page content all updated on the Ramsey-Brain side; this file and `task-list.md`/`registry.md` brought back in sync here.
 - 2026-07-07: **Timeline sync from Ramsey-Brain** (auditing/cleanup only — no study work yet). Reconciled stale status across all docs: Attempt 1 failed 670/1000; **early retake now available** (platform migration waived the 6-month wait), target window **July 21 – Aug 1, 2026** (was 2026-11-21). **"Other" / "Conversational AI Patterns" resolved = D4** (v0.2 exam guide; score-report mislabel, no mystery domain) — closed the related research tasks in task-list and corrected lessons.md. Confirmed 12-month cert validity. Study resumes 7/8 or 7/9, D4/D3 priority. Note: Ramsey-Brain now has 47 recall cards seeded (run "quiz me cca" there).
 - 2026-05-13: D4 HTML quiz 11/14 (79%); misses: any vs auto tool_choice, conflict_detected overconfidence, batch recovery resubmit only failed custom_ids
 - 2026-05-13: D1 HTML quiz 12/12 (100%) — D1 fully mastered

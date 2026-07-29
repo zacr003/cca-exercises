@@ -99,6 +99,8 @@ cca-exercises/
 | File | Description | Status |
 |------|-------------|--------|
 | `pre-exam-summary.html` | Pre-exam reference card — mental moves, miss patterns, domain anchors, distinctions table, anti-patterns | Created 2026-05-26 |
+| `d1/d3/d4/d5-review.html` | Domain study guides, downstream renderings of the Ramsey-Brain wiki domain pages | Last full audit 2026-07-14 — due for a refresh (wiki has advanced since, esp. D1/D3/D5 content from the 2026-07-29 mock) |
+| `d2-review.html` | Domain 2 study guide | **Fully audited + remediated 2026-07-29** (2nd full audit; 1st was 2026-07-14). Fixed 5 issues (Edit-recovery bug in 5 spots incl. graded quiz answer, `~/.claude.json` path regression, missing error fields, missing tool_choice rule, missing Coordinator tier, missing API-connector section) + expanded quiz 17→21 questions. Confirmed internally consistent (all 4 hardcoded quiz-count bookkeeping spots). |
 
 ### Root (`cca-exercises/`)
 
@@ -148,4 +150,4 @@ Used explicitly in `.claude/settings.json` hook commands.
 
 ---
 
-_Last updated: 2026-07-07 (added External Practice Resources — CCA readiness diagnostic)_
+_Last updated: 2026-07-29 (d2-review.html full remediation — see HTML Resources table)_

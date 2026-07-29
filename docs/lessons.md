@@ -403,13 +403,15 @@ Do NOT start with direct execution and switch to plan mode later — costs rewor
 
 ---
 
-## Edit Fallback — Non-Unique Anchor (surfaced 2026-05-26 drill)
+## Edit Fallback — Non-Unique Anchor (surfaced 2026-05-26 drill; CORRECTED 2026-07-28)
 
-- When `Edit` fails because the anchor text appears multiple times in the file: **do not Grep + replace-all**
-- Correct pattern: `Read` the full file → identify the intended block by surrounding context → `Write` the complete corrected file
-- Grep + replace-all changes every occurrence — violates the requirement to change only one
-- Retrying `Edit` with broader text still doesn't guarantee hitting the right occurrence
-- Rule: **ambiguous anchor → full-file Read + Write**
+**This section taught an incomplete fact for 2 months — corrected after it cost real points on the 2026-07-28 real-platform mock (missed twice, defaulted straight to Read+Write both times).**
+
+- When `Edit` fails because the anchor text appears multiple times in the file, the **FIRST** recovery step — still inside the Edit tool — is to either: (a) expand `old_string` with more surrounding context so the match becomes unique, or (b) use `replace_all` if every occurrence should legitimately change identically.
+- `Read` the full file → `Write` the complete corrected file is the **LAST resort** — only when no unique context exists at all, or for large-scale rewrites. It is NOT the first or only fallback.
+- Retrying `Edit` with the identical string, or jumping straight to Read+Write without trying to expand context first, are both the exam trap.
+- Rule: **expand context / `replace_all` first — Read+Write only when nothing else works.**
+- Source of truth: `~/Desktop/Ramsey-Brain/wiki/cca/domain-2-mcp-tool-design.md` §2.5 (corrected 2026-07-28) and its recall deck at `wiki/cca/recall/domain-2-mcp-tool-design.md`.
 
 ---
 
@@ -450,6 +452,20 @@ Do not tell the user they are ready to sit an exam unless ALL of the following a
 - The user is rested
 
 If any are missing, flag it explicitly. This rule was added because Claude said the user was ready on 2026-05-26 when he was sleep-deprived, missing his official mock score, and had an uncovered exam domain. He failed. Do not repeat this.
+
+---
+
+## Second Mock Exam (claudecertificationguide.com, 2026-07-29) — 720/1000 PASSED
+
+Real-exam-confirmed additions from the full question-by-question review (source of truth + recall cards: Ramsey-Brain wiki, `wiki/cca/domain-*.md` + `wiki/cca/recall/`):
+
+**Batch vs. sequential feedback — the mixed case (D3 3.5):** when giving Claude Code feedback on multiple bugs where ONE issue changes a shape/contract the OTHERS must conform to (and the others are independent of each other): resolve the interacting/blocking issue FIRST, standalone — then sequence the remaining independent issues ONE AT A TIME, not batched. Do not batch all issues together just because they're in the same function — batching genuinely independent fixes risks Claude conflating which feedback applies to which fix. This was missed on the mock by reasoning "just batch everything, it's efficient" — that's the trap.
+
+**PostToolUse side-effects vs. model-facing context (D1 1.5 / D3 3.1):** the "PostToolUse can only inject `additionalContext`, can't replace the tool result" limitation is about what the MODEL sees. The hook is still an arbitrary script — it can perform external side effects (write a log, transform data for a downstream system) the model never needs to see. Example: normalizing API response fields to snake_case before logging, and linting a file after write, are BOTH PostToolUse (both act on completed outputs) — PreToolUse is wrong for either (can't lint before the file exists; can't normalize before the tool retrieves data).
+
+**Review-capacity allocation by risk vs. accuracy-measurement stratification (D5 5.5/5.7):** stratified sampling for MEASURING accuracy (segment-level validation) is a different decision from allocating review CAPACITY when you can't review everything — the latter should be proportional to consequence-of-error (regulatory/financial/legal risk), not volume or uniform sampling. Don't use the model's self-reported confidence to decide what to skip reviewing — it's poorly calibrated.
+
+**Shared `.env` file is the same violation, consolidated (D2 2.4):** for a team-shared MCP server needing a per-developer credential, the fix is project-level `.mcp.json` (shared, version-controlled) + `${VAR}` expansion where each developer's token stays in their OWN local environment. A single `.env` file committed to the repo with every developer's token is NOT a fix — it's still a secrets-in-git violation, just consolidated instead of spread across literals.
 
 ---
 

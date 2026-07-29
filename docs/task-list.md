@@ -4,12 +4,18 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-## ▶ Next Session (study kickoff — 7/8 or 7/9)
-- [ ] **Warm up with `quiz me cca` in Ramsey-Brain** (47 recall cards, D3/D4-heavy) to surface weak spots, then drill the matching `domain-3/` and `domain-4/` exercises here. D4 (33%) and D3 (54%) are the retake priority.
+## ▶ Current status (2026-07-29)
+
+**The retake study sprint itself is tracked in `~/Desktop/Ramsey-Brain/docs/task-list.md`** — that's the live, day-to-day plan (mock exams, recall drilling, readiness gates). This file only tracks work specific to *this* project (exercises + `html-resource-guide/`).
+
+- [x] ~~`d2-review.html` full audit + remediation~~ (2026-07-29) — see `docs/memory.md` for detail. 5 fixes (Edit-recovery bug incl. graded quiz answer, `~/.claude.json` path regression, error fields, tool_choice rule, Coordinator tier, API-connector section); quiz 17→21 questions.
+- [x] ~~Fix stale Edit-recovery lesson in this project's own `docs/lessons.md`~~ (2026-07-29) — was teaching the same incomplete fact as the old `d2-review.html`.
+- [ ] **Consider auditing d1/d3/d4/d5-review.html against the current wiki state** — they were last fully audited 2026-07-14; the wiki has advanced since (new D1/D3/D5 content from the 2026-07-29 mock: PostToolUse side-effects, review-capacity-by-risk, batch-vs-sequential worked example). Not yet done — d2 was prioritized because it was the mock's flagged weak domain.
+- [ ] ~~Warm up with `quiz me cca` in Ramsey-Brain~~ — superseded; recall drilling has been happening continuously in Ramsey-Brain since 2026-07-14 (63→48-card decks now split across `wiki/cca/recall/`).
 
 ---
 
-## Exercise Sprint — Attempt 1 FAILED (670/1000, 2026-05-26) · Retake window: July 21 – Aug 1, 2026
+## Exercise Sprint — Attempt 1 FAILED (670/1000, 2026-05-26) · Retake sprint ongoing, tracked in Ramsey-Brain
 
 ### Domain 1 — Agentic Architecture (27%) — COMPLETE
 - [x] ex1: Basic agentic loop — check `stop_reason`, append `tool_result` blocks, handle `max_tokens`
@@ -85,10 +91,9 @@ _Current exercise backlog. Updated by `/sync`._
 - [ ] Find recent test-taker accounts of D3 real exam wording (54% despite 92% practice = wording gap)
 - [x] ~~Locate any prep material for "Conversational AI Patterns" content~~ — no longer needed; resolved to D4.
 
-### Retake Prep (early retake available now; target window July 21 – Aug 1, 2026)
-- [ ] D3 deep dive — 54% on real exam; needs real-exam-wording-aligned drill
-- [ ] D2 targeted drill — 67% on real exam; consistently weakest domain
-- [x] ~~"Other" / Conversational AI Patterns deep dive~~ — moot; resolved to D4. Folded into the D4 deep dive above.
+### Retake Prep (superseded — tracked live in Ramsey-Brain `docs/task-list.md` since 2026-07-24)
+- [x] ~~D3 deep dive~~ / [x] ~~D2 targeted drill~~ — superseded by the Ramsey-Brain retake sprint's recall-card + mock-exam cycle (2026-07-14 onward). D2 was the priority-drill domain 2026-07-28→29 (20%→60% after remediation); D4 is now the repeat-drill target (100%→67% on the 2026-07-29 mock).
+- [x] ~~"Other" / Conversational AI Patterns deep dive~~ — moot; resolved to D4.
 - [ ] Archive domain-1/ and domain-2/ exercise notes into Ramsey-Brain wiki
 - [ ] Tag any reusable patterns (agentic loop skeleton, hook templates) for future reference
 - [ ] Lint check: confirm no literal secrets in any exercise files
@@ -96,4 +101,4 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-_Last updated: 2026-07-07 (timeline sync from Ramsey-Brain — retake window July 21–Aug 1; "Other" = D4 resolution)_
+_Last updated: 2026-07-29 (d2-review.html remediation + lessons.md Edit-recovery fix; retake window now confidence-gated for Sat 2026-08-01 or Mon 2026-08-03 — see Ramsey-Brain task-list.md for the live plan)_

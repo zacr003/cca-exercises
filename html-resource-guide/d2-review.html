@@ -144,6 +144,13 @@ get_order_by_id:
         </tbody>
       </table>
 
+      <h3><code>tool_choice</code> — Force, Then Release</h3>
+      <div class="concept-box">
+        <p>Three modes: <code>auto</code> (model decides whether to call a tool — may skip and return text instead), <code>any</code> (must call SOME tool, but picks which), <code>{type:"tool", name:"..."}</code> (must call that exact named tool).</p>
+        <p style="margin-top:8px;"><strong>Force a named tool only for a deterministic FIRST step</strong> that must produce structured output before the loop can proceed (e.g. always <code>validate_input</code> or <code>plan_subtasks</code> first). Once it resolves, <strong>switch back to <code>auto</code></strong> so the agent reasons freely for the rest of the turn — leaving it forced blocks the agent from adapting afterward.</p>
+        <p style="margin-top:8px;">Don't reach for <code>auto</code> when a tool call is a <strong>hard contract</strong> of the turn (e.g. a mandatory logging step) — use <code>any</code> there instead.</p>
+      </div>
+
       <h3>Exam Trap Table — 2.1</h3>
       <table>
         <thead><tr><th>Trap</th><th>Correct Pattern</th></tr></thead>
@@ -178,7 +185,9 @@ get_order_by_id:
           <tr><td></td><td>"permission"</td><td>Access denied / insufficient privilege — escalate; not retryable</td></tr>
           <tr><td><code>isRetryable</code></td><td>true</td><td>Agent can retry with same parameters</td></tr>
           <tr><td></td><td>false</td><td>Agent must change approach or escalate</td></tr>
-          <tr><td><code>description</code></td><td>string</td><td>Customer-safe — NEVER echo raw input or PII back</td></tr>
+          <tr><td><code>description</code></td><td>string</td><td>Human-readable detail for the agent's reasoning — may include internal specifics</td></tr>
+          <tr><td><code>customerFriendlyMessage</code></td><td>string</td><td>Separate, customer-safe rendering — NEVER echo raw input or PII back; this is what's safe to surface to the end user</td></tr>
+          <tr><td><code>suggestedAction</code></td><td>"retry" / "fix_input" / "escalate" / "alternative_workflow"</td><td>Machine-readable next step the agent's recovery logic can branch on directly</td></tr>
         </tbody>
       </table>
 
@@ -289,10 +298,10 @@ def load_support_doc_impl(url):
       <table>
         <thead><tr><th>Tool Count</th><th>Effect</th></tr></thead>
         <tbody>
-          <tr><td>2–4 specialized tools</td><td class="td-correct">High reliability — model picks correctly</td></tr>
-          <tr><td>4–6 general-purpose tools</td><td class="td-correct">Good — acceptable complexity</td></tr>
-          <tr><td>6+ overlapping tools</td><td class="td-trap">Degraded reliability — misrouting increases</td></tr>
-          <tr><td>15+ tools</td><td class="td-trap">Significant misrouting — consolidation required</td></tr>
+          <tr><td>Specialized subagent — 2–4 tools</td><td class="td-correct">High reliability — tightly scoped to its role</td></tr>
+          <tr><td>General-purpose agent — 4–6 tools</td><td class="td-correct">Good — acceptable complexity</td></tr>
+          <tr><td>Coordinator</td><td class="td-correct">Task tool + whatever it needs for its own analysis — not bound by the subagent counts above</td></tr>
+          <tr><td>15+ tools</td><td class="td-trap">Decision complexity degrades selection reliability — misrouting becomes common; consolidate or split</td></tr>
         </tbody>
       </table>
       <div class="kv-list">
@@ -435,6 +444,16 @@ def load_support_doc_impl(url):
         <p><code>"github__*"</code> in allowedTools is WRONG. The correct pattern is <code>"mcp__github__*"</code> — the <code>mcp__</code> prefix is required for all MCP tool permissions.</p>
       </div>
 
+      <h3>Two MCP Surfaces — API Connector vs. Claude Code Config</h3>
+      <div class="concept-box">
+        <p>The exam tests whether you conflate two different MCP configuration surfaces:</p>
+        <div class="kv-list" style="margin-top:8px;">
+          <div class="kv-row"><span class="kv-key">API-level MCP Connector</span><span class="kv-val">Messages API <code>mcp_servers</code> array. The server's auth token goes <strong>inline in the array object</strong> — <code>{type:"url", url, name, authorization_token}</code>. This token authenticates the Anthropic API (acting as MCP client) TO the remote server — it lives in the request BODY, not a separate header. (The <code>x-api-key</code> header authenticates you to Anthropic — different auth, different purpose.)</span></div>
+          <div class="kv-row"><span class="kv-key">Claude Code MCP config</span><span class="kv-val"><code>.mcp.json</code> / <code>claude mcp add</code>, credentials via <code>${VAR}</code> env-var expansion (see above).</span></div>
+        </div>
+        <p style="margin-top:8px; color:var(--yellow);">Reaching for the <code>.env</code>/<code>${VAR}</code> mental model on an API-connector question is the designed trap — that pattern belongs to the Claude Code surface, not the Messages API.</p>
+      </div>
+
       <h3>Tool Avoidance = Description Problem</h3>
       <div class="concept-box">
         <p>If an agent ignores a custom MCP tool and falls back to built-in primitives (Bash, grep), the root cause is a thin tool description — not a config or scope problem. If it were a config issue, the tool wouldn't load at all. The tool loads but loses the selection competition.</p>
@@ -453,7 +472,7 @@ def load_support_doc_impl(url):
           <tr><td class="td-trap">Hardcode API keys in .mcp.json</td><td>Always use <code>${ENV_VAR}</code> expansion — configs can be version-controlled; secrets cannot</td></tr>
           <tr><td class="td-trap">Rate limiting via system prompt instructions</td><td>Token bucket in the MCP server — server-side enforcement is deterministic</td></tr>
           <tr><td class="td-trap">MCP resources are the same as MCP tools</td><td>Tools = callable functions; Resources = readable data sources</td></tr>
-          <tr><td class="td-trap">User-scoped MCP servers shared via git pull</td><td><code>~/.claude/mcp.json</code> is machine-local — not shared via version control</td></tr>
+          <tr><td class="td-trap">User-scoped MCP servers shared via git pull</td><td><code>~/.claude.json</code> is machine-local — not shared via version control</td></tr>
           <tr><td class="td-trap"><code>"github__*"</code> in allowedTools</td><td><code>"mcp__github__*"</code> — the mcp__ prefix is required</td></tr>
           <tr><td class="td-trap">Build custom MCP server for Jira</td><td>Use community MCP server (already exists and is maintained)</td></tr>
           <tr><td class="td-trap">Agent ignores custom tool; check config</td><td>Enrich tool description — avoidance is a description problem not config</td></tr>
@@ -497,7 +516,7 @@ def load_support_doc_impl(url):
           <tr><td>Read an existing file</td><td class="td-correct">Read (with <code>offset</code>/<code>limit</code>)</td><td class="td-trap">Bash cat; reading the whole file blindly</td></tr>
           <tr><td><strong>Targeted</strong> change at a unique anchor</td><td class="td-correct">Edit</td><td class="td-trap">Write (overwrites the whole file)</td></tr>
           <tr><td><strong>Create a new file</strong> or full rewrite</td><td class="td-correct">Write</td><td class="td-trap">Edit (only for targeted changes)</td></tr>
-          <tr><td>Edit fails — anchor not unique</td><td class="td-correct">Read → modify → Write</td><td class="td-trap">Retry Edit with a slightly different string</td></tr>
+          <tr><td>Edit fails — anchor not unique</td><td class="td-correct">Expand context / <code>replace_all</code> first; Read → modify → Write is the LAST resort</td><td class="td-trap">Jumping straight to Read+Write, or retrying Edit with the identical string</td></tr>
           <tr><td>Long-running command + parallel work</td><td class="td-correct">Bash with <code>run_in_background: true</code></td><td class="td-trap">Blocking Bash (halts all other work)</td></tr>
         </tbody>
       </table>
@@ -529,14 +548,14 @@ def load_support_doc_impl(url):
         <div class="kv-row"><span class="kv-key">Hook returns summary + raw</span><span class="kv-val">WRONG — still sends full raw content to model. Return ONLY the trimmed version.</span></div>
       </div>
 
-      <h3>Edit → Read + Write Fallback</h3>
+      <h3>Edit Recovery Order — Non-Unique Match</h3>
       <div class="concept-box">
-        <p>The Edit tool requires a <strong>unique match</strong> in the target file. If the same string appears multiple times, Edit fails. Fallback:</p>
+        <p>The Edit tool requires a <strong>unique match</strong> in the target file. If the same string appears multiple times, Edit fails. The correct recovery order (real-exam-confirmed):</p>
         <ol style="margin-top:8px; padding-left:18px; color:var(--muted);">
-          <li style="margin-bottom:4px;">Read the full file</li>
-          <li style="margin-bottom:4px;">Replace all occurrences in application code (<code>str.replace()</code>)</li>
-          <li>Write the full file back</li>
+          <li style="margin-bottom:4px;"><strong>FIRST</strong> — expand <code>old_string</code> with more surrounding context so the match becomes unique, <strong>or</strong> use <code>replace_all</code> if every occurrence should change identically. Both stay inside the Edit tool.</li>
+          <li>LAST resort — <code>Read</code> the full file, modify it, then <code>Write</code> it back. Only when no unique context exists at all, or for large-scale rewrites.</li>
         </ol>
+        <p style="margin-top:8px; color:var(--yellow);">Defaulting straight to Read+Write without trying to expand context or <code>replace_all</code> first is the exam trap.</p>
       </div>
 
       <h3>Pagination for Large Result Sets</h3>
@@ -567,7 +586,7 @@ def load_support_doc_impl(url):
         <tbody>
           <tr><td class="td-trap">Return full backend response and rely on Claude to ignore noise</td><td>Trim at source — only business-relevant fields returned</td></tr>
           <tr><td class="td-trap">PostToolUse hook returns formatted summary AND raw output</td><td>Return ONLY the formatted/trimmed version — not both</td></tr>
-          <tr><td class="td-trap">Edit tool on non-unique string (appears 3 times)</td><td>Edit fails — fall back to Read + modify all + Write</td></tr>
+          <tr><td class="td-trap">Edit tool on non-unique string (appears 3 times)</td><td>FIRST expand context or use <code>replace_all</code>; Read + modify all + Write is the LAST resort, not the first fallback</td></tr>
           <tr><td class="td-trap">Rate limiting via PreToolUse hook sleep delay</td><td>Token bucket in MCP server — server-side, deterministic</td></tr>
           <tr><td class="td-trap">Return all 100K results in single tool response</td><td>Paginate — first page + total + next_page_token</td></tr>
           <tr><td class="td-trap">Glob to search file contents</td><td>Glob matches names/paths only — use Grep for contents</td></tr>
@@ -690,7 +709,7 @@ def load_support_doc_impl(url):
             <tr><td class="td-trap">Return full backend response, let Claude ignore noise</td><td>Trim at source — only business-relevant fields</td></tr>
             <tr><td class="td-trap">PostToolUse hook returns summary AND raw output</td><td>Return ONLY the trimmed version — not both</td></tr>
             <tr><td class="td-trap">PostToolUse to check every text response against a brand guide</td><td>PostToolUse fires on tool calls only — not on text completions</td></tr>
-            <tr><td class="td-trap">Edit on non-unique string / Edit to create a new file</td><td>Read + modify all + Write; use Write for new files</td></tr>
+            <tr><td class="td-trap">Edit on non-unique string / Edit to create a new file</td><td>FIRST expand context or <code>replace_all</code> — Read+Write is the LAST resort, not the first fallback; use Write for new files</td></tr>
             <tr><td class="td-trap">Raise temperature for more exploratory tool selection</td><td>Temperature is not a selection lever — it reduces routing reliability</td></tr>
             <tr><td class="td-trap">Return all 100K results in one response</td><td>Paginate — first page + total + next_page_token</td></tr>
           </tbody>
@@ -702,12 +721,12 @@ def load_support_doc_impl(url):
   <!-- QUIZ -->
   <div id="quiz" class="tab-panel">
     <div class="card" style="margin-bottom:24px;">
-      <div class="card-title">Domain 2 Quiz — 17 Questions</div>
+      <div class="card-title">Domain 2 Quiz — 21 Questions</div>
       <p style="color:var(--muted); font-size:0.88rem;">Select an answer to see immediate feedback.</p>
     </div>
 
     <div class="quiz-q" id="q1">
-      <div class="q-num">Question 1 of 17</div>
+      <div class="q-num">Question 1 of 21</div>
       <div class="q-text">Two tools (<code>find_orders</code> and <code>get_order</code>) have similar descriptions and Claude keeps misrouting. What is the correct fix?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q1',false)">A. Rename and rewrite only <code>find_orders</code> — the better description will clarify the distinction.</div>
@@ -719,7 +738,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q2">
-      <div class="q-num">Question 2 of 17</div>
+      <div class="q-num">Question 2 of 21</div>
       <div class="q-text">A product search returns 0 results. How should the tool respond?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q2',false)">A. <code>{"isError": true, "errorCategory": "transient", "description": "No data returned"}</code></div>
@@ -731,7 +750,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q3">
-      <div class="q-num">Question 3 of 17</div>
+      <div class="q-num">Question 3 of 21</div>
       <div class="q-text">A tool returns <code>{"isError": true, "errorCategory": "validation", "isRetryable": false}</code>. What should the agent do?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q3',false)">A. Retry with the same parameters after a brief delay.</div>
@@ -743,7 +762,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q4">
-      <div class="q-num">Question 4 of 17</div>
+      <div class="q-num">Question 4 of 21</div>
       <div class="q-text">A tool has a URL parameter but should only fetch from <code>support.example.com</code>. Where should this constraint be enforced?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q4',false)">A. System prompt: "Only use support.example.com URLs."</div>
@@ -755,7 +774,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q5">
-      <div class="q-num">Question 5 of 17</div>
+      <div class="q-num">Question 5 of 21</div>
       <div class="q-text">An MCP config file needs a database password. How should it be stored?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q5',false)">A. As a literal string: <code>"DB_PASSWORD": "my_secret_password"</code></div>
@@ -767,7 +786,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q6">
-      <div class="q-num">Question 6 of 17</div>
+      <div class="q-num">Question 6 of 21</div>
       <div class="q-text">A PostToolUse hook returns both a formatted summary and the raw tool output. What's the problem?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q6',false)">A. The hook runs too slowly, delaying the agent's response.</div>
@@ -779,7 +798,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q7">
-      <div class="q-num">Question 7 of 17</div>
+      <div class="q-num">Question 7 of 21</div>
       <div class="q-text">An agent has 18 tools for various order operations, most with overlapping names. Selection reliability has degraded. What's the fix?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q7',false)">A. Add version numbers to tool names (order_lookup_v2).</div>
@@ -791,19 +810,19 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q8">
-      <div class="q-num">Question 8 of 17</div>
-      <div class="q-text">The Edit tool fails with "match is not unique." What is the fallback procedure?</div>
+      <div class="q-num">Question 8 of 21</div>
+      <div class="q-text">The Edit tool fails with "match is not unique" because the target string appears three times in the file. What is the FIRST recovery step?</div>
       <div class="options">
-        <div class="opt" onclick="answer(this,'q8',false)">A. Use Grep to find the unique occurrence, then Edit with more context.</div>
-        <div class="opt" onclick="answer(this,'q8',true)">B. Read the full file → modify all occurrences in application code → Write the full file back.</div>
+        <div class="opt" onclick="answer(this,'q8',false)">A. Read the full file → modify all occurrences in application code → Write the full file back.</div>
+        <div class="opt" onclick="answer(this,'q8',true)">B. Expand <code>old_string</code> with more surrounding context so the match becomes unique, or use <code>replace_all</code> if every occurrence should change identically.</div>
         <div class="opt" onclick="answer(this,'q8',false)">C. Use Bash with sed to replace all occurrences.</div>
-        <div class="opt" onclick="answer(this,'q8',false)">D. Retry the Edit with a larger match context window.</div>
+        <div class="opt" onclick="answer(this,'q8',false)">D. Retry the Edit with the identical <code>old_string</code>.</div>
       </div>
-      <div class="explanation" id="exp-q8">Edit requires a unique match. When it fails: Read full file → replace all occurrences in code (e.g., str.replace()) → Write full file back. This handles non-unique matches reliably.</div>
+      <div class="explanation" id="exp-q8">The FIRST recovery step stays inside the Edit tool: expand context or use <code>replace_all</code>. Read the full file → modify → Write it back (option A) is the LAST resort, only when no unique anchor exists at all — not the immediate fallback. Retrying with the identical string (D) repeats the same failure; sed (C) bypasses the Edit tool entirely.</div>
     </div>
 
     <div class="quiz-q" id="q9">
-      <div class="q-num">Question 9 of 17</div>
+      <div class="q-num">Question 9 of 21</div>
       <div class="q-text">A tool description says "Retrieve information about an order." Why is this problematic?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q9',false)">A. It's too short — descriptions need to be at least 100 words.</div>
@@ -815,7 +834,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q10">
-      <div class="q-num">Question 10 of 17</div>
+      <div class="q-num">Question 10 of 21</div>
       <div class="q-text">A tool returns an error description that includes the user's submitted promo code: "Invalid promo code: SUMMER25." What's wrong?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q10',false)">A. Nothing — echoing input helps the model understand the error context.</div>
@@ -827,7 +846,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q11">
-      <div class="q-num">Question 11 of 17</div>
+      <div class="q-num">Question 11 of 21</div>
       <div class="q-text">An inventory tool could return 50,000 product records. What output design handles this correctly?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q11',false)">A. Return all 50,000 records — let Claude sort through them.</div>
@@ -839,7 +858,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q12">
-      <div class="q-num">Question 12 of 17</div>
+      <div class="q-num">Question 12 of 21</div>
       <div class="q-text">An MCP server needs to enforce rate limiting (max 10 calls per second). Where should this be implemented?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q12',false)">A. System prompt: "Wait 100ms between tool calls."</div>
@@ -851,7 +870,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q13">
-      <div class="q-num">Question 13 of 17</div>
+      <div class="q-num">Question 13 of 21</div>
       <div class="q-text">An MCP server must expose read access to every customer's profile, and the customer set grows constantly. What's the right design?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q13',false)">A. Declare a separate static resource with a fixed URI for each customer profile.</div>
@@ -863,7 +882,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q14">
-      <div class="q-num">Question 14 of 17</div>
+      <div class="q-num">Question 14 of 21</div>
       <div class="q-text">An MCP server configured with the SSE transport shows none of its tools when Claude starts — but no error appears. Most likely cause?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q14',false)">A. The <code>mcp__</code> prefix is missing from <code>allowedTools</code>.</div>
@@ -875,7 +894,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q15">
-      <div class="q-num">Question 15 of 17</div>
+      <div class="q-num">Question 15 of 21</div>
       <div class="q-text">You need to find every file that imports the <code>auth</code> module across a large repo. Which built-in tool?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q15',false)">A. <code>Glob</code> with <code>**/*.ts</code>.</div>
@@ -887,7 +906,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q16">
-      <div class="q-num">Question 16 of 17</div>
+      <div class="q-num">Question 16 of 21</div>
       <div class="q-text">A synthesis subagent constantly needs a simple read-only <code>verify_fact</code> lookup owned by another role. Routing each one through the coordinator adds latency. Correct move?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q16',false)">A. Give the subagent the full coordinator tool set so it's self-sufficient.</div>
@@ -899,7 +918,7 @@ def load_support_doc_impl(url):
     </div>
 
     <div class="quiz-q" id="q17">
-      <div class="q-num">Question 17 of 17</div>
+      <div class="q-num">Question 17 of 21</div>
       <div class="q-text">A single tool takes a <code>mode</code> parameter that switches it between "search", "create", and "delete" behaviors, and routing is unreliable. Best fix?</div>
       <div class="options">
         <div class="opt" onclick="answer(this,'q17',false)">A. Add few-shot examples showing each mode in the system prompt.</div>
@@ -910,9 +929,57 @@ def load_support_doc_impl(url):
       <div class="explanation" id="exp-q17">A mode/action parameter that switches a tool between fundamentally different behaviors is a signal to SPLIT into purpose-specific tools, each answering what-it-does / when-to-use / what-it-does-NOT-do. Examples and longer docs don't fix the structural overlap; raising temperature harms routing reliability.</div>
     </div>
 
+    <div class="quiz-q" id="q18">
+      <div class="q-num">Question 18 of 21</div>
+      <div class="q-text">Two tool descriptions are confirmed well-written and non-overlapping, yet whenever a user message contains the word "urgent," routing systematically picks the wrong tool. What's the root cause and fix?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q18',false)">A. The descriptions still overlap — rewrite both again with sharper boundaries.</div>
+        <div class="opt" onclick="answer(this,'q18',false)">B. Add a few-shot example showing the correct tool for "urgent" requests.</div>
+        <div class="opt" onclick="answer(this,'q18',true)">C. System-prompt keyword sensitivity — a distinct diagnosis from bad descriptions. Fix it in the system prompt, not the tool layer.</div>
+        <div class="opt" onclick="answer(this,'q18',false)">D. Add a routing classifier that special-cases the word "urgent."</div>
+      </div>
+      <div class="explanation" id="exp-q18">The stem explicitly rules out description problems ("confirmed well-written and non-overlapping") and points at a specific token in user input — that's the tell for system-prompt keyword sensitivity, not a tool-description issue. The fix lives in the system prompt. Rewriting descriptions again, adding examples, or bolting on a classifier are all fighting the premise.</div>
+    </div>
+
+    <div class="quiz-q" id="q19">
+      <div class="q-num">Question 19 of 21</div>
+      <div class="q-text">Your personal <code>~/.claude.json</code> defines an MCP server for a staging database. It shares a name with a shared, prod-facing server defined in the team's <code>.mcp.json</code>, and Claude keeps picking the wrong one. What's the correct fix?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q19',false)">A. Edit the shared <code>.mcp.json</code> so the collision is resolved for the whole team.</div>
+        <div class="opt" onclick="answer(this,'q19',true)">B. Make your own <code>~/.claude.json</code> entry structurally distinguishable (distinct name, environment noted in the description) plus an explicit routing rule.</div>
+        <div class="opt" onclick="answer(this,'q19',false)">C. Force <code>tool_choice</code> to the staging server for the rest of the session.</div>
+        <div class="opt" onclick="answer(this,'q19',false)">D. Rename the shared server since it was there first.</div>
+      </div>
+      <div class="explanation" id="exp-q19">Fix the thing that's actually yours: your personal-scope <code>~/.claude.json</code> entry, not the shared team config. Editing the shared <code>.mcp.json</code> affects everyone for a problem that's specific to your personal server; forcing <code>tool_choice</code> blocks every other legitimate tool call for the rest of the session; renaming the long-standing shared server is the wrong-scoped lever. The trap is reaching for a broader fix than the one that actually changed or belongs to you.</div>
+    </div>
+
+    <div class="quiz-q" id="q20">
+      <div class="q-num">Question 20 of 21</div>
+      <div class="q-text">A workflow requires a deterministic first step — the agent must always call <code>validate_input</code> before doing anything else. After that call resolves, what should <code>tool_choice</code> be set to for the rest of the turn?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q20',false)">A. Keep it forced to <code>validate_input</code> for the entire turn so the workflow stays deterministic.</div>
+        <div class="opt" onclick="answer(this,'q20',false)">B. Switch to <code>any</code> so some tool is always called next.</div>
+        <div class="opt" onclick="answer(this,'q20',true)">C. Switch back to <code>auto</code> so the agent reasons freely for the rest of the loop.</div>
+        <div class="opt" onclick="answer(this,'q20',false)">D. Switch to a different named tool to guarantee the second step too.</div>
+      </div>
+      <div class="explanation" id="exp-q20">Force a named tool only for the deterministic first step. Once it resolves, switch back to <code>auto</code> — leaving it forced (to the same tool, to <code>any</code>, or to another named tool) prevents the agent from adapting to what actually happened next. <code>auto</code> = model decides whether to call a tool at all; that's correct once the mandatory first step is satisfied.</div>
+    </div>
+
+    <div class="quiz-q" id="q21">
+      <div class="q-num">Question 21 of 21</div>
+      <div class="q-text">You're configuring the MCP Connector at the API level (Messages API, <code>mcp_servers</code> array) to reach a remote MCP server that requires its own auth token. Where does that token go?</div>
+      <div class="options">
+        <div class="opt" onclick="answer(this,'q21',false)">A. In a <code>.env</code> file the MCP server reads independently, same as Claude Code's <code>${VAR}</code> pattern.</div>
+        <div class="opt" onclick="answer(this,'q21',false)">B. In a separate authentication header alongside the <code>x-api-key</code> header.</div>
+        <div class="opt" onclick="answer(this,'q21',true)">C. Inline in the <code>mcp_servers</code> array object: <code>{type:"url", url, name, authorization_token}</code>.</div>
+        <div class="opt" onclick="answer(this,'q21',false)">D. In the system prompt, so the model can present it to the server itself.</div>
+      </div>
+      <div class="explanation" id="exp-q21">The API-level MCP Connector is a different surface from Claude Code's <code>.mcp.json</code>/<code>${VAR}</code> config. Its auth token goes inline in the <code>mcp_servers</code> array object as <code>authorization_token</code>, in the request body — it authenticates Anthropic-as-client TO the remote server. That's distinct from the <code>x-api-key</code> header, which authenticates you to Anthropic. Reaching for the <code>.env</code>/<code>${VAR}</code> mental model here is the designed trap.</div>
+    </div>
+
     <button id="quiz-btn" onclick="showScore()">Show My Score</button>
     <div class="quiz-score" id="quiz-score">
-      <div class="score-num" id="score-display">0/17</div>
+      <div class="score-num" id="score-display">0/21</div>
       <p id="score-msg" style="color:var(--muted); margin-top:8px;"></p>
     </div>
   </div>
@@ -941,8 +1008,8 @@ def load_support_doc_impl(url):
   }
   function showScore() {
     const got = Object.values(scores).filter(Boolean).length;
-    document.getElementById('score-display').textContent = got + '/17';
-    const pct = Math.round(got / 17 * 100);
+    document.getElementById('score-display').textContent = got + '/21';
+    const pct = Math.round(got / 21 * 100);
     const msg = pct >= 90 ? 'Excellent — Domain 2 mastered.' : pct >= 75 ? 'Good — review the questions you missed.' : pct >= 60 ? 'Getting there — re-read the exam trap tables.' : 'Needs work — walk through the subdomain tabs again.';
     document.getElementById('score-msg').textContent = pct + '% — ' + msg;
     document.getElementById('quiz-score').classList.add('show');
