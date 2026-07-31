@@ -99,8 +99,10 @@ cca-exercises/
 | File | Description | Status |
 |------|-------------|--------|
 | `pre-exam-summary.html` | Pre-exam reference card — mental moves, miss patterns, domain anchors, distinctions table, anti-patterns | Created 2026-05-26 |
-| `d1/d3/d4/d5-review.html` | Domain study guides, downstream renderings of the Ramsey-Brain wiki domain pages | Last full audit 2026-07-14 — due for a refresh (wiki has advanced since, esp. D1/D3/D5 content from the 2026-07-29 mock) |
+| `d1/d3/d4/d5-review.html` | Domain study guides, downstream renderings of the Ramsey-Brain wiki domain pages | Last full audit 2026-07-14 — due for a refresh (wiki has advanced since, incl. D1/D3/D5 content from 2026-07-29 and D4/D5 content from 2026-07-30) |
 | `d2-review.html` | Domain 2 study guide | **Fully audited + remediated 2026-07-29** (2nd full audit; 1st was 2026-07-14). Fixed 5 issues (Edit-recovery bug in 5 spots incl. graded quiz answer, `~/.claude.json` path regression, missing error fields, missing tool_choice rule, missing Coordinator tier, missing API-connector section) + expanded quiz 17→21 questions. Confirmed internally consistent (all 4 hardcoded quiz-count bookkeeping spots). |
+| `CCAF-Scenarios.html` | Reference for all 6 exam scenarios — domains tested, key concepts, exam traps, clarifying insight per scenario | Created earlier; **re-audited 2026-07-30** against ~2.5 months of wiki growth — ~20 new concepts/traps mirrored from `wiki/cca/CCAF-Scenarios.md` in lockstep, new green "NEW" badge CSS class added |
+| `CCAF-AntiPatterns.html` | All ~21 CCA-F exam anti-patterns grouped by domain (D1–D5), each with a why-it-fails box and a do-instead box, plus a quick-reference table | **Created 2026-07-30** — compiled from the v1.0 exam guide's task-statement anti-pattern callouts + domain-page corroborating detail |
 
 ### Root (`cca-exercises/`)
 
@@ -150,4 +152,4 @@ Used explicitly in `.claude/settings.json` hook commands.
 
 ---
 
-_Last updated: 2026-07-29 (d2-review.html full remediation — see HTML Resources table)_
+_Last updated: 2026-07-30 (CCAF-Scenarios.html re-audit + new CCAF-AntiPatterns.html — see HTML Resources table)_

@@ -4,14 +4,16 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-## ▶ Current status (2026-07-29)
+## ▶ Current status (2026-07-30)
 
 **The retake study sprint itself is tracked in `~/Desktop/Ramsey-Brain/docs/task-list.md`** — that's the live, day-to-day plan (mock exams, recall drilling, readiness gates). This file only tracks work specific to *this* project (exercises + `html-resource-guide/`).
 
 - [x] ~~`d2-review.html` full audit + remediation~~ (2026-07-29) — see `docs/memory.md` for detail. 5 fixes (Edit-recovery bug incl. graded quiz answer, `~/.claude.json` path regression, error fields, tool_choice rule, Coordinator tier, API-connector section); quiz 17→21 questions.
 - [x] ~~Fix stale Edit-recovery lesson in this project's own `docs/lessons.md`~~ (2026-07-29) — was teaching the same incomplete fact as the old `d2-review.html`.
-- [ ] **Consider auditing d1/d3/d4/d5-review.html against the current wiki state** — they were last fully audited 2026-07-14; the wiki has advanced since (new D1/D3/D5 content from the 2026-07-29 mock: PostToolUse side-effects, review-capacity-by-risk, batch-vs-sequential worked example). Not yet done — d2 was prioritized because it was the mock's flagged weak domain.
-- [ ] ~~Warm up with `quiz me cca` in Ramsey-Brain~~ — superseded; recall drilling has been happening continuously in Ramsey-Brain since 2026-07-14 (63→48-card decks now split across `wiki/cca/recall/`).
+- [x] ~~Re-audit `CCAF-Scenarios.html`~~ (2026-07-30) — mirrored ~20 new concepts/traps from the wiki `.md` in lockstep; new green "NEW" badge class.
+- [x] ~~Build an anti-patterns reference guide~~ (2026-07-30) — new `CCAF-AntiPatterns.html`, all ~21 exam anti-patterns by domain (why-it-fails/do-instead) + quick-reference table.
+- [ ] **Consider auditing d1/d3/d4/d5-review.html against the current wiki state** — they were last fully audited 2026-07-14; the wiki has advanced since (D1/D3/D5 content from the 2026-07-29 mock: PostToolUse side-effects, review-capacity-by-risk, batch-vs-sequential worked example; plus D4/D5 tool_choice-single-tool and stratified-sampling-vs-classifier from the 2026-07-30 mock). Not yet done — d2 and the Scenarios/AntiPatterns pages were prioritized instead.
+- [ ] ~~Warm up with `quiz me cca` in Ramsey-Brain~~ — superseded; recall drilling has been happening continuously in Ramsey-Brain since 2026-07-14 (68→70-card decks now split across `wiki/cca/recall/`).
 
 ---
 
@@ -101,4 +103,4 @@ _Current exercise backlog. Updated by `/sync`._
 
 ---
 
-_Last updated: 2026-07-29 (d2-review.html remediation + lessons.md Edit-recovery fix; retake window now confidence-gated for Sat 2026-08-01 or Mon 2026-08-03 — see Ramsey-Brain task-list.md for the live plan)_
+_Last updated: 2026-07-30 (CCAF-Scenarios.html re-audit + new CCAF-AntiPatterns.html; 3rd mock 907/1000 PASSED in Ramsey-Brain, full 60Q attempt planned 2026-07-31 PM — see Ramsey-Brain task-list.md for the live plan)_

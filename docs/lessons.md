@@ -469,6 +469,16 @@ Real-exam-confirmed additions from the full question-by-question review (source 
 
 ---
 
+## Third Mock Exam (claudecertificationguide.com, 2026-07-30) — 907/1000 PASSED (89%)
+
+Big jump from 720 the prior night. D1/D2/D3 all 100%; D4 83%; D5 60% (now the standalone weakest domain). Two real-exam-confirmed additions from the miss review (source of truth: Ramsey-Brain wiki, `wiki/cca/domain-4-prompt-engineering.md` §4.4 and `domain-5-context-management.md` §5.7):
+
+**`tool_choice` single-tool edge case (D4 4.4):** even when only ONE tool is defined, `tool_choice: "any"` technically works (nothing else to pick) — but forcing the SPECIFIC tool by name (`{type:"tool", name:"X"}`) is still the more reliable answer. It guarantees schema-compliant output by construction (no text-only response possible), rather than relying on "there's currently nothing else it could pick." Don't downgrade to `"any"` just because the tool count happens to be one right now.
+
+**Stratified sampling vs. building a format-classifier (D5 5.5/5.7):** a novel document format reporting acceptable confidence (e.g. 92%, above a 90% auto-approve threshold) still needs the existing stratified-sampling safeguard — confidence calibration is only valid for formats represented in the calibration data, so a genuinely novel format can be systematically overconfident. Building a dedicated classifier to flag unfamiliar layouts isn't wrong in principle, but it's unnecessary ML-infrastructure complexity when ongoing stratified sampling across document types already catches this without training or maintaining an extra model.
+
+---
+
 ## D5 Exam Traps — Surfaced 2026-05-14
 
 - **cache_control after compaction**: Compaction replaces conversation history with a new summary block. That block is new content — no cache hit. Fix: explicitly add a `cache_control` breakpoint to the compaction block so future requests hit the cache. Without it, every post-compaction request is a cache miss.

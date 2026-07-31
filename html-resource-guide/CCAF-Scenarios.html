@@ -193,6 +193,20 @@
     margin-left: 4px;
   }
 
+  /* ── New (2026-07-30 audit) flag ── */
+  .new-flag {
+    display: inline-block;
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+    border-radius: 4px;
+    padding: 0 5px;
+    font-size: 11px;
+    font-weight: 600;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+
   /* ── Summary table ── */
   .summary-section { margin-top: 60px; padding-top: 32px; border-top: 2px solid var(--border); }
   .summary-section h2 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
@@ -245,6 +259,7 @@
     <span class="badge badge-neutral">D4 · Prompt Engineering 20%</span>
     <span class="badge badge-neutral">D5 · Context Management 15%</span>
   </div>
+  <p style="margin-top:10px;font-size:13px;"><span class="new-flag">AUDITED 2026-07-30</span> Expanded with patterns from the two July mock exams and subsequent recall-card additions. New items marked with the green badge below.</p>
 </div>
 
 <!-- ─────────────────────────────────────────── -->
@@ -276,6 +291,8 @@
     <li>Sentiment detects frustration, not case complexity — <strong>do not use sentiment as an escalation trigger</strong></li>
     <li>For financial/identity operations: <strong><code>PreToolUse</code> hook</strong> enforces identity verification before downstream tools execute (prompt instructions have non-zero failure rate)</li>
     <li>Transactional facts (order numbers, amounts, dates) → <strong>persistent case-facts block</strong> outside summarized history, not a revised summarization prompt</li>
+    <li><span class="new-flag">NEW</span>Valid escalation triggers are narrow: policy ambiguous/silent, repeated failed clarification with no progress, or an explicit human request (honor it immediately). An angry-but-solvable case with no explicit request should <strong>not</strong> escalate — acknowledge the emotion and offer resolution.</li>
+    <li><span class="new-flag">NEW</span>Contradictory stated preferences (e.g. "low risk tolerance" then a request for aggressive trades) call for <strong>structured preference tracking</strong> — surface the specific contradiction and ask which one governs. Neither "always escalate" nor "latest preference silently wins" is correct.</li>
   </ul>
 
   <div class="section-label">Exam Traps</div>
@@ -295,9 +312,14 @@
     A frustrated customer with a simple problem does not need escalation. A calm customer with a complex billing dispute does. Sentiment ≠ case complexity — they are independent signals.
   </div>
 
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> <span class="new-flag">NEW</span>Trap 4 — Escalating a contradiction, or silently honoring the latest preference</div>
+    Both "always escalate to a human" and "the most recent statement wins" are wrong. The correct move stays inside the agent: track preferences in a structured block, surface the contradiction, and ask which one governs.
+  </div>
+
   <div class="insight">
     <div class="insight-header">✓ Clarifying Insight</div>
-    This scenario almost always contains one tool-selection question and one escalation question. For tool selection: root cause = thin descriptions → fix both tools. For escalation: root cause = ambiguous criteria → add few-shot examples with contrastive cases. Neither is solved by ML classifiers, confidence scores, or sentiment analysis.
+    This scenario almost always contains one tool-selection question and one escalation question. For tool selection: root cause = thin descriptions → fix both tools. For escalation: root cause = ambiguous criteria → add few-shot examples with contrastive cases. Neither is solved by ML classifiers, confidence scores, or sentiment analysis. <span class="new-flag">NEW</span>A third question type on recent mocks: preference contradictions, resolved via structured tracking + explicit surfacing — not escalation or silent overwrite.
   </div>
 </section>
 
@@ -327,6 +349,8 @@
     <li><strong>Plan mode first</strong> for multi-file architectural changes — explore codebase and understand dependencies before any implementation (Q5)</li>
     <li><strong>Independent review = separate Claude instance</strong> — same-session review is biased by the model's prior reasoning; it is less likely to challenge decisions it just made</li>
     <li>CLAUDE.md rules and <code>.claude/rules/</code> glob patterns enforce coding conventions automatically without developer invocation</li>
+    <li><span class="new-flag">NEW</span>Delegation split for very differently-sized simultaneous requests: a large multi-file change (e.g. renaming a class used across 60 files) goes to a <strong>scoped subagent</strong> — direct handling risks attention dilution across that many files. A trivial single-file change is handled <strong>directly</strong> by the coordinator — delegation overhead isn't worth it. "Full codebase awareness means the coordinator should handle the rename itself" is a trap that inverts the rule.</li>
+    <li><span class="new-flag">NEW</span>Multiple reported code issues where one is a shared dependency (e.g. an output-schema field name the other fixes must target): <strong>resolve the real dependency first, standalone</strong>, then sequence the remaining independent fixes one at a time. Don't batch everything into one message — batching independent fixes risks conflating which feedback applies to which fix.</li>
   </ul>
 
   <div class="section-label">Exam Traps</div>
@@ -344,6 +368,16 @@
   <div class="trap">
     <div class="trap-header"><span class="trap-icon">⚠</span> Trap 3 — Same-session self-review</div>
     The model retains reasoning context from generation, making it less likely to question its own decisions. A second Claude instance reviewing only the final artifact catches what the first won't. The exam guide explicitly calls same-session self-review an anti-pattern.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> <span class="new-flag">NEW</span>Trap 4 — Coordinator handles the large rename "because it has full codebase awareness"</div>
+    Sounds like a strength but inverts the rule — broad awareness doesn't prevent attention dilution across dozens of files; it's exactly why a large scoped task needs a subagent's narrower focus instead.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> <span class="new-flag">NEW</span>Trap 5 — Batching all reported issues into one message</div>
+    Feels efficient, but if some issues are independent and only one is a real dependency, batching risks conflating which feedback applies to which fix. Resolve the dependency first, then sequence the independents.
   </div>
 
   <div class="insight">
@@ -381,6 +415,8 @@
     <li>Least privilege: give synthesis subagent only the simple <code>verify_fact</code> tool — not the full web search tool set (Q9)</li>
     <li>Dependency-aware scheduling: only serialize at actual dependency boundaries; independent subagents launch in parallel immediately</li>
     <li>Partial failure: return partial results with <strong>coverage annotations</strong> marking gaps — don't terminate the full workflow</li>
+    <li><span class="new-flag">NEW</span>When a coordinator fans out to N subagents and only K succeed: fail the whole operation when the missing data is <strong>correctness-critical</strong> (e.g. a financial total with some accounts inaccessible — a 3-of-5 total presented as complete is worse than an error). Use-what-you-have is fine for supplementary/additive enrichment, but you MUST annotate which sources succeeded/failed and why. Also collect ALL failures across the fan-out — don't short-circuit on the first one.</li>
+    <li><span class="new-flag">NEW</span>When two credible sources conflict on the same metric, preserve <strong>methodology context and publication/collection dates</strong> so "different measurement" reads as distinct from "different data." Include both values annotated and let the coordinator reconcile — don't auto-select by heuristic, halt immediately, or include both unflagged.</li>
   </ul>
 
   <div class="section-label">Exam Traps</div>
@@ -398,6 +434,16 @@
   <div class="trap">
     <div class="trap-header"><span class="trap-icon">⚠</span> Trap 3 — Terminating workflow on single subagent failure (Q8)</div>
     One timeout is not grounds to kill the entire research workflow. Return structured error context, annotate coverage gaps, and proceed with partial results. The coordinator decides how to recover — the subagent's job is to propagate rich error context, not to terminate everything.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> <span class="new-flag">NEW</span>Trap 4 — Returning partial data as if it were complete</div>
+    Even when use-what-you-have is the right call, silently presenting a 3-of-5 result as a full one is a separate error from failing to fail — always annotate what succeeded and what didn't.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> <span class="new-flag">NEW</span>Trap 5 — Auto-selecting a value when sources conflict</div>
+    Picking "the more recent source" or averaging two conflicting numbers discards information the coordinator needs to reconcile properly. Preserve both, with dates and methodology.
   </div>
 
   <div class="insight">
@@ -433,6 +479,11 @@
     <li>Skills: <code>context: fork</code> isolates verbose output; <code>context: merge</code> surfaces findings into the main session</li>
     <li>PreToolUse/PostToolUse hooks enforce formatting or linting deterministically — prompt instructions cannot guarantee these</li>
     <li>Team commands in <code>.claude/commands/</code> provide shared slash commands without per-developer setup</li>
+    <li><span class="new-flag">NEW</span>All discovered CLAUDE.md files are <strong>CONCATENATED</strong>, not overriding. On conflict, more specific scope wins (directory &gt; project &gt; user). Same-scope conflicts may resolve arbitrarily — eliminate them rather than relying on load order. Keep each file under ~200 lines.</li>
+    <li><span class="new-flag">NEW</span>A team MCP server needing a per-developer token belongs in <strong>project-level <code>.mcp.json</code></strong> with <code>${VAR}</code> expansion — each developer supplies their own token locally. A shared <code>.env</code> file listing every developer's token, even committed alongside <code>.mcp.json</code>, is still a secrets-in-git violation, just consolidated.</li>
+    <li><span class="new-flag">NEW</span>Two same-purpose tools/servers colliding by identity (system-prompt keyword matches a tool name; personal staging DB server vs. shared prod server) should be fixed at <strong>the thing that actually changed or belongs to you</strong> — rephrase the prompt, or make your own <code>~/.claude.json</code> entry distinguishable — not by editing the shared <code>.mcp.json</code> or forcing <code>tool_choice</code> for the whole session.</li>
+    <li><span class="new-flag">NEW</span>An SSE-transport MCP server showing <em>zero</em> tools at Claude startup with no error means the server wasn't reachable at startup — SSE connects to an already-running server, and if it isn't up yet, it silently drops all its tools. Distinct from a missing <code>mcp__</code> prefix in <code>allowedTools</code>, which blocks one specific tool that <em>did</em> load.</li>
+    <li><span class="new-flag">NEW</span>Rate limiting for a shared MCP server must be enforced <strong>server-side</strong> (token bucket in the server implementation) — the one point every request is forced through. A <code>PreToolUse</code> <code>time.sleep()</code> or a prompt instruction to "space out calls" is client-side and advisory; it doesn't stop a second agent session from overwhelming the server.</li>
   </ul>
 
   <div class="section-label">Exam Traps</div>
@@ -450,6 +501,16 @@
   <div class="trap">
     <div class="trap-header"><span class="trap-icon">⚠</span> Trap 3 — Relying on header inference in CLAUDE.md (Q6)</div>
     A <code>## Test file conventions</code> section header in root CLAUDE.md does not automatically apply when test files are edited. Claude does not infer scope from section headers. Explicit <code>paths:</code> glob matching in <code>.claude/rules/</code> is required for automatic activation.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> <span class="new-flag">NEW</span>Trap 4 — A shared <code>.env</code> file "solves" the credential problem</div>
+    Consolidating every developer's token into one committed file is not meaningfully different from hardcoding them individually — both put secrets in git. Use <code>${VAR}</code> expansion instead.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> <span class="new-flag">NEW</span>Trap 5 — Wrong-scoped fix on a tool/server identity collision</div>
+    Renaming a tool that was already fine, forcing <code>tool_choice</code> for the whole session, or editing the shared <code>.mcp.json</code> to fix a personal-scope problem are all wrong-blast-radius fixes. Fix what actually changed or actually belongs to you.
   </div>
 
   <div class="insight">
@@ -486,6 +547,9 @@
     <li>Overnight/nightly jobs (tech debt, coverage): <strong>Batch API appropriate</strong> — 50% cost savings; no blocking latency requirement (Q12)</li>
     <li>Generate + review in CI: <strong>two separate Claude instances</strong> — review instance receives only the artifact + review criteria; no generation context carries over</li>
     <li>CI-specific CLAUDE.md: disable clarification prompts; enforce structured output format; no interactive confirmations</li>
+    <li><span class="new-flag">NEW</span>A chained pipeline (generate → review → check-breaking-changes) must run each review/check step as an <strong>independent session</strong>, not sharing context with the generation step. Shared context biases the review toward agreeing with the generator's own reasoning instead of catching its errors — bias inheritance, not a formatting problem.</li>
+    <li><span class="new-flag">NEW</span><code>--bare</code> is not "quiet mode" — it skips auto-discovery of hooks, skills, plugins, MCP servers, auto memory, and CLAUDE.md, and sets <code>CLAUDE_CODE_SIMPLE</code>. Docker still auto-discovers local config by default. <code>-p</code>/<code>--print</code> is the separate non-interactive flag; <code>--batch</code> and <code>CLAUDE_HEADLESS</code> don't exist.</li>
+    <li><span class="new-flag">NEW</span>Batch job re-submission math: max interval = <code>SLA_hours − 24h (batch window) − preprocessing_hours</code>. Results return <strong>out of order</strong> — correlate by <code>custom_id</code>, never by array position. No per-request GET endpoint exists; poll until <code>ended</code>, then download one <code>.jsonl</code> results file.</li>
   </ul>
 
   <div class="section-label">Exam Traps</div>
@@ -503,6 +567,16 @@
   <div class="trap">
     <div class="trap-header"><span class="trap-icon">⚠</span> Trap 3 — Same-session generate + review</div>
     Using the same Claude session to generate code and then review it carries same-session reasoning bias. The review instance must be independent — supplied with only the code artifact and review criteria, not the generation context or reasoning chain.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> <span class="new-flag">NEW</span>Trap 4 — "Fix it with better formatting" for an unreliable CI review step</div>
+    If review/check output is noisy or self-contradictory, the instinct is to demand JSON or add formatting rules. If the root cause is shared-context bias inheritance from the generation step, no formatting fix touches it.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> <span class="new-flag">NEW</span>Trap 5 — Treating <code>--bare</code> as just output suppression</div>
+    It disables an entire layer of auto-discovered configuration (hooks, skills, plugins, MCP, memory, CLAUDE.md) — very different from quieting console noise.
   </div>
 
   <div class="insight">
@@ -539,6 +613,11 @@
     <li><code>tool_choice: {"type": "tool", "name": "extract_fields"}</code> forces the first tool call — guarantees structured output format immediately, no natural-language preamble turn</li>
     <li>Batch API: appropriate for high-volume overnight extraction runs (no real-time SLA) — not for user-facing synchronous extraction</li>
     <li>Human review thresholds must be calibrated per document-type segment, not by overall confidence scores alone</li>
+    <li><span class="new-flag">NEW</span>A flat <code>enum</code> field that keeps producing invalid combinations (a cardio metric on a strength-type record) needs a <strong>discriminated-union schema</strong> — <code>anyOf</code>/<code>oneOf</code> branches per type, each with its own required fields — or separate per-type tools. A flat enum can't bind two correlated fields.</li>
+    <li><span class="new-flag">NEW</span>Retry-with-error-feedback is the wrong tool when required information is <strong>simply absent from the source</strong> — no retry invents data that isn't there. Retryable = info exists but extracted wrong (resend source + failed output + validator errors). Non-retryable = info absent (use nullable fields; don't force the model to fabricate a value).</li>
+    <li><span class="new-flag">NEW</span>When extraction fails because a referenced document was never uploaded, further retries produce <strong>plausible hallucinations</strong>, not recovered data. Detect the absence after validation, stop retrying, mark the extraction incomplete, and request the document.</li>
+    <li><span class="new-flag">NEW</span>Reported per-field confidence ≠ measured accuracy — models are often overconfident (a stated 90% may be ~70% correct). Close the gap by measuring stated-vs-observed accuracy against labeled ground truth <strong>per document type</strong>, and feed corrections back — not one global threshold.</li>
+    <li><span class="new-flag">NEW</span>When review <em>capacity</em> is limited (not just measuring accuracy), allocate it <strong>proportional to risk/consequence-of-error</strong> — heavy review on high-regulatory-exposure segments, light on low-risk ones. Distinct from segment-level accuracy measurement: that finds where accuracy is weak; this allocates limited effort once you know what's at stake. Don't use the model's self-reported confidence to decide what to skip.</li>
   </ul>
 
   <div class="section-label">Exam Traps</div>
@@ -556,6 +635,21 @@
   <div class="trap">
     <div class="trap-header"><span class="trap-icon">⚠</span> Trap 3 — Lower confidence threshold to reduce flagging (Q11)</div>
     Lowering the confidence threshold suppresses detection — it does not improve extraction accuracy. This approach would reduce human review rates precisely where the model is most likely to be wrong. Higher-risk segments need more review, not less.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> <span class="new-flag">NEW</span>Trap 4 — A flat enum with more values fixes invalid field combinations</div>
+    More enum values still can't express "field X is required only when type = Y." That needs a discriminated union or per-type tools.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> <span class="new-flag">NEW</span>Trap 5 — Retrying any failed extraction on principle</div>
+    Retry-with-error-feedback only helps when the source information exists but was extracted wrong. If the source document itself is missing, retrying manufactures a plausible but fabricated answer.
+  </div>
+
+  <div class="trap">
+    <div class="trap-header"><span class="trap-icon">⚠</span> <span class="new-flag">NEW</span>Trap 6 — Using self-reported model confidence to decide what to skip reviewing</div>
+    Confidence is a poorly-calibrated internal estimate, not a measured guarantee — a fluent-but-wrong high-risk extraction can still self-report high confidence. Allocate review capacity by actual risk, not the model's own confidence score.
   </div>
 
   <div class="insight">
